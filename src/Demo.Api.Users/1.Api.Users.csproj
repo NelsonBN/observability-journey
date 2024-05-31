@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+
+    <RootNamespace>Api.Users</RootNamespace>
+    <AssemblyName>Api.Users</AssemblyName>
+
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.6" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+
+    <PackageReference Include="MediatR" Version="12.2.0" />
+
+    <PackageReference Include="MongoDB.Driver" Version="2.25.0" />
+
+    <!-- Grpc -->
+    <PackageReference Include="Google.Protobuf" Version="3.27.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.63.0" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.63.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.64.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+
+    <!-- Trace -->
+    <PackageReference Include="OpenTelemetry" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient" Version="1.8.0-beta.1" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.8.1" />
+    <PackageReference Include="MongoDB.Driver.Core.Extensions.DiagnosticSources" Version="1.4.0" />
+
+    <!-- Continuous Profiling -->
+    <PackageReference Include="Pyroscope" Version="0.8.14" />
+
+    <!-- HealthChecks -->
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
+    <PackageReference Include="AspNetCore.HealthChecks.MongoDb" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Demo.Common\0.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\Demo.Common\DTOs\notifications.proto" GrpcServices="Client" />
+  </ItemGroup>
+
+</Project>

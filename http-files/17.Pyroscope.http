@@ -1,0 +1,9 @@
+@Host = http://localhost:4040
+
+
+### Ready
+GET {{Host}}/ready
+
+
+### Metrics
+GET {{Host}}/metrics

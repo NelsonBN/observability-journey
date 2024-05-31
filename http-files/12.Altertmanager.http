@@ -1,0 +1,26 @@
+@Host = http://localhost:9093
+
+
+######### HEALTH CHECK #########
+
+
+GET {{Host}}/-/healthy
+
+###
+
+HEAD {{Host}}/-/healthy
+
+
+######### READINESS CHECK #########
+
+
+GET {{Host}}/-/ready
+
+###
+
+HEAD {{Host}}/-/ready
+
+
+######### READINESS CHECK #########
+
+POST {{Host}}/-/reload

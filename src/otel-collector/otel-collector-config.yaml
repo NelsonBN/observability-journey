@@ -1,0 +1,86 @@
+# Data sources: traces, metrics, logs
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: otel-collector:4317
+      # http:
+      #   endpoint: 0.0.0.0:4318
+
+
+exporters:
+  otlp/tempo-traces:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+    default_labels_enabled:
+      exporter: true
+      job: true
+    tls:
+      insecure: true
+
+  # Data sources: metrics
+  prometheusremotewrite:
+    endpoint: http://prometheus:9090/api/v1/write
+    # tls:
+    #   insecure: true
+
+  prometheus:
+    endpoint: otel-collector:8889
+
+
+extensions:
+  health_check:
+    endpoint: otel-collector:13133
+
+
+processors:
+  batch:
+
+
+  # Filter HTTP spans to server for `GET /health`
+  # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor
+  filter/exclude-traces-health:
+    error_mode: ignore
+    traces:
+      span:
+        - 'attributes["http.route"] == "/health"'
+
+  # Filter logs for `GET /health`
+  # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor
+  # filter/exclude-health-logs-api:
+  #   error_mode: ignore
+  #   logs:
+  #     exclude:
+  #       match_type: regexp
+  #       bodies:
+  #         - '.*Health check API invoked!.*'
+
+
+
+service:
+  extensions: [health_check]
+
+  pipelines:
+    traces:
+      receivers: [otlp]
+      #processors: [filter/exclude-traces-health, batch]
+      processors: [filter/exclude-traces-health]
+      exporters: [otlp/tempo-traces]
+    logs:
+      receivers: [otlp]
+      #processors: [batch]
+      exporters: [loki]
+    metrics:
+      receivers: [otlp]
+      #processors: [batch]
+      exporters: [prometheusremotewrite]
+      #exporters: [prometheus]
+
+  telemetry:
+    metrics:
+      address: 0.0.0.0:8888
+      level: detailed

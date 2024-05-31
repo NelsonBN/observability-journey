@@ -1,0 +1,6 @@
+@Host = http://localhost:3000
+
+
+### Export datasources configuration
+GET {{Host}}/api/datasources
+Content-Type: application/json

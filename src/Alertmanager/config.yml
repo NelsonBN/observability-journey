@@ -1,0 +1,35 @@
+global:
+  smtp_smarthost: 'mailpit:1025'
+  smtp_from: 'alertmanager@example.fk'
+  smtp_require_tls: false
+
+route:
+  receiver: 'default'
+  group_by: ['alertname']
+  group_wait: 15s
+  group_interval: 15s
+  repeat_interval: 1m
+
+  routes:
+  - receiver: developers-email
+    match:
+      team: Developers
+
+  - receiver: devops-email
+    match:
+      team: DevOps
+
+
+
+receivers:
+- name: 'default'
+  email_configs:
+  - to: 'default@example.fk'
+
+- name: 'developers-email'
+  email_configs:
+  - to: 'developers@example.fk'
+
+- name: 'devops-email'
+  email_configs:
+  - to: 'devops@example.fk'

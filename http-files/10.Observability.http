@@ -1,0 +1,40 @@
+@UsersApiHost = http://localhost:8088
+@NotificationsApiHost = http://localhost:8089
+@EmailGatewayHost = http://localhost:8098
+@SMSGatewayHost = http://localhost:8099
+
+
+######### METRICS #########
+GET {{UsersApiHost}}/metrics
+
+###
+
+GET {{NotificationsApiHost}}/metrics
+
+###
+
+GET {{EmailGatewayHost}}/metrics
+
+###
+
+GET {{SMSGatewayHost}}/metrics
+
+
+######### HEALTH #########
+GET {{UsersApiHost}}/health
+
+###
+
+GET {{NotificationsApiHost}}/health
+
+###
+
+GET {{UsersApiHost}}/health
+
+###
+
+GET {{EmailGatewayHost}}/health
+
+###
+
+GET {{SMSGatewayHost}}/health

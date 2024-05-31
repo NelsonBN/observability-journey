@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+
+    <RootNamespace>Common</RootNamespace>
+    <AssemblyName>Common</AssemblyName>
+
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
+    
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+    
+    <PackageReference Include="OpenTelemetry.Api" Version="1.8.1" />
+
+    <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
+
+    <!-- Trace -->
+    <PackageReference Include="OpenTelemetry" Version="1.8.1" />
+
+    <!-- Continuous Profiling -->
+    <PackageReference Include="Pyroscope" Version="0.8.14" />
+
+    <!-- Grpc -->
+    <PackageReference Include="Grpc.AspNetCore" Version="2.63.0" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+
+    <RootNamespace>Gateway.SMS</RootNamespace>
+    <AssemblyName>Gateway.SMS</AssemblyName>
+    
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
+
+    <!-- Trace -->
+    <PackageReference Include="OpenTelemetry" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.8.1" />
+
+    <!-- Continuous Profiling -->
+    <PackageReference Include="Pyroscope" Version="0.8.14" />
+
+    <!-- HealthChecks -->
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
+    <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="8.0.1" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\Demo.Common\0.Common.csproj" />
+  </ItemGroup>
+</Project>

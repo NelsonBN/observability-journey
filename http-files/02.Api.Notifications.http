@@ -1,0 +1,17 @@
+@NotificationsApiHost = http://localhost:8089/notifications
+
+GET {{NotificationsApiHost}}
+
+###
+
+GET {{NotificationsApiHost}}/5f4dac16-5692-46b9-919b-9b4f3e0d0d91
+
+###
+
+POST {{NotificationsApiHost}}
+Content-Type: application/json
+
+{
+    "userId": "28111954-9422-4822-a40a-c912f9f297dd",
+    "message": "Hello World!"
+}

@@ -1,0 +1,474 @@
+networks:
+  demo:
+    driver: bridge
+
+services:
+
+############################## AUX SERVICES ###############################
+
+
+  postgres:
+    image: postgres:16.3
+    container_name: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: demouser
+      POSTGRES_PASSWORD: a123456789
+      POSTGRES_DB: demodb
+    volumes:
+      - ./src/Postgres/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+    networks:
+      - demo
+
+  pgadmin:
+    image: dpage/pgadmin4:8.6
+    container_name: pgadmin
+    restart: always
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_PASSWORD: a123456789
+      PGADMIN_DEFAULT_EMAIL: test@test.com
+    volumes:
+      - ./src/Postgres/servers.json:/pgadmin4/servers.json
+    networks:
+      - demo
+    depends_on:
+      - postgres
+
+  mongo:
+    image: mongo:7.0.9
+    container_name: mongo
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: root
+    #   MONGO_INITDB_ROOT_PASSWORD: a123456789
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./src/Mongo/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - demo
+
+  mongo-express:
+    image: mongo-express:1.0.2
+    container_name: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: guest
+      ME_CONFIG_BASICAUTH_PASSWORD: guest
+      ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/
+    networks:
+      - demo
+    depends_on:
+      - mongo
+
+
+  rabbitmq:
+    image: rabbitmq:3.13.2-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - 5672:5672 # AMQP
+      - 15672:15672 # Management
+      - 15692:15692 # Prometeus
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    command: >
+      bash -c "rabbitmq-plugins enable --offline rabbitmq_prometheus && rabbitmq-server"
+    networks:
+      - demo
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      start_period: 3s
+      retries: 5
+
+
+  redis:
+    image: redis:7.2.5-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - demo
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 10s
+      timeout: 5s
+      start_period: 3s
+      retries: 5
+
+  redis-insight:
+    image: redislabs/redisinsight:v2
+    container_name: redis-insight
+    restart: always
+    ports:
+      - 5540:5540
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - demo
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5540/api/health", "||", "exit 1"]
+      interval: 10s
+      timeout: 5s
+      start_period: 3s
+      retries: 5
+
+
+  mailpit:
+    image: axllent/mailpit:v1.18.3
+    container_name: mailpit
+    restart: on-failure
+    ports:
+      - 8025:8025 # HTTP
+      - 1025:1025 # SMTP
+    environment:
+      TZ: Europe/Lisbon
+    networks:
+      - demo
+
+
+############################## OBSERVABILITY ###############################
+
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: prometheus
+    restart: always
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      # This is necessary to otel-collector can send metrics to prometheus
+      - "--web.enable-remote-write-receiver"
+    volumes:
+      - ./src/Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./src/Prometheus/alert-rules.yml:/etc/prometheus/alert.rules:ro
+    ports:
+      - 9090:9090
+    networks:
+      - demo
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 5s
+      start_period: 3s
+      retries: 5
+
+
+  loki:
+    image: grafana/loki:3.0.0
+    container_name: loki
+    restart: always
+    ports:
+      - 3100:3100 # http
+      - 3101:3101 # grpc
+    command:
+      - -config.file=/etc/loki/loki-config.yaml
+      - -print-config-stderr=true
+    volumes:
+      - ./src/Loki:/etc/loki
+    networks:
+      - demo
+    healthcheck:
+      test:
+        [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3100/ready" ]
+      interval: 10s
+      timeout: 5s
+      start_period: 15s
+      retries: 5
+
+
+  tempo:
+    image: grafana/tempo:2.4.2
+    container_name: tempo
+    restart: always
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./src/Tempo/tempo.yaml:/etc/tempo.yaml
+    ports:
+      - 3200:3200   # tempo
+#      - 4317:4317  # otlp grpc
+#      - 4318:4318  # otlp http
+    networks:
+      - demo
+
+
+  pyroscope:
+    image: grafana/pyroscope:1.5.0
+    container_name: pyroscope
+    restart: on-failure
+    ports:
+      - 4040:4040
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    networks:
+      - demo
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4040/ready"]
+      interval: 10s
+      timeout: 5s
+      start_period: 3s
+      retries: 5
+
+
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:v0.15.0
+    container_name: postgres-exporter
+    restart: always
+    ports:
+      - 9187:9187
+    environment:
+      DATA_SOURCE_NAME: postgresql://demouser:a123456789@postgres:5432/demodb?sslmode=disable
+    networks:
+      - demo
+    depends_on:
+      postgres:
+        condition: service_started
+
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.101.0
+    container_name: otel-collector
+    restart: always
+    command: --config=/etc/otel-collector-config.yaml
+    volumes:
+      - ./src/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+    ports:
+      # - 1888:1888   # pprof extension
+      - 8888:8888   # Prometheus metrics exposed by the collector
+      - 8889:8889   # Prometheus exporter metrics
+      - 4317:4317   # OTLP gRPC receiver
+      - 13133:13133 # health_check extension
+    networks:
+      - demo
+    depends_on:
+      tempo:
+        condition: service_started
+      loki:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy
+
+
+  altertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: alertmanager
+    restart: always
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+    volumes:
+      - ./src/Alertmanager/config.yml:/etc/alertmanager/config.yml:ro
+    ports:
+      - 9093:9093
+    networks:
+      - demo
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9093/-/healthy"]
+      interval: 10s
+      timeout: 5s
+      start_period: 3s
+      retries: 5
+    depends_on:
+      mailpit:
+        condition: service_started
+
+
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:v1.8.1
+    container_name: node-exporter
+    command: '--path.rootfs=/host'
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    ports:
+      - 9100:9100
+    networks:
+      - demo
+
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: grafana
+    environment:
+      TZ: Europe/Lisbon
+      GF_AUTH_ANONYMOUS_ENABLED: true # Allow anonymous access
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin # Set the role for anonymous users to Admin
+      GF_AUTH_BASIC_ENABLED: false # Disable basic auth
+      GF_FEATURE_TOGGLES_ENABLE: flameGraph
+    ports:
+      - 3000:3000
+    volumes:
+      - ./src/Grafana/grafana.ini:/etc/grafana/grafana.ini # Config
+      - ./src/Grafana/data-source.yml:/etc/grafana/provisioning/datasources/data-source.yml # Data source configurations
+      - ./src/Grafana/dashboards:/etc/grafana/provisioning/dashboards # Folder containing dashboards
+      - ./src/Grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml # Dashboard configurations
+      #- ./data/grafana/logs:/var/log/grafana # logs
+      #- ./data/grafana/grafana-data:/var/lib/grafana # To libs
+    networks:
+      - demo
+    depends_on:
+      tempo:
+        condition: service_started
+      loki:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy
+
+
+############################## DEMO SERVICES ###############################
+
+
+  gateway-email:
+    build:
+      context: .
+      dockerfile: ./src/Demo.Gateway.Email/Dockerfile
+    image: technobre/demo-gateway-email
+    container_name: gateway-email
+    restart: always
+    environment:
+      MESSAGEBUS__HOSTNAME: rabbitmq
+      MESSAGEBUS__SSL__SERVERNAME: rabbitmq
+      ### Observability
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      PYROSCOPE_APPLICATION_NAME: gateway-email
+      PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
+    ports:
+      - 8098:8080
+    networks:
+      - demo
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy
+      loki:
+        condition: service_healthy
+      tempo:
+        condition: service_started
+      pyroscope:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+
+  gateway-sms:
+    build:
+      context: .
+      dockerfile: ./src/Demo.Gateway.SMS/Dockerfile
+    image: technobre/demo-gateway-sms
+    container_name: gateway-sms
+    restart: always
+    environment:
+      MESSAGEBUS__HOSTNAME: rabbitmq
+      MESSAGEBUS__SSL__SERVERNAME: rabbitmq
+      ### Observability
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      PYROSCOPE_APPLICATION_NAME: gateway-sms
+      PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
+    ports:
+      - 8099:8080
+    networks:
+      - demo
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy
+      loki:
+        condition: service_healthy
+      tempo:
+        condition: service_started
+      pyroscope:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+
+  api-users:
+    build:
+      context: .
+      dockerfile: ./src/Demo.Api.Users/Dockerfile
+    image: technobre/demo-api-users
+    container_name: api-users
+    restart: always
+    environment:
+      CONNECTIONSTRINGS__DEFAULT: mongodb://mongo:27017/Demo
+      NOTIFICATIONSAPI: http://api-notifications:8081
+      ### Observability
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      PYROSCOPE_APPLICATION_NAME: api-users
+      PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
+    ports:
+      - 8088:8080
+    networks:
+      - demo
+    depends_on:
+      mongo:
+        condition: service_started
+      prometheus:
+        condition: service_healthy
+      loki:
+        condition: service_healthy
+      tempo:
+        condition: service_started
+      pyroscope:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+
+  api-notifications:
+    build:
+      context: .
+      dockerfile: ./src/Demo.Api.Notifications/Dockerfile
+    image: technobre/demo-api-notifications
+    container_name: api-notifications
+    restart: always
+    environment:
+      CONNECTIONSTRINGS__POSTGRES: Server=postgres;Port=5432;Database=demodb;User Id=demouser;Password=a123456789;
+      CONNECTIONSTRINGS__REDIS: redis:6379
+      MESSAGEBUS__HOSTNAME: rabbitmq
+      MESSAGEBUS__SSL__SERVERNAME: rabbitmq
+      USERSAPI: http://api-users:8080
+      ### Observability
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      PYROSCOPE_APPLICATION_NAME: api-notifications
+      PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
+    ports:
+      - 8089:8080 # Web Api
+      - 8090:8081 # gRPC Api
+    networks:
+      - demo
+    depends_on:
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy
+      loki:
+        condition: service_healthy
+      tempo:
+        condition: service_started
+      pyroscope:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+      gateway-sms:
+        condition: service_healthy
+      gateway-email:
+        condition: service_healthy
+      api-users:
+        condition: service_healthy

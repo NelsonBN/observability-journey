@@ -1,0 +1,41 @@
+@UsersApiHost = http://localhost:8088/users
+
+GET {{UsersApiHost}}
+
+###
+
+GET {{UsersApiHost}}/28111954-9422-4822-a40a-c912f9f297dd
+
+### User with notifications
+
+GET {{UsersApiHost}}/28111954-9422-4822-a40a-c912f9f297dd/total-notifications
+
+### User without notifications
+
+GET {{UsersApiHost}}/ab497ca3-4304-47fd-866d-b647f4daaa99/total-notifications
+
+###
+
+POST {{UsersApiHost}}
+Content-Type: application/json
+
+{
+    "name": "Fake User",
+    "email": "fake@fake.fk",
+    "phone": "1234"
+}
+
+###
+
+PUT {{UsersApiHost}}/28111954-9422-4822-a40a-c912f9f297dd
+Content-Type: application/json
+
+{
+    "name": "Fake User Update",
+    "email": "fake@Update.fk",
+    "phone": "12341112"
+}
+
+###
+
+DELETE {{UsersApiHost}}/64c76e00-ce3c-4967-8e50-3d5a972a0cc7

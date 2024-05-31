@@ -1,0 +1,14 @@
+
+### Metrics
+
+GET http://localhost:8888/metrics
+
+
+### Health
+
+GET http://localhost:13133/health
+
+
+### Prometheus exporter
+
+GET http://localhost:8889/metrics

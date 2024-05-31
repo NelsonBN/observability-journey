@@ -1,0 +1,133 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 15s
+
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - scheme: http
+    static_configs:
+    - targets:
+      - alertmanager:9093
+
+rule_files:
+  - 'alert.rules'
+
+
+scrape_configs:
+
+#################### OBSERVABILITY ####################
+  - job_name: 'Prometheus'
+    scrape_interval: 15s
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service_type: 'Observability'
+          service_name: 'Prometheus'
+
+  - job_name: 'Loki'
+    static_configs:
+    - targets: ['loki:3100']
+      labels:
+        service_type: 'Observability'
+        service_name: 'Loki'
+
+  - job_name: 'Pyroscope'
+    static_configs:
+    - targets: ['pyroscope:4040']
+      labels:
+        service_type: 'Observability'
+        service_name: 'Pyroscope'
+
+  - job_name: 'Alertmanager'
+    static_configs:
+    - targets: ['alertmanager:9093']
+      labels:
+        service_type: 'Observability'
+        service_name: 'Alertmanager'
+
+  - job_name: 'otel-collector'
+    static_configs:
+    - targets: ['otel-collector:8888']
+      labels:
+        service_type: 'Observability'
+        service_name: 'otel-collector'
+
+  - job_name: 'node-exporter'
+    static_configs:
+    - targets: ['node-exporter:9100']
+      labels:
+        service_type: 'Observability'
+        service_name: 'node-exporter'
+
+  - job_name: 'Grafana'
+    scrape_interval: 15s
+    static_configs:
+    - targets: ['grafana:3000']
+      labels:
+        service_type: 'Observability'
+        service_name: 'Grafana'
+    basic_auth:
+      username: 'DemoGrafanaMetricsUsername'
+      password: 'DemoGrafanaMetricsPassword'
+
+
+#################### DATABASES ####################
+
+  - job_name: 'Postgres'
+    static_configs:
+    - targets: ['postgres-exporter:9187']
+      labels:
+        service_type: 'Databases'
+        service_name: 'Postgres'
+    relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    # - target_label: __address__
+    #   replacement: 127.0.0.1:9116  # The postgres exporter's real hostname:port.
+
+#################### BROKERS ####################
+
+  - job_name: 'RabbitMQ'
+    static_configs:
+    - targets: ['rabbitmq:15692']
+      labels:
+        service_type: 'Brokers'
+        service_name: 'RabbitMQ'
+
+
+
+# #################### APIS ####################
+#   - job_name: 'Api.Users'
+#     static_configs:
+#       - targets: ['api-users:8080']
+#         labels:
+#           service_type: 'Api'
+#           service_name: 'Api.Users'
+
+#   - job_name: 'Api.Notifications'
+#     static_configs:
+#       - targets: ['api-notifications:8080']
+#         labels:
+#           service_type: 'Api'
+#           service_name: 'Api.Notifications'
+
+
+
+# #################### WORKERS ####################
+#   - job_name: 'Gateway.SMS'
+#     static_configs:
+#       - targets: ['gateway-sms:8080']
+#         labels:
+#           service_type: 'Worker'
+#           service_name: 'Gateway.SMS'
+
+#   - job_name: 'Gateway.Email'
+#     static_configs:
+#       - targets: ['gateway-email:8080']
+#         labels:
+#           service_type: 'Worker'
+#           service_name: 'Gateway.Email'

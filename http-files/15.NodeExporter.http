@@ -1,0 +1,4 @@
+@Host = http://localhost:9100
+
+### Metrics
+GET {{Host}}/metrics
