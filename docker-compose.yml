@@ -8,22 +8,27 @@ services:
 
 
   postgres:
-    image: postgres:16.3
+    image: postgres:16.3-alpine3.20
     container_name: postgres
     restart: always
     ports:
       - 5432:5432
     environment:
+      POSTGRES_DB: demodb
       POSTGRES_USER: demouser
       POSTGRES_PASSWORD: a123456789
-      POSTGRES_DB: demodb
     volumes:
       - ./src/Postgres/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "demodb", "-U", "demouser"]
+      interval: 15s
+      timeout: 30s
+      retries: 5
     networks:
       - demo
 
   pgadmin:
-    image: dpage/pgadmin4:8.6
+    image: dpage/pgadmin4:8.8
     container_name: pgadmin
     restart: always
     ports:
@@ -36,7 +41,8 @@ services:
     networks:
       - demo
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   mongo:
     image: mongo:7.0.9
@@ -233,7 +239,7 @@ services:
       - demo
     depends_on:
       postgres:
-        condition: service_started
+        condition: service_healthy
 
 
   otel-collector:
@@ -451,7 +457,7 @@ services:
       - demo
     depends_on:
       postgres:
-        condition: service_started
+        condition: service_healthy
       redis:
         condition: service_healthy
       rabbitmq:
