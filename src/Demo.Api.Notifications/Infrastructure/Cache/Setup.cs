@@ -7,23 +7,14 @@ public static class Setup
 {
     public static IServiceCollection AddCache(this IServiceCollection services, IConfiguration configuration)
     {
+        var connectionMultiplexer = ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis")!);
         services
-            .AddSingleton<Task<IConnectionMultiplexer>>(async (sp) =>
+            .AddSingleton(connectionMultiplexer)
+            .AddStackExchangeRedisCache(options =>
             {
-                var connectionMultiplexer = configuration.GetConnectionString("Redis")!;
-                return await ConnectionMultiplexer.ConnectAsync(connectionMultiplexer);
-            })
-            .AddSingleton<IConnectionMultiplexer>(sp =>
-            {
-                var connectionMultiplexer = configuration.GetConnectionString("Redis")!;
-                return ConnectionMultiplexer.Connect(connectionMultiplexer);
+                options.InstanceName = AppDetails.Name;
+                options.ConnectionMultiplexerFactory = () => Task.FromResult<IConnectionMultiplexer>(connectionMultiplexer);
             });
-
-        services.AddStackExchangeRedisCache(options =>
-        {
-            options.Configuration = configuration.GetConnectionString("Redis")!;
-            options.InstanceName = AppDetails.Name;
-        });
 
         return services;
     }
