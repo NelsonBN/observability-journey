@@ -1,6 +1,6 @@
-# Demo - Full Observability
+# Demo - Observability Wit Four Signals and OpenTelemetry
 
-This project aims to explore the four pillars of Observability and OpenTelemetry.
+This project aims to explore the four signals of Observability and OpenTelemetry.
 
 
 ## Components
