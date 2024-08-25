@@ -1,0 +1,38 @@
+name: 'Build Services'
+
+
+on:
+  workflow_dispatch: # To can dispatch manually
+
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+    branches:
+      - main
+
+  push:
+    branches:
+      - main
+
+
+jobs:
+  build:
+    name: 'Building Docker Image'
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        config:
+          - { imageName: 'api-users', dockerfilePath: './src/Demo.Api.Users/Dockerfile' }
+          - { imageName: 'api-notifications', dockerfilePath: './src/Demo.Api.Notifications/Dockerfile' }
+          - { imageName: 'gateway-sms', dockerfilePath: './src/Demo.Gateway.SMS/Dockerfile' }
+          - { imageName: 'gateway-email', dockerfilePath: './src/Demo.Gateway.Email/Dockerfile' }
+
+    steps:
+    - name: 'Checkout'
+      uses: actions/checkout@v4.1.2
+
+    - name: 'Set up Docker Buildx'
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker
+      run: docker build -f ${{ matrix.config.dockerfilePath }} . -t ${{ matrix.config.imageName }}
