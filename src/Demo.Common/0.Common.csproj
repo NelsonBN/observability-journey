@@ -29,7 +29,7 @@
     <PackageReference Include="Pyroscope" Version="0.8.14" />
 
     <!-- Grpc -->
-    <PackageReference Include="Grpc.AspNetCore" Version="2.63.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.65.0" />
   </ItemGroup>
 
 </Project>
