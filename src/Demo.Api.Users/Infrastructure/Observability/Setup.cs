@@ -3,7 +3,6 @@ using Common.Observability;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using MongoDB.Driver;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -46,8 +45,9 @@ public static class Setup
         services
             .AddHealthChecks()
             .AddMongoDb(
-                sp => sp.GetRequiredService<IMongoClient>(),
-                "MongoDB", HealthStatus.Unhealthy);
+                mongodbConnectionStringFactory: sp => sp.GetRequiredService<IConfiguration>().GetConnectionString("Default")!,
+                name: "MongoDB",
+                failureStatus: HealthStatus.Unhealthy);
 
         return services;
     }
