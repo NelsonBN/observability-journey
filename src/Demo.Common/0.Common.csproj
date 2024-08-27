@@ -26,7 +26,7 @@
     <PackageReference Include="OpenTelemetry" Version="1.8.1" />
 
     <!-- Continuous Profiling -->
-    <PackageReference Include="Pyroscope" Version="0.8.14" />
+    <PackageReference Include="Pyroscope" Version="0.8.20" />
 
     <!-- Grpc -->
     <PackageReference Include="Grpc.AspNetCore" Version="2.65.0" />

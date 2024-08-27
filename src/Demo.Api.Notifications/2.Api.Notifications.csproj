@@ -51,7 +51,7 @@
     <PackageReference Include="Npgsql.OpenTelemetry" Version="8.0.3" />
 
     <!-- Continuous Profiling -->
-    <PackageReference Include="Pyroscope" Version="0.8.14" />
+    <PackageReference Include="Pyroscope" Version="0.8.20" />
 
     <!-- HealthChecks -->
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
