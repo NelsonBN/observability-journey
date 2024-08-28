@@ -18,15 +18,15 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
 
-    <PackageReference Include="OpenTelemetry.Api" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry.Api" Version="1.9.0" />
 
     <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
 
     <!-- Trace -->
-    <PackageReference Include="OpenTelemetry" Version="1.8.1" />
+    <PackageReference Include="OpenTelemetry" Version="1.9.0" />
 
     <!-- Continuous Profiling -->
-    <PackageReference Include="Pyroscope" Version="0.8.14" />
+    <PackageReference Include="Pyroscope" Version="0.8.20" />
 
     <!-- Grpc -->
     <PackageReference Include="Grpc.AspNetCore" Version="2.65.0" />
