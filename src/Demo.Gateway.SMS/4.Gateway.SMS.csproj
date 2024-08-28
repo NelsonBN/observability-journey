@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
     <PackageReference Include="MediatR" Version="12.4.0" />
+    <PackageReference Include="System.Text.Json" Version="8.0.4" /> <!-- To fix vulnerability -->
 
     <!-- Trace -->
     <PackageReference Include="OpenTelemetry" Version="1.9.0" />
