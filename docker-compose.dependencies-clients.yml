@@ -1,0 +1,72 @@
+networks:
+  demo:
+    driver: bridge
+
+services:
+
+  postgres:
+    extends:
+      file: docker-compose.dependencies.yml
+      service: postgres
+
+  pgadmin:
+    image: dpage/pgadmin4:8.8
+    container_name: pgadmin
+    restart: always
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_PASSWORD: a123456789
+      PGADMIN_DEFAULT_EMAIL: test@test.com
+    volumes:
+      - ./src/Postgres/servers.json:/pgadmin4/servers.json
+    networks:
+      - demo
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+
+  mongo:
+    extends:
+      file: docker-compose.dependencies.yml
+      service: mongo
+
+  mongo-express:
+    image: mongo-express:1.0.2
+    container_name: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: guest
+      ME_CONFIG_BASICAUTH_PASSWORD: guest
+      ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/
+    networks:
+      - demo
+    depends_on:
+      - mongo
+
+
+  redis:
+    extends:
+      file: docker-compose.dependencies.yml
+      service: redis
+
+  redis-insight:
+    image: redislabs/redisinsight:v2
+    container_name: redis-insight
+    restart: always
+    ports:
+      - 5540:5540
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - demo
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5540/api/health", "||", "exit 1"]
+      interval: 10s
+      timeout: 5s
+      start_period: 3s
+      retries: 5
