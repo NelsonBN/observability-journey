@@ -1,0 +1,176 @@
+networks:
+  demo:
+    driver: bridge
+
+services:
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: prometheus
+    restart: always
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      # This is necessary to otel-collector can send metrics to prometheus
+      - "--web.enable-remote-write-receiver"
+    volumes:
+      - ./src/Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./src/Prometheus/alert-rules.yml:/etc/prometheus/alert.rules:ro
+    ports:
+      - 9090:9090
+    networks:
+      - demo
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 5s
+      start_period: 3s
+      retries: 5
+
+
+  loki:
+    image: grafana/loki:3.0.0
+    container_name: loki
+    restart: always
+    ports:
+      - 3100:3100 # http
+      - 3101:3101 # grpc
+    command:
+      - -config.file=/etc/loki/loki-config.yaml
+      - -print-config-stderr=true
+    volumes:
+      - ./src/Loki:/etc/loki
+    networks:
+      - demo
+    healthcheck:
+      test:
+        [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3100/ready" ]
+      interval: 10s
+      timeout: 5s
+      start_period: 15s
+      retries: 5
+
+
+  tempo:
+    image: grafana/tempo:2.4.2
+    container_name: tempo
+    restart: always
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./src/Tempo/tempo.yaml:/etc/tempo.yaml
+    ports:
+      - 3200:3200   # tempo
+#      - 4317:4317  # otlp grpc
+#      - 4318:4318  # otlp http
+    networks:
+      - demo
+
+
+  pyroscope:
+    image: grafana/pyroscope:1.5.0
+    container_name: pyroscope
+    restart: on-failure
+    ports:
+      - 4040:4040
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    networks:
+      - demo
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4040/ready"]
+      interval: 10s
+      timeout: 5s
+      start_period: 3s
+      retries: 5
+
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.101.0
+    container_name: otel-collector
+    restart: always
+    command: --config=/etc/otel-collector-config.yaml
+    volumes:
+      - ./src/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+    ports:
+      # - 1888:1888   # pprof extension
+      - 8888:8888   # Prometheus metrics exposed by the collector
+      - 8889:8889   # Prometheus exporter metrics
+      - 4317:4317   # OTLP gRPC receiver
+      - 13133:13133 # health_check extension
+    networks:
+      - demo
+    depends_on:
+      tempo:
+        condition: service_started
+      loki:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy
+
+
+  altertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: alertmanager
+    restart: always
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+    volumes:
+      - ./src/Alertmanager/config.yml:/etc/alertmanager/config.yml:ro
+    ports:
+      - 9093:9093
+    networks:
+      - demo
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9093/-/healthy"]
+      interval: 10s
+      timeout: 5s
+      start_period: 3s
+      retries: 5
+    depends_on:
+      mailpit:
+        condition: service_started
+
+
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:v0.15.0
+    container_name: postgres-exporter
+    restart: always
+    ports:
+      - 9187:9187
+    environment:
+      DATA_SOURCE_NAME: postgresql://demouser:a123456789@postgres:5432/demodb?sslmode=disable
+    networks:
+      - demo
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: grafana
+    environment:
+      TZ: Europe/Lisbon
+      GF_AUTH_ANONYMOUS_ENABLED: true # Allow anonymous access
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin # Set the role for anonymous users to Admin
+      GF_AUTH_BASIC_ENABLED: false # Disable basic auth
+      GF_FEATURE_TOGGLES_ENABLE: flameGraph
+    ports:
+      - 3000:3000
+    volumes:
+      - ./src/Grafana/grafana.ini:/etc/grafana/grafana.ini # Config
+      - ./src/Grafana/data-source.yml:/etc/grafana/provisioning/datasources/data-source.yml # Data source configurations
+      - ./src/Grafana/dashboards:/etc/grafana/provisioning/dashboards # Folder containing dashboards
+      - ./src/Grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml # Dashboard configurations
+      #- ./data/grafana/logs:/var/log/grafana # logs
+      #- ./data/grafana/grafana-data:/var/lib/grafana # To libs
+    networks:
+      - demo
+    depends_on:
+      tempo:
+        condition: service_started
+      loki:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy

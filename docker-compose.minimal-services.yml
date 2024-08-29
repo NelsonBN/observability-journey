@@ -1,0 +1,92 @@
+networks:
+  demo:
+    driver: bridge
+
+services:
+
+
+############################## AUX SERVICES ###############################
+
+
+  postgres:
+    extends:
+      file: docker-compose.dependencies.yml
+      service: postgres
+
+
+  mongo:
+    extends:
+      file: docker-compose.dependencies.yml
+      service: mongo
+
+
+  redis:
+    extends:
+      file: docker-compose.dependencies.yml
+      service: redis
+
+
+  rabbitmq:
+    extends:
+      file: docker-compose.dependencies.yml
+      service: rabbitmq
+
+
+############################## EXTERNAL ###############################
+
+
+  mailpit:
+    extends:
+      file: docker-compose.external.yml
+      service: mailpit
+
+
+############################## OBSERVABILITY ###############################
+
+
+  prometheus:
+    extends:
+      file: docker-compose.observability.yml
+      service: prometheus
+
+
+  loki:
+    extends:
+      file: docker-compose.observability.yml
+      service: loki
+
+
+  tempo:
+    extends:
+      file: docker-compose.observability.yml
+      service: tempo
+
+
+  pyroscope:
+    extends:
+      file: docker-compose.observability.yml
+      service: pyroscope
+
+
+  otel-collector:
+    extends:
+      file: docker-compose.observability.yml
+      service: otel-collector
+
+
+  altertmanager:
+    extends:
+      file: docker-compose.observability.yml
+      service: altertmanager
+
+
+  postgres-exporter:
+    extends:
+      file: docker-compose.observability.yml
+      service: postgres-exporter
+
+
+  grafana:
+    extends:
+      file: docker-compose.observability.yml
+      service: grafana
