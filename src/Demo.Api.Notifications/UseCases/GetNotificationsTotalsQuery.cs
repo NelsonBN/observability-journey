@@ -1,4 +1,5 @@
 ﻿using Api.Notifications.Domain;
+using BuildingBlocks.Exceptions;
 using MediatR;
 using Notifications;
 
@@ -12,6 +13,8 @@ public sealed record GetNotificationsTotalsQuery(Guid UserId) : IRequest<Notific
 
         public async Task<NotificationsTotalsResponse> Handle(GetNotificationsTotalsQuery query, CancellationToken cancellationToken)
         {
+            ExceptionFactory.ProbablyThrow<Handler>(35);
+
             var total = await _repository.GetTotalsAsync(query.UserId, cancellationToken);
             if(total is null)
             {

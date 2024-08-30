@@ -15,7 +15,6 @@ public static class TelemetryFactory
             .AddAttributes([
                 new("system.environment", Environment.GetEnvironmentVariable("SYSTEM_ENVIRONMENT") ?? "UNKNOWN")]);
 
-    // TODO: to remove
     public static ResourceBuilder CreateResource()
     {
         var resourceBuilder = ResourceBuilder.CreateDefault();
