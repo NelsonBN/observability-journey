@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0.3-alpine3.19-amd64 AS base-env
+FROM mcr.microsoft.com/dotnet/aspnet:8.0.8-alpine3.20-amd64 AS base-env
 # Preparing the runtime environment
 
 WORKDIR /app
@@ -54,14 +54,14 @@ RUN apk upgrade musl
 
 USER app
 
-ENV ASPNETCORE_ENVIRONMENT Production
-ENV ASPNETCORE_URLS http://*:8080
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_URLS=http://*:8080
 ENV ASPNETCORE_HTTP_PORTS=
 ENV ASPNETCORE_HTTPS_PORTS=
 
 
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0.203 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:8.0.401 AS build-env
 
 WORKDIR /libs
 

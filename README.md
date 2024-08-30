@@ -53,6 +53,12 @@ docker build -t api-notifications -f ./src/Demo.Api.Notifications/Dockerfile .
 docker build -t gateway-email -f ./src/Demo.Gateway.Email/Dockerfile .
 ```
 
+#### `Gateway.SMS`
+
+```bash
+docker build -t gateway-sms -f ./src/Demo.Gateway.SMS/Dockerfile .
+```
+
 
 
 
