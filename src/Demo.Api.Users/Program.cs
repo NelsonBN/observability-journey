@@ -15,9 +15,8 @@ builder.Services
     .AddDatabase()
     .AddGrpcClient();
 
-builder.Logging.AddObservability();
-builder.Services.AddObservability();
 
+builder.Services.AddObservability();
 builder.Services.AddHttp();
 
 

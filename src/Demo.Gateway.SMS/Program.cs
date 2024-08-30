@@ -10,7 +10,7 @@ var builder = Host.CreateDefaultBuilder(args);
 builder
     .ConfigureWebHostDefaults(builder =>
         builder.Configure(app => app.AddObservability()))
-    .ConfigureServices((hostContext, services) =>
+    .ConfigureServices((_, services) =>
     {
         services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssemblyContaining<Program>());
@@ -18,9 +18,7 @@ builder
         services.AddMessageBus();
 
         services.AddObservability();
-    })
-    .ConfigureLogging((hostContext, logging) =>
-        logging.AddObservability());
+    });
 
 
 
