@@ -50,8 +50,13 @@ public static class Setup
     private static IServiceCollection _addHealth(this IServiceCollection services)
     {
         services
+            .AddSingleton<StartupBackgroundService.HealthCheck>()
+            .AddHostedService<StartupBackgroundService>()
             .AddHealthChecks()
-            .AddRabbitMQ("RabbitMQ", HealthStatus.Unhealthy);
+            .AddRabbitMQ("RabbitMQ", HealthStatus.Unhealthy)
+            .AddCheck<StartupBackgroundService.HealthCheck>(
+                "Startup",
+                tags: ["Startup"]);
 
         return services;
     }
@@ -60,7 +65,19 @@ public static class Setup
     {
         app.UseRouting();
 
-        app.UseEndpoints(endpoints => endpoints.MapHealthChecks("/health", new HealthCheckOptions
+        app.UseEndpoints(endpoints => endpoints.MapHealthChecks("/healthz/startup", new HealthCheckOptions
+        {
+            Predicate = check => check.Tags.Contains("Startup"),
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        }));
+
+        app.UseEndpoints(endpoints => endpoints.MapHealthChecks("/healthz/live", new HealthCheckOptions
+        {
+            Predicate = _ => false,
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        }));
+
+        app.UseEndpoints(endpoints => endpoints.MapHealthChecks("/healthz/ready", new HealthCheckOptions
         {
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         }));
