@@ -25,15 +25,23 @@ public static class Setup
                     .AddAspNetCoreInstrumentation()
                     .AddGrpcClientInstrumentation()
                     .AddSource("MongoDB.Driver.Core.Extensions.DiagnosticSources"))
-            .WithMetrics(options =>
-                options
+            .WithMetrics(options
+                => options
                     .SetResourceBuilder(TelemetryFactory.CreateResource())
                     .AddAspNetCoreInstrumentation()
                     .AddRuntimeInstrumentation()
                     .AddMeter(Diagnostic.Meter.Name)
                     .AddView(
                         "http.server.request.duration",
-                        new ExplicitBucketHistogramConfiguration { Boundaries = [0, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10] }));
+                        new ExplicitBucketHistogramConfiguration { Boundaries = [0, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10] }))
+            .WithLogging(options =>
+                options.SetResourceBuilder(TelemetryFactory.CreateResource()),
+                configureOptions =>
+                {
+                    configureOptions.IncludeFormattedMessage = true;
+                    configureOptions.IncludeScopes = true;
+                    configureOptions.ParseStateValues = true;
+                });
 
         services._addHealth();
 
@@ -51,17 +59,6 @@ public static class Setup
 
         return services;
     }
-
-    public static ILoggingBuilder AddObservability(this ILoggingBuilder logging)
-        => logging
-            .AddOpenTelemetry(options =>
-            {
-                options.IncludeScopes = true;
-                options.IncludeFormattedMessage = true;
-                options.ParseStateValues = true;
-
-                options.SetResourceBuilder(TelemetryFactory.CreateResource());
-            });
 
     public static IApplicationBuilder AddObservability(this IApplicationBuilder app)
     {

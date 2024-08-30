@@ -21,7 +21,6 @@ builder.Services
     .AddMessageBus()
     .AddUsersApi();
 
-builder.Logging.AddObservability();
 builder.Services.AddObservability();
 
 builder.Services.AddHttp();
