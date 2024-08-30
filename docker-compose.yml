@@ -122,7 +122,6 @@ services:
       MESSAGEBUS__SSL__SERVERNAME: rabbitmq
       ### Observability
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
-      PYROSCOPE_APPLICATION_NAME: gateway-email
       PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
     ports:
       - 8098:8080
@@ -154,7 +153,6 @@ services:
       MESSAGEBUS__SSL__SERVERNAME: rabbitmq
       ### Observability
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
-      PYROSCOPE_APPLICATION_NAME: gateway-sms
       PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
     ports:
       - 8099:8080
@@ -182,11 +180,11 @@ services:
     container_name: api-users
     restart: always
     environment:
-      CONNECTIONSTRINGS__DEFAULT: mongodb://mongo:27017/Demo
+      CONNECTIONSTRINGS__MONGO: mongodb://mongo:27017/Demo
+      CONNECTIONSTRINGS__REDIS: redis:6379
       NOTIFICATIONSAPI: http://api-notifications:8081
       ### Observability
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
-      PYROSCOPE_APPLICATION_NAME: api-users
       PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
     ports:
       - 8088:8080
@@ -195,6 +193,8 @@ services:
     depends_on:
       mongo:
         condition: service_started
+      redis:
+        condition: service_healthy
       prometheus:
         condition: service_healthy
       loki:
@@ -215,13 +215,11 @@ services:
     restart: always
     environment:
       CONNECTIONSTRINGS__POSTGRES: Server=postgres;Port=5432;Database=demodb;User Id=demouser;Password=a123456789;
-      CONNECTIONSTRINGS__REDIS: redis:6379
       MESSAGEBUS__HOSTNAME: rabbitmq
       MESSAGEBUS__SSL__SERVERNAME: rabbitmq
       USERSAPI: http://api-users:8080
       ### Observability
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
-      PYROSCOPE_APPLICATION_NAME: api-notifications
       PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
     ports:
       - 8089:8080 # Web Api
@@ -230,8 +228,6 @@ services:
       - demo
     depends_on:
       postgres:
-        condition: service_healthy
-      redis:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy

@@ -24,7 +24,8 @@ public static class Setup
                     .SetResourceBuilder(TelemetryFactory.CreateResource())
                     .AddAspNetCoreInstrumentation()
                     .AddGrpcClientInstrumentation()
-                    .AddSource("MongoDB.Driver.Core.Extensions.DiagnosticSources"))
+                    .AddSource("MongoDB.Driver.Core.Extensions.DiagnosticSources")
+                    .AddRedisInstrumentation())
             .WithMetrics(options
                 => options
                     .SetResourceBuilder(TelemetryFactory.CreateResource())
@@ -57,6 +58,10 @@ public static class Setup
             .AddMongoDb(
                 mongodbConnectionStringFactory: sp => sp.GetRequiredService<IConfiguration>().GetConnectionString("Default")!,
                 name: "MongoDB",
+                failureStatus: HealthStatus.Unhealthy)
+            .AddRedis(
+                name: "Redis",
+                connectionStringFactory: (sp) => sp.GetRequiredService<IConfiguration>().GetConnectionString("Redis")!,
                 failureStatus: HealthStatus.Unhealthy)
             .AddCheck<StartupBackgroundService.HealthCheck>(
                 "Startup",

@@ -1,4 +1,5 @@
-﻿using Api.Users.Infrastructure.Database;
+﻿using Api.Users.Infrastructure.Cache;
+using Api.Users.Infrastructure.Database;
 using Api.Users.Infrastructure.Http;
 using Api.Users.Infrastructure.NotificationsApi;
 using Api.Users.Infrastructure.Observability;
@@ -13,6 +14,7 @@ builder.Services.AddMediatR(cfg =>
 
 builder.Services
     .AddDatabase()
+    .AddCache(builder.Configuration)
     .AddGrpcClient();
 
 

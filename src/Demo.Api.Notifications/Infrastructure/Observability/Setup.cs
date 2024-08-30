@@ -27,8 +27,7 @@ public static class Setup
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddNpgsql()
-                    .AddEntityFrameworkCoreInstrumentation()
-                    .AddRedisInstrumentation())
+                    .AddEntityFrameworkCoreInstrumentation())
             .WithMetrics(options =>
                 options
                     .SetResourceBuilder(TelemetryFactory.CreateResource())
@@ -61,10 +60,6 @@ public static class Setup
             .AddHealthChecks()
             .AddDbContextCheck<DataContext>("EFCore", HealthStatus.Unhealthy)
             .AddRabbitMQ("RabbitMQ", HealthStatus.Unhealthy)
-            .AddRedis(
-                name: "Redis",
-                connectionStringFactory: (sp) => sp.GetRequiredService<IConfiguration>().GetConnectionString("Redis")!,
-                failureStatus: HealthStatus.Unhealthy)
             .AddCheck<StartupBackgroundService.HealthCheck>(
                 "Startup",
                 tags: ["Startup"]);

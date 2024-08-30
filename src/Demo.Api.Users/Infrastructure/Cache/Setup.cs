@@ -1,7 +1,7 @@
 ﻿using Common;
 using StackExchange.Redis;
 
-namespace Api.Notifications.Infrastructure.Cache;
+namespace Api.Users.Infrastructure.Cache;
 
 public static class Setup
 {

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Api.Notifications.Infrastructure.Cache;
+namespace Api.Users.Infrastructure.Cache;
 
 public static class CacheExtensions
 {

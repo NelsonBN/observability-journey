@@ -13,6 +13,7 @@ HEALTHCHECK --interval=10s \
 
 
 ### Configure pyroscope
+ENV PYROSCOPE_APPLICATION_NAME=gateway-email
 # Enable the Pyroscope profiler
 ENV CORECLR_ENABLE_PROFILING=1
 # The Pyroscope profiler GUID
