@@ -56,7 +56,7 @@ public static class Setup
             .AddHostedService<StartupBackgroundService>()
             .AddHealthChecks()
             .AddMongoDb(
-                mongodbConnectionStringFactory: sp => sp.GetRequiredService<IConfiguration>().GetConnectionString("Default")!,
+                mongodbConnectionStringFactory: sp => sp.GetRequiredService<IConfiguration>().GetConnectionString("Mongo")!,
                 name: "MongoDB",
                 failureStatus: HealthStatus.Unhealthy)
             .AddRedis(
