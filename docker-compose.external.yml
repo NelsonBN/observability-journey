@@ -5,7 +5,7 @@ networks:
 services:
 
   mailpit:
-    image: axllent/mailpit:v1.18.3
+    image: axllent/mailpit:v1.20.2
     container_name: mailpit
     restart: on-failure
     ports:
