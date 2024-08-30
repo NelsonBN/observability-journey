@@ -57,11 +57,11 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\Demo.Common\0.Common.csproj" />
+    <ProjectReference Include="..\Demo.BuildingBlocks\0.BuildingBlocks.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\Demo.Common\DTOs\notifications.proto" GrpcServices="Server" />
+    <Protobuf Include="..\Demo.BuildingBlocks\DTOs\notifications.proto" GrpcServices="Server" />
   </ItemGroup>
 
 

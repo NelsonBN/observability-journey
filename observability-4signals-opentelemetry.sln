@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "4.Gateway.SMS", "src\Demo.G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "1.Api.Users", "src\Demo.Api.Users\1.Api.Users.csproj", "{8FE07233-FBD3-4115-A3E4-ABDC868AB36D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "0.Common", "src\Demo.Common\0.Common.csproj", "{4E08D56E-4543-47F9-883B-721AB0D20565}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "0.BuildingBlocks", "src\Demo.BuildingBlocks\0.BuildingBlocks.csproj", "{4E08D56E-4543-47F9-883B-721AB0D20565}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Requests", "Requests", "{CEFBB136-1CBE-42AB-B9F4-158A1D04973E}"
 	ProjectSection(SolutionItems) = preProject
