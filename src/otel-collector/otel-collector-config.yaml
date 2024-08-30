@@ -47,7 +47,9 @@ processors:
     error_mode: ignore
     traces:
       span:
-        - 'attributes["http.route"] == "/health"'
+        - 'attributes["http.route"] == "/healthz/startup"'
+        - 'attributes["http.route"] == "/healthz/live"'
+        - 'attributes["http.route"] == "/healthz/ready"'
 
   # Filter logs for `GET /health`
   # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor
