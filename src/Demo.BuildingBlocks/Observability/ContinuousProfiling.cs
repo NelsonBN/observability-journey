@@ -1,6 +1,6 @@
 ﻿using Pyroscope;
 
-namespace Common.Observability;
+namespace BuildingBlocks.Observability;
 
 public static class ContinuousProfiling
 {

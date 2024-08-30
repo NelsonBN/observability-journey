@@ -1,7 +1,7 @@
 ﻿using Api.Notifications.Domain;
 using Api.Notifications.DTOs;
-using Common.Exceptions;
-using Common.MessageBus;
+using BuildingBlocks.Exceptions;
+using BuildingBlocks.MessageBus;
 using MediatR;
 
 namespace Api.Notifications.UseCases;

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
-namespace Common.Observability;
+namespace BuildingBlocks.Observability;
 
 public static class Diagnostic
 {

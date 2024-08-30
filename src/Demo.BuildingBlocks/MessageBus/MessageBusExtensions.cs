@@ -6,7 +6,7 @@ using System.Text.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace Common.MessageBus;
+namespace BuildingBlocks.MessageBus;
 
 public static class MessageBusExtensions
 {

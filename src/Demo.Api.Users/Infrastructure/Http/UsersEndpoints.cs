@@ -1,6 +1,6 @@
 ﻿using Api.Users.DTOs;
 using Api.Users.UseCases;
-using Common.Observability;
+using BuildingBlocks.Observability;
 using MediatR;
 
 namespace Api.Users.Infrastructure.Http;

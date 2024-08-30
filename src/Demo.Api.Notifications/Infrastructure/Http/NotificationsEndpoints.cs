@@ -1,6 +1,6 @@
 ﻿using Api.Notifications.DTOs;
 using Api.Notifications.UseCases;
-using Common.Observability;
+using BuildingBlocks.Observability;
 using MediatR;
 
 namespace Api.Notifications.Infrastructure.Http;

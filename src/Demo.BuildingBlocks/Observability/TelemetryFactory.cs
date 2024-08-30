@@ -1,6 +1,6 @@
 ﻿using OpenTelemetry.Resources;
 
-namespace Common.Observability;
+namespace BuildingBlocks.Observability;
 
 public static class TelemetryFactory
 {

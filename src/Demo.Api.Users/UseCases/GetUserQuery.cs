@@ -1,6 +1,6 @@
 ﻿using Api.Users.Domain;
 using Api.Users.DTOs;
-using Common.Exceptions;
+using BuildingBlocks.Exceptions;
 using MediatR;
 
 namespace Api.Users.UseCases;

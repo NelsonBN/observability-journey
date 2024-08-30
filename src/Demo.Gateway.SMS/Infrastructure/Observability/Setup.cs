@@ -1,5 +1,5 @@
-﻿using Common;
-using Common.Observability;
+﻿using BuildingBlocks;
+using BuildingBlocks.Observability;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;

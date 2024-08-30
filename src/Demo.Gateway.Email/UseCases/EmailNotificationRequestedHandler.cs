@@ -1,5 +1,5 @@
-﻿using Common.Events;
-using Common.MessageBus;
+﻿using BuildingBlocks.Events;
+using BuildingBlocks.MessageBus;
 using MediatR;
 
 namespace Gateway.Email.UseCases;

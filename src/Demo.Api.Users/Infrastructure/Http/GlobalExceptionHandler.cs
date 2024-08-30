@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-using Common.Exceptions;
-using Common.Observability;
+using BuildingBlocks.Exceptions;
+using BuildingBlocks.Observability;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,5 +1,5 @@
 ﻿using Api.Notifications.UseCases;
-using Common.Observability;
+using BuildingBlocks.Observability;
 using Grpc.Core;
 using MediatR;
 using Notifications;

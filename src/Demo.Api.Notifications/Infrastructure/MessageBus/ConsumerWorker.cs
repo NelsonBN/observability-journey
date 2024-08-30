@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using Common.Events;
-using Common.MessageBus;
-using Common.Observability;
+using BuildingBlocks.Events;
+using BuildingBlocks.MessageBus;
+using BuildingBlocks.Observability;
 using MediatR;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;

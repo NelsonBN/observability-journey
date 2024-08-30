@@ -1,5 +1,5 @@
 ﻿using Api.Users.Domain;
-using Common.Exceptions;
+using BuildingBlocks.Exceptions;
 using MediatR;
 
 namespace Api.Users.UseCases;

@@ -1,6 +1,6 @@
 ﻿using Api.Notifications.Infrastructure.Database;
-using Common;
-using Common.Observability;
+using BuildingBlocks;
+using BuildingBlocks.Observability;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;

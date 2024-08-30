@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Common;
+namespace BuildingBlocks;
 
 public static class AppDetails
 {

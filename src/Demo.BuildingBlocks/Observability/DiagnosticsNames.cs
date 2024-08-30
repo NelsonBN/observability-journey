@@ -1,4 +1,4 @@
-﻿namespace Common.Observability;
+﻿namespace BuildingBlocks.Observability;
 
 internal static class DiagnosticsNames
 {

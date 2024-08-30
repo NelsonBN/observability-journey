@@ -1,4 +1,4 @@
-﻿using Common.Observability;
+﻿using BuildingBlocks.Observability;
 using Gateway.SMS.Infrastructure.MessageBus;
 using Gateway.SMS.Infrastructure.Observability;
 using Microsoft.AspNetCore.Hosting;

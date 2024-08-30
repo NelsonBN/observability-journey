@@ -6,7 +6,7 @@ using OpenTelemetry.Context.Propagation;
 using OpenTelemetry.Trace;
 using RabbitMQ.Client;
 
-namespace Common.Observability;
+namespace BuildingBlocks.Observability;
 
 public static class TelemetryExtensions
 {

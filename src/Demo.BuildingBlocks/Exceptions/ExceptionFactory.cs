@@ -1,4 +1,4 @@
-﻿namespace Common.Exceptions;
+﻿namespace BuildingBlocks.Exceptions;
 
 public static class ExceptionFactory
 {
