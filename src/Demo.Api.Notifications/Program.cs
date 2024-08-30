@@ -26,12 +26,12 @@ builder.Services.AddObservability();
 
 builder.Services.AddHttp();
 
+
+
 var app = builder.Build();
 
-
-
-app.AddObservability();
 app.UseHttp();
+app.AddObservability();
 app.UseGrpcServer();
 
 await app.RunAsync();

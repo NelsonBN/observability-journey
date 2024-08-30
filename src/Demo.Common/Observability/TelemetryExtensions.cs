@@ -81,7 +81,8 @@ public static class TelemetryExtensions
     public static Activity? AddAt(this Activity? activity)
         => activity?.SetTag(DiagnosticsNames.AT, DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.ffffff"));
 
-    public static Activity? RegisterException(this Activity? activity, Exception exception, in TagList? tags = null)
+    public static Activity? RegisterException<TException>(this Activity? activity, TException exception)
+        where TException : Exception
     {
         if(activity is null)
         {
@@ -89,20 +90,13 @@ public static class TelemetryExtensions
         }
 
         activity.SetStatus(ActivityStatusCode.Error, exception.Message);
-
-        if(tags is null)
-        {
-            activity.RecordException(exception);
-        }
-        else
-        {
-            activity.RecordException(exception, tags.Value);
-        }
+        activity.RecordException(exception);
 
         return activity;
     }
 
-    public static Activity? RegisterValidation<TModel>(this Activity? activity, in TagList tags)
+    public static Activity? RegisterValidation<TValidation>(this Activity? activity, TValidation validation)
+        where TValidation : Exception
     {
         if(activity is null)
         {
@@ -110,8 +104,10 @@ public static class TelemetryExtensions
         }
 
         activity.AddEvent(new(
-            typeof(TModel).Name,
-            tags: new(tags)));
+            typeof(TValidation).Name,
+            tags: new([
+                new("message", validation.Message)]
+            )));
 
         return activity;
     }

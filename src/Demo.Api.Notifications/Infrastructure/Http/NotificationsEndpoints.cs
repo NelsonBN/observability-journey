@@ -1,8 +1,5 @@
-﻿using System.Diagnostics;
-using Api.Notifications.Domain;
-using Api.Notifications.DTOs;
+﻿using Api.Notifications.DTOs;
 using Api.Notifications.UseCases;
-using Common.Exceptions;
 using Common.Observability;
 using MediatR;
 
@@ -21,23 +18,11 @@ public static class NotificationsEndpoints
         {
             Diagnostic.AddHttpRequest();
 
-            try
-            {
-                using var activity = Diagnostic.Source.StartHttpActivity("Get: /notifications");
+            using var activity = Diagnostic.Source.StartHttpActivity("Get: /notifications");
 
-                var response = await mediator.Send(GetNotificationsQuery.Instance);
+            var response = await mediator.Send(GetNotificationsQuery.Instance);
 
-                return Results.Ok(response);
-            }
-            catch(Exception exception)
-            {
-                loggerFactory
-                    .CreateLogger("NotificationsEndpoints")
-                    .LogError(exception, "[WEB API][GET]");
-
-                Activity.Current.RegisterException(exception);
-                throw;
-            }
+            return Results.Ok(response);
         });
 
 
@@ -49,29 +34,8 @@ public static class NotificationsEndpoints
                 .StartHttpActivity("Get: /notifications/{id}")?
                 .SetTag("NotificationId", id.ToString());
 
-            try
-            {
-                var response = await mediator.Send(new GetNotificationQuery(id));
-                return Results.Ok(response);
-            }
-            catch(NotificationNotFoundException exception)
-            {
-                Activity.Current.RegisterValidation<NotificationNotFoundException>(
-                    new() { { nameof(id), id } });
-
-                return Results.NotFound(exception.Message);
-            }
-            catch(Exception exception)
-            {
-                loggerFactory
-                    .CreateLogger("NotificationsEndpoints")
-                    .LogError(exception, "[WEB API][GET][BY ID]");
-
-                Activity.Current.RegisterException(
-                    exception,
-                    new() { { nameof(id), id } });
-                throw;
-            }
+            var response = await mediator.Send(new GetNotificationQuery(id));
+            return Results.Ok(response);
         }).WithName("GetNotification");
 
 
@@ -84,35 +48,14 @@ public static class NotificationsEndpoints
                 .StartHttpActivity("Post: /notifications")?
                 .SetTag("UserId", request.UserId.ToString());
 
-            try
-            {
-                var id = await mediator.Send(new SendNotificationCommand(request));
+            var id = await mediator.Send(new SendNotificationCommand(request));
 
-                activity?.SetTag("NotificationId", id.ToString());
+            activity?.SetTag("NotificationId", id.ToString());
 
-                return Results.AcceptedAtRoute(
-                    "GetNotification",
-                    new { id },
-                    id);
-            }
-            catch(UserNotFoundException exception)
-            {
-                Activity.Current.RegisterValidation<UserNotFoundException>(
-                    new() { { nameof(request.UserId), request.UserId } });
-
-                return Results.NotFound(exception.Message);
-            }
-            catch(Exception exception)
-            {
-                loggerFactory
-                    .CreateLogger("NotificationsEndpoints")
-                    .LogError(exception, "[WEB API][POST]");
-
-                Activity.Current.RegisterException(
-                    exception,
-                    new() { { nameof(request.UserId), request.UserId } });
-                throw;
-            }
+            return Results.AcceptedAtRoute(
+                "GetNotification",
+                new { id },
+                id);
         });
     }
 }

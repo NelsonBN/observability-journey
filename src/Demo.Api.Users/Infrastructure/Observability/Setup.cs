@@ -65,8 +65,6 @@ public static class Setup
 
     public static IApplicationBuilder AddObservability(this IApplicationBuilder app)
     {
-        app.UseRouting();
-
         app.UseEndpoints(endpoints => endpoints.MapHealthChecks("/health", new HealthCheckOptions
         {
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
