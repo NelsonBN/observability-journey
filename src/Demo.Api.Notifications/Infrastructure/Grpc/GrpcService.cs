@@ -16,7 +16,7 @@ public sealed class GrpcService(
 
     public override async Task<NotificationsTotalsResponse> GetNotificationsTotals(NotificationsTotalsRequest request, ServerCallContext context)
     {
-        Diagnostic.AddGrpcRequest();
+        Telemetry.AddGrpcRequest();
         _logger.LogInformation("[GRPC][GET NOTIFICATIONS TOTALS] UserId '{UserId}'", request.UserId);
 
         var userId = Guid.Parse(request.UserId);

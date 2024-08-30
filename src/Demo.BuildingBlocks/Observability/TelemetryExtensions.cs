@@ -34,11 +34,11 @@ public static class TelemetryExtensions
         }
 
         activity
-            .SetTag(DiagnosticsNames.RabbitMQ.SYSTEM, "rabbitmq")
-            .SetTag(DiagnosticsNames.RabbitMQ.DESTINATION_KIND, "queue")
-            .SetTag(DiagnosticsNames.RabbitMQ.DESTINATION, queueName)
-            .SetTag(DiagnosticsNames.MESSAGE_ID, properties.MessageId)
-            .SetTag(DiagnosticsNames.CORRELATION_ID, properties.CorrelationId)
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.SYSTEM, "rabbitmq")
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.DESTINATION_KIND, "queue")
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.DESTINATION, queueName)
+            .SetTag(TelemetrySemanticConventions.MESSAGE_ID, properties.MessageId)
+            .SetTag(TelemetrySemanticConventions.CORRELATION_ID, properties.CorrelationId)
             .AddAt();
 
         return activity;
@@ -53,11 +53,11 @@ public static class TelemetryExtensions
         }
 
         activity
-            .SetTag(DiagnosticsNames.RabbitMQ.SYSTEM, "rabbitmq")
-            .SetTag(DiagnosticsNames.RabbitMQ.DESTINATION_KIND, "exchange")
-            .SetTag(DiagnosticsNames.RabbitMQ.DESTINATION, exchangeName)
-            .SetTag(DiagnosticsNames.MESSAGE_ID, properties.MessageId)
-            .SetTag(DiagnosticsNames.CORRELATION_ID, properties.CorrelationId)
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.SYSTEM, "rabbitmq")
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.DESTINATION_KIND, "exchange")
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.DESTINATION, exchangeName)
+            .SetTag(TelemetrySemanticConventions.MESSAGE_ID, properties.MessageId)
+            .SetTag(TelemetrySemanticConventions.CORRELATION_ID, properties.CorrelationId)
             .AddAt();
 
         var contextToInject = activity.Context;
@@ -73,13 +73,13 @@ public static class TelemetryExtensions
     }
 
     public static Activity? AddRoutingKey(this Activity? activity, string routingKey)
-        => activity?.SetTag(DiagnosticsNames.RabbitMQ.ROUTING_KEY, routingKey);
+        => activity?.SetTag(TelemetrySemanticConventions.RabbitMQ.ROUTING_KEY, routingKey);
 
     public static Activity? AddMessage<TMessage>(this Activity? activity, TMessage message)
         => activity?.SetTag("message", JsonSerializer.Serialize(message));
 
     public static Activity? AddAt(this Activity? activity)
-        => activity?.SetTag(DiagnosticsNames.AT, DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.ffffff"));
+        => activity?.SetTag(TelemetrySemanticConventions.AT, DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.ffffff"));
 
     public static Activity? RegisterException<TException>(this Activity? activity, TException exception)
         where TException : Exception

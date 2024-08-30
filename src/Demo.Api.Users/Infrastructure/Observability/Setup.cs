@@ -1,5 +1,4 @@
-﻿using BuildingBlocks;
-using BuildingBlocks.Observability;
+﻿using BuildingBlocks.Observability;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -20,18 +19,16 @@ public static class Setup
             .ConfigureResource(TelemetryFactory.Configure)
             .WithTracing(options
                 => options
-                    .AddSource(AppDetails.Name)
-                    .SetResourceBuilder(TelemetryFactory.CreateResource())
+                    .AddSource(Telemetry.Source.Name)
                     .AddAspNetCoreInstrumentation()
                     .AddGrpcClientInstrumentation()
                     .AddSource("MongoDB.Driver.Core.Extensions.DiagnosticSources")
                     .AddRedisInstrumentation())
             .WithMetrics(options
                 => options
-                    .SetResourceBuilder(TelemetryFactory.CreateResource())
+                    .AddMeter(Telemetry.Meter.Name)
                     .AddAspNetCoreInstrumentation()
                     .AddRuntimeInstrumentation()
-                    .AddMeter(Diagnostic.Meter.Name)
                     .AddView(
                         "http.server.request.duration",
                         new ExplicitBucketHistogramConfiguration { Boundaries = [0, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10] }))
@@ -56,7 +53,7 @@ public static class Setup
             .AddHostedService<StartupBackgroundService>()
             .AddHealthChecks()
             .AddMongoDb(
-                mongodbConnectionStringFactory: sp => sp.GetRequiredService<IConfiguration>().GetConnectionString("Mongo")!,
+                mongodbConnectionStringFactory: sp => sp.GetRequiredService<IConfiguration>().GetConnectionString("MongoDB")!,
                 name: "MongoDB",
                 failureStatus: HealthStatus.Unhealthy)
             .AddRedis(

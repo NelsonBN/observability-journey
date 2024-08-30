@@ -10,9 +10,12 @@ public static class TelemetryFactory
             .AddService(
                 serviceName: AppDetails.Name,
                 serviceVersion: AppDetails.Version,
-                serviceInstanceId: AppDetails.ServiceId)
-            .AddTelemetrySdk();
+                serviceInstanceId: Environment.MachineName)
+            .AddTelemetrySdk()
+            .AddAttributes([
+                new("system.environment", Environment.GetEnvironmentVariable("SYSTEM_ENVIRONMENT") ?? "UNKNOWN")]);
 
+    // TODO: to remove
     public static ResourceBuilder CreateResource()
     {
         var resourceBuilder = ResourceBuilder.CreateDefault();

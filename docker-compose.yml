@@ -118,6 +118,7 @@ services:
     container_name: gateway-email
     restart: always
     environment:
+      SYSTEM_ENVIRONMENT: PROD
       MESSAGEBUS__HOSTNAME: rabbitmq
       MESSAGEBUS__SSL__SERVERNAME: rabbitmq
       ### Observability
@@ -149,6 +150,7 @@ services:
     container_name: gateway-sms
     restart: always
     environment:
+      SYSTEM_ENVIRONMENT: PROD
       MESSAGEBUS__HOSTNAME: rabbitmq
       MESSAGEBUS__SSL__SERVERNAME: rabbitmq
       ### Observability
@@ -180,7 +182,8 @@ services:
     container_name: api-users
     restart: always
     environment:
-      CONNECTIONSTRINGS__MONGO: mongodb://mongo:27017/Demo
+      SYSTEM_ENVIRONMENT: PROD
+      CONNECTIONSTRINGS__MONGODB: mongodb://mongo:27017/Demo
       CONNECTIONSTRINGS__REDIS: redis:6379
       NOTIFICATIONSAPI: http://api-notifications:8081
       ### Observability
@@ -214,6 +217,7 @@ services:
     container_name: api-notifications
     restart: always
     environment:
+      SYSTEM_ENVIRONMENT: PROD
       CONNECTIONSTRINGS__POSTGRES: Server=postgres;Port=5432;Database=demodb;User Id=demouser;Password=a123456789;
       MESSAGEBUS__HOSTNAME: rabbitmq
       MESSAGEBUS__SSL__SERVERNAME: rabbitmq

@@ -16,9 +16,9 @@ public static class UsersEndpoints
 
         group.MapGet("", async (IMediator mediator, ILoggerFactory loggerFactory) =>
         {
-            Diagnostic.AddHttpRequest();
+            Telemetry.AddHttpRequest();
 
-            using var activity = Diagnostic.Source.StartHttpActivity("Get: /users");
+            using var activity = Telemetry.Source.StartHttpActivity("Get: /users");
 
             var response = await mediator.Send(GetUsersQuery.Instance);
 
@@ -28,9 +28,9 @@ public static class UsersEndpoints
 
         group.MapGet("{id:guid}", async (IMediator mediator, ILoggerFactory loggerFactory, Guid id) =>
         {
-            Diagnostic.AddHttpRequest();
+            Telemetry.AddHttpRequest();
 
-            using var activity = Diagnostic.Source
+            using var activity = Telemetry.Source
                 .StartHttpActivity("Get: /users/{id}")?
                 .SetTag("UserId", id.ToString());
 
@@ -41,9 +41,9 @@ public static class UsersEndpoints
 
         group.MapGet("{id:guid}/total-notifications", async (IMediator mediator, ILoggerFactory loggerFactory, Guid id) =>
         {
-            Diagnostic.AddHttpRequest();
+            Telemetry.AddHttpRequest();
 
-            using var activity = Diagnostic.Source
+            using var activity = Telemetry.Source
                 .StartHttpActivity("Get: /users/{id}/total-notifications")?
                 .SetTag("UserId", id.ToString());
 
@@ -54,9 +54,9 @@ public static class UsersEndpoints
 
         group.MapPost("", async (IMediator mediator, ILoggerFactory loggerFactory, UserRequest request) =>
         {
-            Diagnostic.AddHttpRequest();
+            Telemetry.AddHttpRequest();
 
-            using var activity = Diagnostic.Source.StartHttpActivity("Post: /users");
+            using var activity = Telemetry.Source.StartHttpActivity("Post: /users");
 
             var id = await mediator.Send(new CreateUserCommand(request));
 
@@ -71,9 +71,9 @@ public static class UsersEndpoints
 
         group.MapPut("{id:guid}", async (IMediator mediator, ILoggerFactory loggerFactory, Guid id, UserRequest request) =>
         {
-            Diagnostic.AddHttpRequest();
+            Telemetry.AddHttpRequest();
 
-            using var activity = Diagnostic.Source
+            using var activity = Telemetry.Source
                 .StartHttpActivity("Put: /users")?
                 .SetTag("UserId", id.ToString());
 
@@ -85,9 +85,9 @@ public static class UsersEndpoints
 
         group.MapDelete("{id:guid}", async (IMediator mediator, ILoggerFactory loggerFactory, Guid id) =>
         {
-            Diagnostic.AddHttpRequest();
+            Telemetry.AddHttpRequest();
 
-            using var activity = Diagnostic.Source
+            using var activity = Telemetry.Source
                 .StartHttpActivity("Delete: /users")?
                 .SetTag("UserId", id.ToString());
 

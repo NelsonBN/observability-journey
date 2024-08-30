@@ -1,5 +1,4 @@
 ﻿using Api.Notifications.Infrastructure.Database;
-using BuildingBlocks;
 using BuildingBlocks.Observability;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -22,19 +21,17 @@ public static class Setup
             .ConfigureResource(TelemetryFactory.Configure)
             .WithTracing(options
                 => options
-                    .AddSource(AppDetails.Name)
-                    .SetResourceBuilder(TelemetryFactory.CreateResource())
+                    .AddSource(Telemetry.Source.Name)
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddNpgsql()
                     .AddEntityFrameworkCoreInstrumentation())
             .WithMetrics(options =>
                 options
-                    .SetResourceBuilder(TelemetryFactory.CreateResource())
+                    .AddMeter(Telemetry.Meter.Name)
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation()
-                    .AddMeter(Diagnostic.Meter.Name)
                     .AddView(
                         "http.server.request.duration",
                         new ExplicitBucketHistogramConfiguration { Boundaries = [0, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10] }))

@@ -35,7 +35,7 @@ internal sealed class MessageBusServer(
         var properties = _channel.CreateProperties(messageType);
 
 
-        using var activity = Diagnostic.Source
+        using var activity = Telemetry.Source
             .StartProducerActivity(_options.ExchangeName, properties)
             .AddRoutingKey(messageType)
             .AddMessage(domainEvent);
