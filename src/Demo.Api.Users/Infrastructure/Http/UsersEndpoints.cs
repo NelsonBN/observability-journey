@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using Api.Users.DTOs;
+﻿using Api.Users.DTOs;
 using Api.Users.UseCases;
-using Common.Exceptions;
 using Common.Observability;
 using MediatR;
 
@@ -19,23 +17,12 @@ public static class UsersEndpoints
         group.MapGet("", async (IMediator mediator, ILoggerFactory loggerFactory) =>
         {
             Diagnostic.AddHttpRequest();
-            try
-            {
-                using var activity = Diagnostic.Source.StartHttpActivity("Get: /users");
 
-                var response = await mediator.Send(GetUsersQuery.Instance);
+            using var activity = Diagnostic.Source.StartHttpActivity("Get: /users");
 
-                return Results.Ok(response);
-            }
-            catch(Exception exception)
-            {
-                loggerFactory
-                    .CreateLogger("NotificationsEndpoints")
-                    .LogError(exception, "[WEB API][GET]");
+            var response = await mediator.Send(GetUsersQuery.Instance);
 
-                Activity.Current.RegisterException(exception);
-                throw;
-            }
+            return Results.Ok(response);
         });
 
 
@@ -47,29 +34,8 @@ public static class UsersEndpoints
                 .StartHttpActivity("Get: /users/{id}")?
                 .SetTag("UserId", id.ToString());
 
-            try
-            {
-                var response = await mediator.Send(new GetUserQuery(id));
-                return Results.Ok(response);
-            }
-            catch(UserNotFoundException exception)
-            {
-                Activity.Current.RegisterValidation<UserNotFoundException>(
-                    new() { { nameof(id), id } });
-
-                return Results.NotFound(exception.Message);
-            }
-            catch(Exception exception)
-            {
-                loggerFactory
-                    .CreateLogger("NotificationsEndpoints")
-                    .LogError(exception, "[WEB API][GET][BY USER ID]");
-
-                Activity.Current.RegisterException(
-                    exception,
-                    new() { { nameof(id), id } });
-                throw;
-            }
+            var response = await mediator.Send(new GetUserQuery(id));
+            return Results.Ok(response);
         }).WithName("GetUser");
 
 
@@ -81,29 +47,8 @@ public static class UsersEndpoints
                 .StartHttpActivity("Get: /users/{id}/total-notifications")?
                 .SetTag("UserId", id.ToString());
 
-            try
-            {
-                var response = await mediator.Send(new GetUserNotificationsTotals(id));
-                return Results.Ok(response);
-            }
-            catch(UserNotFoundException exception)
-            {
-                Activity.Current.RegisterValidation<UserNotFoundException>(
-                    new() { { nameof(id), id } });
-
-                return Results.NotFound(exception.Message);
-            }
-            catch(Exception exception)
-            {
-                loggerFactory
-                    .CreateLogger("NotificationsEndpoints")
-                    .LogError(exception, "[WEB API][GET TOTAL NOTIFICATIONS][BY USER ID]");
-
-                Activity.Current.RegisterException(
-                    exception,
-                    new() { { nameof(id), id } });
-                throw;
-            }
+            var response = await mediator.Send(new GetUserNotificationsTotals(id));
+            return Results.Ok(response);
         });
 
 
@@ -111,30 +56,16 @@ public static class UsersEndpoints
         {
             Diagnostic.AddHttpRequest();
 
-            try
-            {
-                using var activity = Diagnostic.Source.StartHttpActivity("Post: /users");
+            using var activity = Diagnostic.Source.StartHttpActivity("Post: /users");
 
-                var id = await mediator.Send(new CreateUserCommand(request));
+            var id = await mediator.Send(new CreateUserCommand(request));
 
-                activity?.SetTag("UserId", id.ToString());
+            activity?.SetTag("UserId", id.ToString());
 
-                return Results.CreatedAtRoute(
-                    "GetUser",
-                    new { id },
-                    id);
-            }
-            catch(Exception exception)
-            {
-                loggerFactory
-                    .CreateLogger("NotificationsEndpoints")
-                    .LogError(exception, "[WEB API][POST]");
-
-                Activity.Current.RegisterException(
-                    exception,
-                    new() { { nameof(request.Name), request.Name } });
-                throw;
-            }
+            return Results.CreatedAtRoute(
+                "GetUser",
+                new { id },
+                id);
         });
 
 
@@ -146,28 +77,7 @@ public static class UsersEndpoints
                 .StartHttpActivity("Put: /users")?
                 .SetTag("UserId", id.ToString());
 
-            try
-            {
-                await mediator.Send(new UpdateUserCommand(id, request));
-            }
-            catch(UserNotFoundException exception)
-            {
-                Activity.Current.RegisterValidation<UserNotFoundException>(
-                    new() { { nameof(id), id } });
-
-                return Results.NotFound(exception.Message);
-            }
-            catch(Exception exception)
-            {
-                loggerFactory
-                    .CreateLogger("NotificationsEndpoints")
-                    .LogError(exception, "[WEB API][PUT]");
-
-                Activity.Current.RegisterException(
-                    exception,
-                    new() { { nameof(id), id } });
-                throw;
-            }
+            await mediator.Send(new UpdateUserCommand(id, request));
 
             return Results.NoContent();
         });
@@ -181,28 +91,7 @@ public static class UsersEndpoints
                 .StartHttpActivity("Delete: /users")?
                 .SetTag("UserId", id.ToString());
 
-            try
-            {
-                await mediator.Send(new DeleteUserCommand(id));
-            }
-            catch(UserNotFoundException exception)
-            {
-                Activity.Current.RegisterValidation<UserNotFoundException>(
-                    new() { { nameof(id), id } });
-
-                return Results.NotFound(exception.Message);
-            }
-            catch(Exception exception)
-            {
-                loggerFactory
-                    .CreateLogger("NotificationsEndpoints")
-                    .LogError(exception, "[WEB API][DELETE]");
-
-                Activity.Current.RegisterException(
-                    exception,
-                    new() { { nameof(id), id } });
-                throw;
-            }
+            await mediator.Send(new DeleteUserCommand(id));
 
             return Results.NoContent();
         });

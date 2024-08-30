@@ -1,5 +1,6 @@
 ﻿using Api.Users.Domain;
 using Api.Users.DTOs;
+using Common.Exceptions;
 using MediatR;
 
 namespace Api.Users.UseCases;
@@ -12,6 +13,8 @@ public sealed record CreateUserCommand(UserRequest Request) : IRequest<Guid>
 
         public async Task<Guid> Handle(CreateUserCommand command, CancellationToken cancellationToken)
         {
+            ExceptionFactory.ProbablyThrow<Handler>(35);
+
             var user = User.Create(
                 command.Request.Name,
                 command.Request.Email,

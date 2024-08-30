@@ -12,7 +12,6 @@ public static class Setup
 
     public static IApplicationBuilder UseGrpcServer(this IApplicationBuilder app)
     {
-        app.UseRouting();
         app.UseEndpoints(endpoints => endpoints.MapGrpcService<GrpcService>());
 
         return app;
