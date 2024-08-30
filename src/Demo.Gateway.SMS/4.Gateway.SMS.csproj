@@ -5,7 +5,7 @@
 
     <RootNamespace>Gateway.SMS</RootNamespace>
     <AssemblyName>Gateway.SMS</AssemblyName>
-    
+
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 
