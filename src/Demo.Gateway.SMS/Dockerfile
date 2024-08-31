@@ -9,10 +9,11 @@ HEALTHCHECK --interval=10s \
             --timeout=5s \
             --start-period=3s \
             --retries=5 \
-    CMD wget --quiet --tries=1 --spider http://localhost:8080/healthz/startup || exit 1
+    CMD wget --quiet --tries=1 --spider http://localhost:8080/healthz/ready || exit 1
 
 
 ### Configure pyroscope
+ENV PYROSCOPE_APPLICATION_NAME=gateway-sms
 # Enable the Pyroscope profiler
 ENV CORECLR_ENABLE_PROFILING=1
 # The Pyroscope profiler GUID

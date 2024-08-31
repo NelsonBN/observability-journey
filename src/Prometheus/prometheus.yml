@@ -54,13 +54,6 @@ scrape_configs:
         service_type: 'Observability'
         service_name: 'otel-collector'
 
-  - job_name: 'node-exporter'
-    static_configs:
-    - targets: ['node-exporter:9100']
-      labels:
-        service_type: 'Observability'
-        service_name: 'node-exporter'
-
   - job_name: 'Grafana'
     scrape_interval: 15s
     static_configs:

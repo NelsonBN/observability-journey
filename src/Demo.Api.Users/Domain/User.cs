@@ -40,4 +40,30 @@ public sealed class User
             Phone = phone
         };
     }
+
+    public static User RestoreSnapshot(Snapshot snapshot)
+        => new()
+        {
+            Id = snapshot.Id,
+            Name = snapshot.Name,
+            Email = snapshot.Email,
+            Phone = snapshot.Phone
+        };
+
+    public Snapshot ToSnapshot()
+        => new()
+        {
+            Id = Id,
+            Name = Name,
+            Email = Email,
+            Phone = Phone
+        };
+
+    public sealed class Snapshot
+    {
+        public Guid Id { get; init; }
+        public required string Name { get; init; }
+        public string? Email { get; init; }
+        public string? Phone { get; init; }
+    }
 }
