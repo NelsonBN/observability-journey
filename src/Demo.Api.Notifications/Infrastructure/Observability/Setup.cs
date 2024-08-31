@@ -8,6 +8,7 @@ using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Quartz;
 
 namespace Api.Notifications.Infrastructure.Observability;
 
@@ -22,10 +23,33 @@ public static class Setup
             .WithTracing(options
                 => options
                     .AddSource(Telemetry.Source.Name)
-                    .AddAspNetCoreInstrumentation()
-                    .AddHttpClientInstrumentation()
+                    .AddAspNetCoreInstrumentation(o => o.RecordException = true)
+                    .AddHttpClientInstrumentation(o => o.RecordException = true)
+                    .AddGrpcCoreInstrumentation()
                     .AddNpgsql()
-                    .AddEntityFrameworkCoreInstrumentation())
+                    .AddEntityFrameworkCoreInstrumentation()
+                    .AddQuartzInstrumentation(o =>
+                    {
+                        o.RecordException = true;
+                        o.Enrich = (activity, eventName, quartzJobDetails) =>
+                        {
+                            if(eventName == "OnStartActivity" && quartzJobDetails is IJobDetail onStartJobDetail)
+                            {
+                                if(onStartJobDetail.JobDataMap.TryGetValue("ScheduleCron", out var value))
+                                {
+                                    activity.SetTag("scheduler.cron", value);
+                                }
+                            }
+
+                            else if(eventName == "OnStopActivity" && quartzJobDetails is IJobDetail onStopJobDetails)
+                            {
+                                if(onStopJobDetails.JobDataMap.TryGetValue("ScheduleNext", out var value))
+                                {
+                                    activity.SetTag("scheduler.next", value);
+                                }
+                            }
+                        };
+                    }))
             .WithMetrics(options =>
                 options
                     .AddMeter(Telemetry.Meter.Name)

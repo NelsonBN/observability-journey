@@ -21,7 +21,7 @@ public static class Setup
             .WithTracing(options
                 => options
                     .AddSource(Telemetry.Source.Name)
-                    .AddAspNetCoreInstrumentation())
+                    .AddAspNetCoreInstrumentation(o => o.RecordException = true))
             .WithMetrics(options =>
                 options
                     .AddMeter(Telemetry.Meter.Name)

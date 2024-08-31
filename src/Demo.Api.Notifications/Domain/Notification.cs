@@ -18,6 +18,8 @@ public sealed class Notification
 
     public int Version { get; private set; }
 
+    public DateTime CreatedAt { get; private set; }
+
     private Notification() { }
 
 
@@ -70,7 +72,8 @@ public sealed class Notification
             Id = Guid.NewGuid(),
             UserId = userId,
             Version = 1,
-            Message = message
+            Message = message,
+            CreatedAt = DateTime.UtcNow
         };
 
 
