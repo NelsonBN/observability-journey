@@ -4,6 +4,7 @@ using Api.Notifications.Infrastructure.Http;
 using Api.Notifications.Infrastructure.MessageBus;
 using Api.Notifications.Infrastructure.Observability;
 using Api.Notifications.Infrastructure.Schedules;
+using Api.Notifications.Infrastructure.Storage;
 using Api.Notifications.Infrastructure.UsersApi;
 using BuildingBlocks.Observability;
 
@@ -17,14 +18,12 @@ builder.Services.AddMediatR(cfg =>
 builder.Services
     .AddDatabase()
     .AddGrpcServer()
+    .AddHttp()
     .AddMessageBus()
     .AddUsersApi()
-    .AddSchedules();
-
-builder.Services.AddObservability();
-
-builder.Services.AddHttp();
-
+    .AddStorage()
+    .AddSchedules()
+    .AddObservability();
 
 
 var app = builder.Build();

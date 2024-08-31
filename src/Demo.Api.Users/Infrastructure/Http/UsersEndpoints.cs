@@ -1,7 +1,6 @@
 ﻿using Api.Users.DTOs;
 using Api.Users.UseCases;
 using BuildingBlocks.Observability;
-using MediatR;
 
 namespace Api.Users.Infrastructure.Http;
 
@@ -14,19 +13,19 @@ public static class UsersEndpoints
             .WithOpenApi();
 
 
-        group.MapGet("", async (IMediator mediator, ILoggerFactory loggerFactory) =>
+        group.MapGet("", async (GetUsersQuery query, CancellationToken cancellationToken) =>
         {
             Telemetry.AddHttpRequest();
 
             using var activity = Telemetry.Source.StartHttpActivity("Get: /users");
 
-            var response = await mediator.Send(GetUsersQuery.Instance);
+            var response = await query.Handle(cancellationToken);
 
             return Results.Ok(response);
         });
 
 
-        group.MapGet("{id:guid}", async (IMediator mediator, ILoggerFactory loggerFactory, Guid id) =>
+        group.MapGet("{id:guid}", async (GetUserQuery query, Guid id, CancellationToken cancellationToken) =>
         {
             Telemetry.AddHttpRequest();
 
@@ -34,12 +33,12 @@ public static class UsersEndpoints
                 .StartHttpActivity("Get: /users/{id}")?
                 .SetTag("UserId", id.ToString());
 
-            var response = await mediator.Send(new GetUserQuery(id));
+            var response = await query.Handle(id, cancellationToken);
             return Results.Ok(response);
         }).WithName("GetUser");
 
 
-        group.MapGet("{id:guid}/total-notifications", async (IMediator mediator, ILoggerFactory loggerFactory, Guid id) =>
+        group.MapGet("{id:guid}/total-notifications", async (GetUserNotificationsTotalsQuery query, Guid id, CancellationToken cancellationToken) =>
         {
             Telemetry.AddHttpRequest();
 
@@ -47,18 +46,18 @@ public static class UsersEndpoints
                 .StartHttpActivity("Get: /users/{id}/total-notifications")?
                 .SetTag("UserId", id.ToString());
 
-            var response = await mediator.Send(new GetUserNotificationsTotals(id));
+            var response = await query.Handle(id, cancellationToken);
             return Results.Ok(response);
         });
 
 
-        group.MapPost("", async (IMediator mediator, ILoggerFactory loggerFactory, UserRequest request) =>
+        group.MapPost("", async (CreateUserCommand command, UserRequest request, CancellationToken cancellationToken) =>
         {
             Telemetry.AddHttpRequest();
 
             using var activity = Telemetry.Source.StartHttpActivity("Post: /users");
 
-            var id = await mediator.Send(new CreateUserCommand(request));
+            var id = await command.Handle(request, cancellationToken);
 
             activity?.SetTag("UserId", id.ToString());
 
@@ -69,7 +68,7 @@ public static class UsersEndpoints
         });
 
 
-        group.MapPut("{id:guid}", async (IMediator mediator, ILoggerFactory loggerFactory, Guid id, UserRequest request) =>
+        group.MapPut("{id:guid}", async (UpdateUserCommand command, Guid id, UserRequest request, CancellationToken cancellationToken) =>
         {
             Telemetry.AddHttpRequest();
 
@@ -77,13 +76,13 @@ public static class UsersEndpoints
                 .StartHttpActivity("Put: /users")?
                 .SetTag("UserId", id.ToString());
 
-            await mediator.Send(new UpdateUserCommand(id, request));
+            await command.Handle(id, request, cancellationToken);
 
             return Results.NoContent();
         });
 
 
-        group.MapDelete("{id:guid}", async (IMediator mediator, ILoggerFactory loggerFactory, Guid id) =>
+        group.MapDelete("{id:guid}", async (DeleteUserCommand command, Guid id, CancellationToken cancellationToken) =>
         {
             Telemetry.AddHttpRequest();
 
@@ -91,7 +90,7 @@ public static class UsersEndpoints
                 .StartHttpActivity("Delete: /users")?
                 .SetTag("UserId", id.ToString());
 
-            await mediator.Send(new DeleteUserCommand(id));
+            await command.Handle(id, cancellationToken);
 
             return Results.NoContent();
         });

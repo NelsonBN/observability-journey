@@ -47,6 +47,6 @@ internal sealed class MessageBusServer(
             basicProperties: properties,
             body: domainEvent.Serialize());
 
-        _logger.LogInformation("[MESSAGE BUS][PUBLISHER] {MessageType} published", messageType);
+        _logger.LogInformation("[INFRASTRUCTURE][MESSAGE BUS][PUBLISHER] {MessageType} published", messageType);
     }
 }

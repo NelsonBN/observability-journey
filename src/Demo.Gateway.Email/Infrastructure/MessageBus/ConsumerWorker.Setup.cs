@@ -27,7 +27,7 @@ internal sealed partial class ConsumerWorker
             durable: true,
             exclusive: false,
             autoDelete: false,
-        arguments: null);
+            arguments: null);
 
         _channel.QueueBind(
             queue: _options.QueueName,

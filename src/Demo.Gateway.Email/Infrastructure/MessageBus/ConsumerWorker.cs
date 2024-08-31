@@ -32,14 +32,14 @@ internal sealed partial class ConsumerWorker : IHostedService
         _channel = channel;
         _serviceProvider = serviceProvider;
 
-        _logger.LogInformation("[MESSAGE BROKER][CONSUMER] Setting...");
+        _logger.LogInformation("[INFRASTRUCTURE][MESSAGE BROKER][CONSUMER] Setting...");
 
         _setup();
 
         _consumer = new(_channel);
         _consumer.Received += (_, arg) => _listener(arg);
 
-        _logger.LogInformation("[MESSAGE BROKER][CONSUMER] Set");
+        _logger.LogInformation("[INFRASTRUCTURE][MESSAGE BROKER][CONSUMER] Set");
     }
 
     private async Task _listener(BasicDeliverEventArgs args)
@@ -66,7 +66,7 @@ internal sealed partial class ConsumerWorker : IHostedService
         {
             _logger.LogError(
                exception,
-               $"[MESSAGE BROKER][CONSUMER][DESERIALIZE]");
+               "[INFRASTRUCTURE][MESSAGE BROKER][CONSUMER][DESERIALIZE]");
 
             Activity.Current.RegisterException(exception);
 
@@ -78,7 +78,7 @@ internal sealed partial class ConsumerWorker : IHostedService
         {
             _logger.LogError(
                 exception,
-                $"[MESSAGE BROKER][CONSUMER][HANDLE]");
+                "[INFRASTRUCTURE][MESSAGE BROKER][CONSUMER][HANDLE]");
 
             Activity.Current.RegisterException(exception);
 
@@ -118,21 +118,21 @@ internal sealed partial class ConsumerWorker : IHostedService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("[MESSAGE BROKER][CONSUMER] Starting...");
+        _logger.LogInformation("[INFRASTRUCTURE][MESSAGE BROKER][CONSUMER] Starting...");
 
         _channel.BasicConsume(
             queue: _options.QueueName,
             autoAck: false,
             consumer: _consumer);
 
-        _logger.LogInformation("[MESSAGE BROKER][CONSUMER] Started");
+        _logger.LogInformation("[INFRASTRUCTURE][MESSAGE BROKER][CONSUMER] Started");
 
         return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("[MESSAGE BROKER][CONSUMER] Stopped");
+        _logger.LogInformation("[INFRASTRUCTURE][MESSAGE BROKER][CONSUMER] Stopped");
         return Task.CompletedTask;
     }
 }

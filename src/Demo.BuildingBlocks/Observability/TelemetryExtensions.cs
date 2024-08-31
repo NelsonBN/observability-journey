@@ -15,19 +15,22 @@ public static class TelemetryExtensions
 
     public static Activity? StartConsumerActivity(this ActivitySource activitySource, string queueName, IBasicProperties properties)
     {
-        var parentContext = Propagators.DefaultTextMapPropagator.Extract(default, properties, (props, key) =>
-        {
-            if(props.Headers.TryGetValue(key, out var value))
+        var parentContext = Propagators.DefaultTextMapPropagator.Extract(
+            default,
+            properties,
+            (props, key) =>
             {
-                var bytes = value as byte[];
-                return [Encoding.UTF8.GetString(bytes!)];
-            }
-
-            return [];
-        });
+                if(props.Headers.TryGetValue(key, out var value))
+                {
+                    var bytes = value as byte[];
+                    return [Encoding.UTF8.GetString(bytes!)];
+                }
+                return [];
+            });
         Baggage.Current = parentContext.Baggage;
 
-        var activity = activitySource.StartActivity($"Consumer {queueName}", ActivityKind.Consumer, parentContext.ActivityContext);
+
+        using var activity = activitySource.StartActivity($"Consumer {queueName}", ActivityKind.Consumer, parentContext.ActivityContext);
         if(activity is null)
         {
             return activity;
@@ -36,9 +39,10 @@ public static class TelemetryExtensions
         activity
             .SetTag(TelemetrySemanticConventions.RabbitMQ.SYSTEM, "rabbitmq")
             .SetTag(TelemetrySemanticConventions.RabbitMQ.DESTINATION_KIND, "queue")
-            .SetTag(TelemetrySemanticConventions.RabbitMQ.DESTINATION, queueName)
-            .SetTag(TelemetrySemanticConventions.MESSAGE_ID, properties.MessageId)
-            .SetTag(TelemetrySemanticConventions.CORRELATION_ID, properties.CorrelationId)
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.OPERATION_TYPE, "receive")
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.DESTINATION_NAME, queueName)
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.MESSAGE_ID, properties.MessageId)
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.CORRELATION_ID, properties.CorrelationId)
             .AddAt();
 
         return activity;
@@ -46,28 +50,35 @@ public static class TelemetryExtensions
 
     public static Activity? StartProducerActivity(this ActivitySource activitySource, string exchangeName, IBasicProperties properties)
     {
-        var activity = activitySource.StartActivity($"Exchange {exchangeName}", ActivityKind.Producer);
-        if(activity is null)
+        using var activity = activitySource.StartActivity($"Exchange {exchangeName}", ActivityKind.Producer);
+
+        ActivityContext contextToInject = default;
+        if(activity is not null)
         {
-            return activity;
+            contextToInject = activity.Context;
+        }
+        else if(Activity.Current is not null)
+        {
+            contextToInject = Activity.Current.Context;
         }
 
-        activity
-            .SetTag(TelemetrySemanticConventions.RabbitMQ.SYSTEM, "rabbitmq")
-            .SetTag(TelemetrySemanticConventions.RabbitMQ.DESTINATION_KIND, "exchange")
-            .SetTag(TelemetrySemanticConventions.RabbitMQ.DESTINATION, exchangeName)
-            .SetTag(TelemetrySemanticConventions.MESSAGE_ID, properties.MessageId)
-            .SetTag(TelemetrySemanticConventions.CORRELATION_ID, properties.CorrelationId)
-            .AddAt();
-
-        var contextToInject = activity.Context;
-
-        Propagators.DefaultTextMapPropagator
-            .Inject(new PropagationContext(contextToInject, Baggage.Current), properties, (props, key, value) =>
+        Propagators.DefaultTextMapPropagator.Inject(
+            new(contextToInject, Baggage.Current),
+            properties,
+            (props, key, value) =>
             {
                 props.Headers ??= new Dictionary<string, object>();
                 props.Headers[key] = value;
             });
+
+        activity?
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.SYSTEM, "rabbitmq")
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.DESTINATION_KIND, "exchange")
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.OPERATION_TYPE, "publish")
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.DESTINATION_NAME, exchangeName)
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.MESSAGE_ID, properties.MessageId)
+            .SetTag(TelemetrySemanticConventions.RabbitMQ.CORRELATION_ID, properties.CorrelationId)
+            .AddAt();
 
         return activity;
     }

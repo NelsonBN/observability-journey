@@ -19,6 +19,9 @@
     <PackageReference Include="MediatR" Version="12.4.0" />
     <PackageReference Include="System.Text.Json" Version="8.0.4" /> <!-- To fix vulnerability -->
 
+    <!-- Storage -->
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.21.2" />
+
     <!-- Trace -->
     <PackageReference Include="OpenTelemetry" Version="1.9.0" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.9.0" />
@@ -32,6 +35,7 @@
     <!-- HealthChecks -->
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
     <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="8.0.1" />
+    <PackageReference Include="AspNetCore.HealthChecks.Azure.Storage.Blobs" Version="8.0.1" />
   </ItemGroup>
 
 

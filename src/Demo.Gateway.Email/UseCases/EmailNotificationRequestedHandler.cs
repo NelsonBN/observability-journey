@@ -1,16 +1,19 @@
 ﻿using BuildingBlocks.Events;
 using BuildingBlocks.MessageBus;
+using Gateway.Email.Domain;
 using MediatR;
 
 namespace Gateway.Email.UseCases;
 
 public sealed class EmailNotificationRequestedHandler(
     ILogger<EmailNotificationRequestedHandler> logger,
-    IMessageBus messageBus)
+    IMessageBus messageBus,
+    IStorageService storage)
 : INotificationHandler<EmailNotificationRequestedEvent>
 {
     private readonly ILogger<EmailNotificationRequestedHandler> _logger = logger;
     private readonly IMessageBus _messageBus = messageBus;
+    private readonly IStorageService _storage = storage;
 
     public async Task Handle(EmailNotificationRequestedEvent domainEvent, CancellationToken cancellationToken)
     {

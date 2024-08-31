@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Observability;
 using Gateway.Email.Infrastructure.MessageBus;
 using Gateway.Email.Infrastructure.Observability;
+using Gateway.Email.Infrastructure.Storage;
 using Microsoft.AspNetCore.Hosting;
 
 ContinuousProfiling.Setup();
@@ -15,9 +16,10 @@ builder
         services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssemblyContaining<Program>());
 
-        services.AddMessageBus();
-
-        services.AddObservability();
+        services
+            .AddMessageBus()
+            .AddStorage()
+            .AddObservability();
     });
 
 

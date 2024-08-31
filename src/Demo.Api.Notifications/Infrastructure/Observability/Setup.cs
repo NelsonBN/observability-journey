@@ -1,8 +1,9 @@
 ﻿using Api.Notifications.Infrastructure.Database;
+using Api.Notifications.Infrastructure.MessageBus;
+using Api.Notifications.Infrastructure.Storage;
 using BuildingBlocks.Observability;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Npgsql;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
@@ -68,22 +69,16 @@ public static class Setup
                     configureOptions.ParseStateValues = true;
                 });
 
-        services._addHealth();
-
-        return services;
-    }
-
-    private static IServiceCollection _addHealth(this IServiceCollection services)
-    {
         services
-            .AddSingleton<StartupBackgroundService.HealthCheck>()
-            .AddHostedService<StartupBackgroundService>()
-            .AddHealthChecks()
-            .AddDbContextCheck<DataContext>("EFCore", HealthStatus.Unhealthy)
-            .AddRabbitMQ("RabbitMQ", HealthStatus.Unhealthy)
-            .AddCheck<StartupBackgroundService.HealthCheck>(
-                "Startup",
-                tags: ["Startup"]);
+             .AddSingleton<StartupBackgroundService.HealthCheck>()
+             .AddHostedService<StartupBackgroundService>()
+             .AddHealthChecks()
+             .AddMessageBus()
+             .AddDatabase()
+             .AddStorage()
+             .AddCheck<StartupBackgroundService.HealthCheck>(
+                 "Startup",
+                 tags: ["Startup"]);
 
         return services;
     }

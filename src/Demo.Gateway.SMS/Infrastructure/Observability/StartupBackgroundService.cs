@@ -12,11 +12,11 @@ public sealed class StartupBackgroundService(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("[API] Configuring...");
+        _logger.LogInformation("[INFRASTRUCTURE][Startup] Starting...");
 
         _healthCheck.StartupCompleted = true;
 
-        _logger.LogInformation("[API] Configured");
+        _logger.LogInformation("[INFRASTRUCTURE][Startup] Ended");
 
         await Task.CompletedTask;
     }

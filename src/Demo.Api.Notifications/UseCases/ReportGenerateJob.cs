@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 using Api.Notifications.Domain;
 using Api.Notifications.DTOs;
@@ -9,10 +10,12 @@ namespace Api.Notifications.UseCases;
 
 public sealed class ReportGenerateJob(
     ILogger<ReportGenerateJob> logger,
-    IReportsRepository repository) : IJob
+    IReportsRepository repository,
+    IStorageService storage) : IJob
 {
     private readonly ILogger<ReportGenerateJob> _logger = logger;
     private readonly IReportsRepository _repository = repository;
+    private readonly IStorageService _storage = storage;
 
     private static readonly JsonSerializerOptions _jsonOpetions = new()
     {
@@ -69,9 +72,13 @@ public sealed class ReportGenerateJob(
                 }
             }
 
-            var reportContent = JsonSerializer.Serialize(report, _jsonOpetions);
+            using var reportContent = new MemoryStream(
+                Encoding.UTF8.GetBytes(JsonSerializer.Serialize(report, _jsonOpetions)));
 
-            _logger.LogInformation("[JOB][REPORT GENERATE] Report content: {ReportContent}", reportContent);
+            await _storage.SaveAsync(
+                reportContent,
+                $"{report.EndDateTime:yyyyMMddHHmmss}.json",
+                context.CancellationToken);
 
             reportState.LastGeneratedAt = report.EndDateTime;
 

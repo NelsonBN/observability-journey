@@ -5,28 +5,26 @@ using MediatR;
 
 namespace Api.Users.UseCases;
 
-public sealed record UpdateUserCommand(Guid Id, UserRequest Request) : IRequest
+public sealed record UpdateUserCommand(IUsersRepository Repository) : IRequest
 {
-    internal sealed class Handler(IUsersRepository repository) : IRequestHandler<UpdateUserCommand>
+    private readonly IUsersRepository _repository = Repository;
+
+
+    public async Task Handle(Guid id, UserRequest request, CancellationToken cancellationToken)
     {
-        private readonly IUsersRepository _repository = repository;
+        ExceptionFactory.ProbablyThrow<UpdateUserCommand>(35);
 
-        public async Task Handle(UpdateUserCommand command, CancellationToken cancellationToken)
+        var user = await _repository.GetAsync(id, cancellationToken);
+        if(user is null)
         {
-            ExceptionFactory.ProbablyThrow<Handler>(35);
-
-            var user = await _repository.GetAsync(command.Id, cancellationToken);
-            if(user is null)
-            {
-                throw new UserNotFoundException(command.Id);
-            }
-
-            user.Update(
-                command.Request.Name,
-                command.Request.Email,
-                command.Request.Phone);
-
-            await _repository.UpdateAsync(user, cancellationToken);
+            throw new UserNotFoundException(id);
         }
+
+        user.Update(
+            request.Name,
+            request.Email,
+            request.Phone);
+
+        await _repository.UpdateAsync(user, cancellationToken);
     }
 }

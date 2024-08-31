@@ -1,25 +1,21 @@
 ﻿using Api.Users.Domain;
 using BuildingBlocks.Exceptions;
-using MediatR;
 
 namespace Api.Users.UseCases;
 
-public sealed record DeleteUserCommand(Guid Id) : IRequest
+public sealed record DeleteUserCommand(IUsersRepository Repository)
 {
-    internal sealed class Handler(IUsersRepository repository) : IRequestHandler<DeleteUserCommand>
+    private readonly IUsersRepository _repository = Repository;
+
+    public async Task Handle(Guid id, CancellationToken cancellationToken)
     {
-        private readonly IUsersRepository _repository = repository;
+        ExceptionFactory.ProbablyThrow<DeleteUserCommand>(35);
 
-        public async Task Handle(DeleteUserCommand command, CancellationToken cancellationToken)
+        if(!await _repository.AnyAsync(id, cancellationToken))
         {
-            ExceptionFactory.ProbablyThrow<Handler>(35);
-
-            if(!await _repository.AnyAsync(command.Id, cancellationToken))
-            {
-                throw new UserNotFoundException(command.Id);
-            }
-
-            await _repository.DeleteAsync(command.Id, cancellationToken);
+            throw new UserNotFoundException(id);
         }
+
+        await _repository.DeleteAsync(id, cancellationToken);
     }
 }

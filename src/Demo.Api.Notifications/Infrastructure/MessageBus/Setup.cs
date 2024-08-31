@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.MessageBus;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using RabbitMQ.Client;
 
 namespace Api.Notifications.Infrastructure.MessageBus;
@@ -6,8 +7,7 @@ namespace Api.Notifications.Infrastructure.MessageBus;
 public static class Setup
 {
     public static IServiceCollection AddMessageBus(this IServiceCollection services)
-    {
-        services
+        => services
             .ConfigureOptions<MessageBusOptions.Setup>()
             .AddSingleton<IConnectionFactory>(sp =>
                 sp.GetRequiredService<IConfiguration>().GetSection(MessageBusOptions.Setup.SECTION_NAME).Get<ConnectionFactory>()!)
@@ -18,6 +18,8 @@ public static class Setup
             .AddTransient<IMessageBus, MessageBusServer>()
             .AddHostedService<ConsumerWorker>();
 
-        return services;
-    }
+    public static IHealthChecksBuilder AddMessageBus(this IHealthChecksBuilder builder)
+        => builder.AddRabbitMQ(
+            "RabbitMQ",
+            HealthStatus.Unhealthy);
 }

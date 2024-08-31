@@ -4,5 +4,5 @@ namespace Api.Notifications.Domain;
 
 public interface IUsersService
 {
-    Task<UserResponse?> GetUserAsync(Guid userId, CancellationToken cancellationToken);
+    Task<UserResponse> GetUserAsync(Guid userId, CancellationToken cancellationToken);
 }

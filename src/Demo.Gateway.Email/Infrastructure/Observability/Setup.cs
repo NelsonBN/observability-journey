@@ -1,8 +1,9 @@
 ﻿using BuildingBlocks.Observability;
+using Gateway.Email.Infrastructure.MessageBus;
+using Gateway.Email.Infrastructure.Storage;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -39,18 +40,12 @@ public static class Setup
                     configureOptions.ParseStateValues = true;
                 });
 
-        services._addHealth();
-
-        return services;
-    }
-
-    private static IServiceCollection _addHealth(this IServiceCollection services)
-    {
         services
             .AddSingleton<StartupBackgroundService.HealthCheck>()
             .AddHostedService<StartupBackgroundService>()
             .AddHealthChecks()
-            .AddRabbitMQ("RabbitMQ", HealthStatus.Unhealthy)
+            .AddMessageBus()
+            .AddStorage()
             .AddCheck<StartupBackgroundService.HealthCheck>(
                 "Startup",
                 tags: ["Startup"]);

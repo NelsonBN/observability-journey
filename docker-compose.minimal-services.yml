@@ -32,6 +32,12 @@ services:
       service: rabbitmq
 
 
+  storage:
+    extends:
+      file: docker-compose.dependencies.yml
+      service: storage
+
+
 ############################## EXTERNAL ###############################
 
 

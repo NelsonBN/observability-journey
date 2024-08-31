@@ -73,3 +73,19 @@ services:
       timeout: 5s
       start_period: 3s
       retries: 5
+
+  storage:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    container_name: storage
+    restart: always
+    command: "azurite-blob --blobHost 0.0.0.0 --blobPort 10000"
+    ports:
+      - 10000:10000
+    networks:
+      - demo
+    healthcheck:
+      test: nc 127.0.0.1 10000 -z
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s

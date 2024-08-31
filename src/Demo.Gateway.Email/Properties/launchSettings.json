@@ -3,10 +3,10 @@
     "src": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:8098",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development",
-        "SYSTEM_ENVIRONMENT": "DEV"
+        "SYSTEM_ENVIRONMENT": "DEV",
+        "ASPNETCORE_URLS": "http://*:8098"
       }
     }
   }

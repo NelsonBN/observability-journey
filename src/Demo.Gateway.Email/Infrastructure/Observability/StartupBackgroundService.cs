@@ -5,20 +5,22 @@ namespace Gateway.Email.Infrastructure.Observability;
 
 public sealed class StartupBackgroundService(
     ILogger<StartupBackgroundService> logger,
-    HealthCheck healthCheck) : BackgroundService
+    HealthCheck healthCheck,
+    IEnumerable<IStartup> startups) : BackgroundService
 {
     private readonly ILogger<StartupBackgroundService> _logger = logger;
     private readonly HealthCheck _healthCheck = healthCheck;
+    private readonly IEnumerable<IStartup> _startups = startups;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("[API] Configuring...");
+        _logger.LogInformation("[INFRASTRUCTURE][Startup] Starting...");
+
+        await Task.WhenAll(_startups.Select(s => s.ExecuteAsync(stoppingToken)));
 
         _healthCheck.StartupCompleted = true;
 
-        _logger.LogInformation("[API] Configured");
-
-        await Task.CompletedTask;
+        _logger.LogInformation("[INFRASTRUCTURE][Startup] Ended");
     }
 
 

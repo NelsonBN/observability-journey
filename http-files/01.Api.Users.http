@@ -2,13 +2,13 @@
 
 GET {{UsersApiHost}}
 
-### Non-existent user
-
-GET {{UsersApiHost}}/1ab4e8c5-931a-4b7f-99d2-dba8aca287b8
-
 ### Existing user
 
 GET {{UsersApiHost}}/28111954-9422-4822-a40a-c912f9f297dd
+
+### Non-existent user
+
+GET {{UsersApiHost}}/1ab4e8c5-931a-4b7f-99d2-dba8aca287b8
 
 ### User with notifications
 
