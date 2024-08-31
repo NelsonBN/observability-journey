@@ -20,7 +20,7 @@ public static class Setup
             .WithTracing(options
                 => options
                     .AddSource(Telemetry.Source.Name)
-                    .AddAspNetCoreInstrumentation()
+                    .AddAspNetCoreInstrumentation(o => o.RecordException = true)
                     .AddGrpcClientInstrumentation()
                     .AddSource("MongoDB.Driver.Core.Extensions.DiagnosticSources")
                     .AddRedisInstrumentation())

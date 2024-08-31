@@ -7,9 +7,9 @@ namespace Api.Notifications.UseCases;
 
 public sealed record GetNotificationsTotalsQuery(Guid UserId) : IRequest<NotificationsTotalsResponse>
 {
-    internal sealed class Handler(INotificationsRepository repository) : IRequestHandler<GetNotificationsTotalsQuery, NotificationsTotalsResponse>
+    internal sealed class Handler(IReportsRepository repository) : IRequestHandler<GetNotificationsTotalsQuery, NotificationsTotalsResponse>
     {
-        private readonly INotificationsRepository _repository = repository;
+        private readonly IReportsRepository _repository = repository;
 
         public async Task<NotificationsTotalsResponse> Handle(GetNotificationsTotalsQuery query, CancellationToken cancellationToken)
         {

@@ -9,6 +9,7 @@
 - [OpenTelemetry .NET](https://opentelemetry.io/docs/instrumentation/net/)
 - [OpenTelemetry .NET](https://opentelemetry.io/docs/instrumentation/net/getting-started/)
 - [OpenTelemetry .NET Exporters](https://opentelemetry.io/docs/instrumentation/net/exporters/)
+- [OpenTelemetry Instrumentation Libs](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/tree/main/src/)
 
 ### Metrics
 

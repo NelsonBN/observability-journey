@@ -3,6 +3,7 @@ using Api.Notifications.Infrastructure.Grpc;
 using Api.Notifications.Infrastructure.Http;
 using Api.Notifications.Infrastructure.MessageBus;
 using Api.Notifications.Infrastructure.Observability;
+using Api.Notifications.Infrastructure.Schedules;
 using Api.Notifications.Infrastructure.UsersApi;
 using BuildingBlocks.Observability;
 
@@ -17,7 +18,8 @@ builder.Services
     .AddDatabase()
     .AddGrpcServer()
     .AddMessageBus()
-    .AddUsersApi();
+    .AddUsersApi()
+    .AddSchedules();
 
 builder.Services.AddObservability();
 

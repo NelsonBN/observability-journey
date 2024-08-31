@@ -6,6 +6,7 @@ namespace Api.Notifications.Infrastructure.Database;
 public sealed class DataContext(ILoggerFactory LoggerFactory, IConfiguration Configuration) : DbContext
 {
     public DbSet<Notification> Notifications { get; set; } = default!;
+    public DbSet<ReportState> ReportState { get; set; } = default!;
 
     private readonly ILoggerFactory _loggerFactory = LoggerFactory;
     private readonly IConfiguration _configuration = Configuration;
@@ -54,5 +55,29 @@ public sealed class DataContext(ILoggerFactory LoggerFactory, IConfiguration Con
                             .HasConversion(
                                 v => v.ToString(),
                                 v => (NotificationStatus)Enum.Parse(typeof(NotificationStatus), v, true));
+
+                notification.Property(p => p.CreatedAt)
+                            .HasColumnName("created_at")
+                            .HasColumnType("TIMESTAMPTZ")
+                            .HasConversion(
+                                v => v, // to the database (stored as UTC)
+                                v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+            })
+            .Entity<ReportState>(reportState =>
+            {
+                reportState
+                    .ToTable("report_state")
+                    .HasKey(product => product.Id);
+
+                reportState.Property(p => p.Id)
+                           .HasColumnName("id");
+
+                reportState
+                    .Property(p => p.LastGeneratedAt)
+                    .HasColumnName("last_generated_at")
+                    .HasColumnType("TIMESTAMPTZ")
+                    .HasConversion(
+                        v => v, // to the database (stored as UTC)
+                        v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
             });
 }

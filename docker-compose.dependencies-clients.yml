@@ -30,7 +30,7 @@ services:
   mongodb:
     extends:
       file: docker-compose.dependencies.yml
-      service: mongo
+      service: mongodb
 
   mongo-express:
     image: mongo-express:1.0.2
