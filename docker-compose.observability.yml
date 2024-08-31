@@ -68,7 +68,7 @@ services:
   pyroscope:
     image: grafana/pyroscope:1.7.1
     container_name: pyroscope
-    restart: on-failure
+    restart: always
     ports:
       - 4040:4040
     deploy:
@@ -77,12 +77,12 @@ services:
           memory: 300M
     networks:
       - demo
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4040/ready"]
-      interval: 10s
-      timeout: 5s
-      start_period: 3s
-      retries: 5
+    # healthcheck:
+    #   test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4040/ready"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   start_period: 3s
+    #   retries: 5
 
 
   otel-collector:
@@ -152,10 +152,12 @@ services:
     container_name: grafana
     environment:
       TZ: Europe/Lisbon
+      GF_AUTH_DISABLE_LOGIN_FORM: true
       GF_AUTH_ANONYMOUS_ENABLED: true # Allow anonymous access
       GF_AUTH_ANONYMOUS_ORG_ROLE: Admin # Set the role for anonymous users to Admin
       GF_AUTH_BASIC_ENABLED: false # Disable basic auth
       GF_FEATURE_TOGGLES_ENABLE: flameGraph,traceqlEditor # Enable flameGraph for Pyroscope / traceqlEditor for Tempo
+      GF_INSTALL_PLUGINS: grafana-pyroscope-app
     ports:
       - 3000:3000
     volumes:
@@ -174,3 +176,5 @@ services:
         condition: service_healthy
       prometheus:
         condition: service_healthy
+      pyroscope:
+        condition: service_started

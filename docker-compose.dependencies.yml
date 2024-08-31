@@ -24,9 +24,9 @@ services:
     networks:
       - demo
 
-  mongo:
+  mongodb:
     image: mongo:7.0.14
-    container_name: mongo
+    container_name: mongodb
     # environment:
     #   MONGO_INITDB_ROOT_USERNAME: root
     #   MONGO_INITDB_ROOT_PASSWORD: a123456789
