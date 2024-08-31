@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Common.Events;
+namespace BuildingBlocks.Events;
 
 public abstract record DomainEvent : INotification
 {

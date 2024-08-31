@@ -71,7 +71,7 @@ WORKDIR /src
 
 # Copy just the project files and restore the nuget packages
 COPY ./src/Demo.Gateway.Email/*.csproj ./Demo.Gateway.Email/
-COPY ./src/Demo.Common/*.csproj ./Demo.Common/
+COPY ./src/Demo.BuildingBlocks/*.csproj ./Demo.BuildingBlocks/
 
 # Restore nuget packages
 RUN dotnet restore ./Demo.Gateway.Email/*.csproj --runtime linux-musl-x64
@@ -79,7 +79,7 @@ RUN dotnet restore ./Demo.Gateway.Email/*.csproj --runtime linux-musl-x64
 
 # Copy all the source code and build
 COPY ./src/Demo.Gateway.Email/ ./Demo.Gateway.Email/
-COPY ./src/Demo.Common/ ./Demo.Common/
+COPY ./src/Demo.BuildingBlocks/ ./Demo.BuildingBlocks/
 
 
 # Build and publish the application. Used the "--no-restore" and "--no-build" to benefit the layer caches

@@ -1,5 +1,5 @@
-﻿using Common.Events;
-using Common.MessageBus;
+﻿using BuildingBlocks.Events;
+using BuildingBlocks.MessageBus;
 using MediatR;
 
 namespace Gateway.SMS.UseCases;
@@ -28,7 +28,7 @@ public sealed class SMSNotificationRequestedHandler(
                         Id = domainEvent.Id,
                     });
 
-                    _logger.LogWarning($"[MESSAGE BUS][WORKER][CONSUMER][HANDLER] {domainEvent.GetType().Name} failed");
+                    _logger.LogError($"[MESSAGE BUS][WORKER][CONSUMER][HANDLER] {domainEvent.GetType().Name} failed");
                 }
 
                 else

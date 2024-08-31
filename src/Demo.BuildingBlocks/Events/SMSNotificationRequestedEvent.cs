@@ -1,4 +1,4 @@
-﻿namespace Common.Events;
+﻿namespace BuildingBlocks.Events;
 
 public sealed record SMSNotificationRequestedEvent : DomainEvent
 {

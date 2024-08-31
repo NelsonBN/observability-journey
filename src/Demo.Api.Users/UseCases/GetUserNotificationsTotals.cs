@@ -1,6 +1,6 @@
 ﻿using Api.Users.Domain;
 using Api.Users.DTOs;
-using Common.Exceptions;
+using BuildingBlocks.Exceptions;
 using MediatR;
 
 namespace Api.Users.UseCases;
@@ -14,6 +14,8 @@ public sealed record GetUserNotificationsTotals(Guid Id) : IRequest<UserNotifica
 
         public async Task<UserNotificationsTotalsResponse> Handle(GetUserNotificationsTotals query, CancellationToken cancellationToken)
         {
+            ExceptionFactory.ProbablyThrow<Handler>(35);
+
             var user = await _repository.GetAsync(query.Id, cancellationToken);
             if(user is null)
             {

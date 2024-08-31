@@ -3,7 +3,7 @@ using Api.Users.Infrastructure.Database;
 using Api.Users.Infrastructure.Http;
 using Api.Users.Infrastructure.NotificationsApi;
 using Api.Users.Infrastructure.Observability;
-using Common.Observability;
+using BuildingBlocks.Observability;
 
 ContinuousProfiling.Setup();
 

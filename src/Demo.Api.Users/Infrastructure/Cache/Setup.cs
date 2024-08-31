@@ -1,4 +1,4 @@
-﻿using Common;
+﻿using BuildingBlocks;
 using StackExchange.Redis;
 
 namespace Api.Users.Infrastructure.Cache;

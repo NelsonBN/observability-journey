@@ -1,6 +1,6 @@
-﻿using Common.Events;
+﻿using BuildingBlocks.Events;
 
-namespace Common.MessageBus;
+namespace BuildingBlocks.MessageBus;
 
 public interface IMessageBus
 {

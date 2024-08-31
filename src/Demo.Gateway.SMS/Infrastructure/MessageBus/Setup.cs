@@ -1,4 +1,4 @@
-﻿using Common.MessageBus;
+﻿using BuildingBlocks.MessageBus;
 using RabbitMQ.Client;
 
 namespace Gateway.SMS.Infrastructure.MessageBus;

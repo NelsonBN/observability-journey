@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using Common.Observability;
+using BuildingBlocks.Observability;
 using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace Api.Users.Infrastructure.Http;

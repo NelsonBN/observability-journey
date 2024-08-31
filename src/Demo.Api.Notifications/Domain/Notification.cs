@@ -1,4 +1,4 @@
-﻿using Common.Events;
+﻿using BuildingBlocks.Events;
 
 namespace Api.Notifications.Domain;
 

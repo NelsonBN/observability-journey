@@ -16,6 +16,7 @@
 ## Documentation
 
 - [Website](https://pyroscope.io/)
+- [Getting Started](https://grafana.com/docs/pyroscope/latest/get-started/)
 - [Official](https://grafana.com/docs/pyroscope/latest/)
 - [GitHub](https://github.com/grafana/pyroscope)
 - [.NET SDK](https://grafana.com/docs/pyroscope/latest/configure-client/language-sdks/dotnet/)

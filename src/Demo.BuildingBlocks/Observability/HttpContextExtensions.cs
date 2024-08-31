@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 
-namespace Common.Observability;
+namespace BuildingBlocks.Observability;
 
 public static class HttpContextExtensions
 {

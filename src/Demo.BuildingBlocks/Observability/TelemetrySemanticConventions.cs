@@ -1,10 +1,10 @@
-﻿namespace Common.Observability;
+﻿namespace BuildingBlocks.Observability;
 
-internal static class DiagnosticsNames
+internal static class TelemetrySemanticConventions
 {
-    public const string AT = "At";
-    public const string MESSAGE_ID = "MessageId";
-    public const string CORRELATION_ID = "CorrelationId";
+    public const string AT = "at";
+    public const string MESSAGE_ID = "message_id";
+    public const string CORRELATION_ID = "correlation_id";
 
     internal static class RabbitMQ
     {

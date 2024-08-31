@@ -16,7 +16,7 @@ public static class Setup
 
         services.AddSingleton(sp =>
             new MongoUrl(sp.GetRequiredService<IConfiguration>()
-                .GetConnectionString("Mongo")!));
+                .GetConnectionString("MongoDB")!));
 
         services.AddSingleton<IMongoClient>(sp =>
         {

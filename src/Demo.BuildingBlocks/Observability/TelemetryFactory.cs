@@ -1,6 +1,6 @@
 ﻿using OpenTelemetry.Resources;
 
-namespace Common.Observability;
+namespace BuildingBlocks.Observability;
 
 public static class TelemetryFactory
 {
@@ -10,8 +10,10 @@ public static class TelemetryFactory
             .AddService(
                 serviceName: AppDetails.Name,
                 serviceVersion: AppDetails.Version,
-                serviceInstanceId: AppDetails.ServiceId)
-            .AddTelemetrySdk();
+                serviceInstanceId: Environment.MachineName)
+            .AddTelemetrySdk()
+            .AddAttributes([
+                new("system.environment", Environment.GetEnvironmentVariable("SYSTEM_ENVIRONMENT") ?? "UNKNOWN")]);
 
     public static ResourceBuilder CreateResource()
     {

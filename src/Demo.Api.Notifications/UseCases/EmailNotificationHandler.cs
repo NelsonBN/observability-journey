@@ -1,5 +1,5 @@
 ﻿using Api.Notifications.Domain;
-using Common.Events;
+using BuildingBlocks.Events;
 using MediatR;
 
 namespace Api.Notifications.UseCases;

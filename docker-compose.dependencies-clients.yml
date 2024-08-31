@@ -27,7 +27,7 @@ services:
         condition: service_healthy
 
 
-  mongo:
+  mongodb:
     extends:
       file: docker-compose.dependencies.yml
       service: mongo
@@ -41,11 +41,11 @@ services:
     environment:
       ME_CONFIG_BASICAUTH_USERNAME: guest
       ME_CONFIG_BASICAUTH_PASSWORD: guest
-      ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
     networks:
       - demo
     depends_on:
-      - mongo
+      - mongodb
 
 
   redis:

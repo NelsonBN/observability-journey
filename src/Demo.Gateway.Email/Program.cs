@@ -1,4 +1,4 @@
-﻿using Common.Observability;
+﻿using BuildingBlocks.Observability;
 using Gateway.Email.Infrastructure.MessageBus;
 using Gateway.Email.Infrastructure.Observability;
 using Microsoft.AspNetCore.Hosting;

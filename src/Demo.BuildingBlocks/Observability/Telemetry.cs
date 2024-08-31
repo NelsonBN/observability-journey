@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
-namespace Common.Observability;
+namespace BuildingBlocks.Observability;
 
-public static class Diagnostic
+public static class Telemetry
 {
     public static readonly Meter Meter = new(AppDetails.Name);
-    public static readonly ActivitySource Source = new(AppDetails.Name, AppDetails.Version);
+    public static readonly ActivitySource Source = new(AppDetails.Name);
 
 
     private static readonly Counter<int> _requestsHttpCount = Meter.CreateCounter<int>("demo_http_requests_count", description: "Counts the number of HTTP requests");

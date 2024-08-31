@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using Common.Events;
-using Common.MessageBus;
-using Common.Observability;
+using BuildingBlocks.Events;
+using BuildingBlocks.MessageBus;
+using BuildingBlocks.Observability;
 using MediatR;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
@@ -45,10 +45,10 @@ internal sealed partial class ConsumerWorker : IHostedService
     {
         try
         {
-            Diagnostic.AddMessageBusRequest();
+            Telemetry.AddMessageBusRequest();
             var domainEvent = _deserialize(args);
 
-            using var activity = Diagnostic.Source
+            using var activity = Telemetry.Source
                 .StartConsumerActivity(_options.QueueName, args.BasicProperties)
                 .AddRoutingKey(args.RoutingKey)
                 .AddMessage(domainEvent);

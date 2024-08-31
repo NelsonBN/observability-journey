@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace Common.MessageBus;
+namespace BuildingBlocks.MessageBus;
 
 public sealed class MessageBusOptions
 {

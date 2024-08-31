@@ -1,6 +1,6 @@
 ﻿using Api.Notifications.DTOs;
 using Api.Notifications.UseCases;
-using Common.Observability;
+using BuildingBlocks.Observability;
 using MediatR;
 
 namespace Api.Notifications.Infrastructure.Http;
@@ -16,9 +16,9 @@ public static class NotificationsEndpoints
 
         group.MapGet("", async (IMediator mediator, ILoggerFactory loggerFactory) =>
         {
-            Diagnostic.AddHttpRequest();
+            Telemetry.AddHttpRequest();
 
-            using var activity = Diagnostic.Source.StartHttpActivity("Get: /notifications");
+            using var activity = Telemetry.Source.StartHttpActivity("Get: /notifications");
 
             var response = await mediator.Send(GetNotificationsQuery.Instance);
 
@@ -28,9 +28,9 @@ public static class NotificationsEndpoints
 
         group.MapGet("{id:guid}", async (IMediator mediator, ILoggerFactory loggerFactory, Guid id) =>
         {
-            Diagnostic.AddHttpRequest();
+            Telemetry.AddHttpRequest();
 
-            using var activity = Diagnostic.Source
+            using var activity = Telemetry.Source
                 .StartHttpActivity("Get: /notifications/{id}")?
                 .SetTag("NotificationId", id.ToString());
 
@@ -42,9 +42,9 @@ public static class NotificationsEndpoints
 
         group.MapPost("", async (IMediator mediator, ILoggerFactory loggerFactory, NotificationRequest request) =>
         {
-            Diagnostic.AddHttpRequest();
+            Telemetry.AddHttpRequest();
 
-            using var activity = Diagnostic.Source
+            using var activity = Telemetry.Source
                 .StartHttpActivity("Post: /notifications")?
                 .SetTag("UserId", request.UserId.ToString());
 

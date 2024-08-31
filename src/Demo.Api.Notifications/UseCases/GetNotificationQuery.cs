@@ -1,5 +1,6 @@
 ﻿using Api.Notifications.Domain;
 using Api.Notifications.DTOs;
+using BuildingBlocks.Exceptions;
 using MediatR;
 
 namespace Api.Notifications.UseCases;
@@ -12,6 +13,8 @@ public sealed record GetNotificationQuery(Guid Id) : IRequest<NotificationRespon
 
         public async Task<NotificationResponse> Handle(GetNotificationQuery query, CancellationToken cancellationToken)
         {
+            ExceptionFactory.ProbablyThrow<Handler>(35);
+
             var notification = await _repository.GetAsync(query.Id, cancellationToken);
             if(notification is null)
             {

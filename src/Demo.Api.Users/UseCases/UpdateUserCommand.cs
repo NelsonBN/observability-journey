@@ -1,6 +1,6 @@
 ﻿using Api.Users.Domain;
 using Api.Users.DTOs;
-using Common.Exceptions;
+using BuildingBlocks.Exceptions;
 using MediatR;
 
 namespace Api.Users.UseCases;
@@ -13,6 +13,8 @@ public sealed record UpdateUserCommand(Guid Id, UserRequest Request) : IRequest
 
         public async Task Handle(UpdateUserCommand command, CancellationToken cancellationToken)
         {
+            ExceptionFactory.ProbablyThrow<Handler>(35);
+
             var user = await _repository.GetAsync(command.Id, cancellationToken);
             if(user is null)
             {

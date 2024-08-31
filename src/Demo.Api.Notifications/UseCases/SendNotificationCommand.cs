@@ -1,7 +1,7 @@
 ﻿using Api.Notifications.Domain;
 using Api.Notifications.DTOs;
-using Common.Exceptions;
-using Common.MessageBus;
+using BuildingBlocks.Exceptions;
+using BuildingBlocks.MessageBus;
 using MediatR;
 
 namespace Api.Notifications.UseCases;
@@ -16,6 +16,8 @@ public sealed record SendNotificationCommand(NotificationRequest Request) : IReq
 
         public async Task<Guid> Handle(SendNotificationCommand command, CancellationToken cancellationToken)
         {
+            ExceptionFactory.ProbablyThrow<Handler>(35);
+
             var user = await _service.GetUserAsync(command.Request.UserId, cancellationToken);
             if(user is null)
             {

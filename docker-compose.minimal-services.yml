@@ -14,10 +14,10 @@ services:
       service: postgres
 
 
-  mongo:
+  mongodb:
     extends:
       file: docker-compose.dependencies.yml
-      service: mongo
+      service: mongodb
 
 
   redis:

@@ -1,6 +1,6 @@
-﻿using Common.Events;
-using Common.MessageBus;
-using Common.Observability;
+﻿using BuildingBlocks.Events;
+using BuildingBlocks.MessageBus;
+using BuildingBlocks.Observability;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 
@@ -35,7 +35,7 @@ internal sealed class MessageBusServer(
         var properties = _channel.CreateProperties(messageType);
 
 
-        using var activity = Diagnostic.Source
+        using var activity = Telemetry.Source
             .StartProducerActivity(_options.ExchangeName, properties)
             .AddRoutingKey(messageType)
             .AddMessage(domainEvent);

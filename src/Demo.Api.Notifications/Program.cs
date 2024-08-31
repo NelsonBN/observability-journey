@@ -4,7 +4,7 @@ using Api.Notifications.Infrastructure.Http;
 using Api.Notifications.Infrastructure.MessageBus;
 using Api.Notifications.Infrastructure.Observability;
 using Api.Notifications.Infrastructure.UsersApi;
-using Common.Observability;
+using BuildingBlocks.Observability;
 
 ContinuousProfiling.Setup();
 
