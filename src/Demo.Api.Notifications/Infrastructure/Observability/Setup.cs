@@ -1,9 +1,11 @@
 ﻿using Api.Notifications.Infrastructure.Database;
-using Api.Notifications.Infrastructure.MessageBus;
 using Api.Notifications.Infrastructure.Storage;
+using BuildingBlocks.MessageBus;
 using BuildingBlocks.Observability;
 using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using OpenTelemetry;
 using OpenTelemetry.Logs;

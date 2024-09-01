@@ -1,16 +1,18 @@
-﻿using Api.Users.Domain;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Api.Users.Domain;
 using Api.Users.DTOs;
-using BuildingBlocks.Exceptions;
-using MediatR;
+using BuildingBlocks.Contracts.Exceptions;
 
 namespace Api.Users.UseCases;
 
-public sealed record UpdateUserCommand(IUsersRepository Repository) : IRequest
+public sealed record UpdateUserCommand(IUsersRepository Repository)
 {
     private readonly IUsersRepository _repository = Repository;
 
 
-    public async Task Handle(Guid id, UserRequest request, CancellationToken cancellationToken)
+    public async Task HandleAsync(Guid id, UserRequest request, CancellationToken cancellationToken)
     {
         ExceptionFactory.ProbablyThrow<UpdateUserCommand>(35);
 

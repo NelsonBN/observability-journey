@@ -1,33 +1,35 @@
-﻿using Api.Notifications.Domain;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Api.Notifications.Domain;
 using Api.Notifications.DTOs;
-using BuildingBlocks.MessageBus;
-using MediatR;
+using BuildingBlocks.Contracts.Abstractions;
 
 namespace Api.Notifications.UseCases;
 
-public sealed record SendNotificationCommand(NotificationRequest Request) : IRequest<Guid>
+public sealed record SendNotificationCommand(
+    INotificationsRepository repository,
+    IUsersService service,
+    IPublisher publisher)
 {
-    internal sealed class Handler(INotificationsRepository repository, IUsersService service, IMessageBus messageBus) : IRequestHandler<SendNotificationCommand, Guid>
+    private readonly INotificationsRepository _repository = repository;
+    private readonly IUsersService _service = service;
+    private readonly IPublisher _publisher = publisher;
+
+    public async Task<Guid> HandleAsync(NotificationRequest request, CancellationToken cancellationToken)
     {
-        private readonly INotificationsRepository _repository = repository;
-        private readonly IUsersService _service = service;
-        private readonly IMessageBus _messageBus = messageBus;
+        var user = await _service.GetUserAsync(request.UserId, cancellationToken);
 
-        public async Task<Guid> Handle(SendNotificationCommand command, CancellationToken cancellationToken)
-        {
-            var user = await _service.GetUserAsync(command.Request.UserId, cancellationToken);
+        var notification = Notification.Create(
+            request.UserId,
+            request.Message,
+            user.Email,
+            user.Phone);
 
-            var notification = Notification.Create(
-                command.Request.UserId,
-                command.Request.Message,
-                user.Email,
-                user.Phone);
+        await _repository.AddAsync(notification, cancellationToken);
 
-            await _repository.AddAsync(notification, cancellationToken);
+        _publisher.Publish(notification.GetDomainEvents());
 
-            _messageBus.Publish(notification.GetDomainEvents());
-
-            return notification.Id;
-        }
+        return notification.Id;
     }
 }

@@ -1,4 +1,7 @@
-﻿using Api.Notifications.UseCases;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Api.Notifications.UseCases;
+using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Listener;
 

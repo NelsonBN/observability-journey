@@ -1,4 +1,5 @@
 ﻿using Api.Notifications.Domain;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Api.Notifications.Infrastructure.Database;

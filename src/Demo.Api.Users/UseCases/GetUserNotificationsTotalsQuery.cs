@@ -1,18 +1,20 @@
-﻿using Api.Users.Domain;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Api.Users.Domain;
 using Api.Users.DTOs;
-using BuildingBlocks.Exceptions;
-using MediatR;
+using BuildingBlocks.Contracts.Exceptions;
 
 namespace Api.Users.UseCases;
 
 public sealed record GetUserNotificationsTotalsQuery(
     IUsersRepository Repository,
-    INotificationsService Service) : IRequest<UserNotificationsTotalsResponse>
+    INotificationsService Service)
 {
     private readonly IUsersRepository _repository = Repository;
     private readonly INotificationsService _service = Service;
 
-    public async Task<UserNotificationsTotalsResponse> Handle(Guid id, CancellationToken cancellationToken)
+    public async Task<UserNotificationsTotalsResponse> HandleAsync(Guid id, CancellationToken cancellationToken)
     {
         ExceptionFactory.ProbablyThrow<GetUserNotificationsTotalsQuery>(35);
 

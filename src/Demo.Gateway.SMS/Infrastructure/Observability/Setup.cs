@@ -1,8 +1,9 @@
-﻿using BuildingBlocks.Observability;
-using Gateway.SMS.Infrastructure.MessageBus;
+﻿using BuildingBlocks.MessageBus;
+using BuildingBlocks.Observability;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;

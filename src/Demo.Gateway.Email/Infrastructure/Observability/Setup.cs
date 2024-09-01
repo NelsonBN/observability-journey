@@ -1,9 +1,10 @@
-﻿using BuildingBlocks.Observability;
-using Gateway.Email.Infrastructure.MessageBus;
+﻿using BuildingBlocks.MessageBus;
+using BuildingBlocks.Observability;
 using Gateway.Email.Infrastructure.Storage;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;

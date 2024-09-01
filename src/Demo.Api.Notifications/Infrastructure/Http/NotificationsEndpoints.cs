@@ -1,7 +1,11 @@
-﻿using Api.Notifications.DTOs;
+﻿using System;
+using System.Threading;
+using Api.Notifications.DTOs;
 using Api.Notifications.UseCases;
 using BuildingBlocks.Observability;
-using MediatR;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 
 namespace Api.Notifications.Infrastructure.Http;
 
@@ -14,19 +18,19 @@ public static class NotificationsEndpoints
             .WithOpenApi();
 
 
-        group.MapGet("", async (IMediator mediator, ILoggerFactory loggerFactory) =>
+        group.MapGet("", async (GetNotificationsQuery query, CancellationToken cancellationToken) =>
         {
             Telemetry.AddHttpRequest();
 
             using var activity = Telemetry.Source.StartHttpActivity("Get: /notifications");
 
-            var response = await mediator.Send(GetNotificationsQuery.Instance);
+            var response = await query.HandleAsync(cancellationToken);
 
             return Results.Ok(response);
         });
 
 
-        group.MapGet("{id:guid}", async (IMediator mediator, ILoggerFactory loggerFactory, Guid id) =>
+        group.MapGet("{id:guid}", async (GetNotificationQuery query, Guid id, CancellationToken cancellationToken) =>
         {
             Telemetry.AddHttpRequest();
 
@@ -34,13 +38,13 @@ public static class NotificationsEndpoints
                 .StartHttpActivity("Get: /notifications/{id}")?
                 .SetTag("NotificationId", id.ToString());
 
-            var response = await mediator.Send(new GetNotificationQuery(id));
+            var response = await query.HandleAsync(id, cancellationToken);
             return Results.Ok(response);
         }).WithName("GetNotification");
 
 
 
-        group.MapPost("", async (IMediator mediator, ILoggerFactory loggerFactory, NotificationRequest request) =>
+        group.MapPost("", async (SendNotificationCommand command, NotificationRequest request, CancellationToken cancellationToken) =>
         {
             Telemetry.AddHttpRequest();
 
@@ -48,7 +52,7 @@ public static class NotificationsEndpoints
                 .StartHttpActivity("Post: /notifications")?
                 .SetTag("UserId", request.UserId.ToString());
 
-            var id = await mediator.Send(new SendNotificationCommand(request));
+            var id = await command.HandleAsync(request, cancellationToken);
 
             activity?.SetTag("NotificationId", id.ToString());
 

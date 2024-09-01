@@ -1,4 +1,11 @@
-﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using BuildingBlocks.Contracts.Abstractions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using static Gateway.Email.Infrastructure.Observability.StartupBackgroundService;
 
 namespace Gateway.Email.Infrastructure.Observability;
@@ -6,11 +13,11 @@ namespace Gateway.Email.Infrastructure.Observability;
 public sealed class StartupBackgroundService(
     ILogger<StartupBackgroundService> logger,
     HealthCheck healthCheck,
-    IEnumerable<IStartup> startups) : BackgroundService
+    IEnumerable<IStartupService> startups) : BackgroundService
 {
     private readonly ILogger<StartupBackgroundService> _logger = logger;
     private readonly HealthCheck _healthCheck = healthCheck;
-    private readonly IEnumerable<IStartup> _startups = startups;
+    private readonly IEnumerable<IStartupService> _startups = startups;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

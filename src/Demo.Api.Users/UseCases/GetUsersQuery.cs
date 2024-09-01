@@ -1,15 +1,18 @@
-﻿using Api.Users.Domain;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Api.Users.Domain;
 using Api.Users.DTOs;
-using BuildingBlocks.Exceptions;
-using MediatR;
+using BuildingBlocks.Contracts.Exceptions;
 
 namespace Api.Users.UseCases;
 
-public sealed record GetUsersQuery(IUsersRepository Repository) : IRequest<IEnumerable<UserResponse>>
+public sealed record GetUsersQuery(IUsersRepository Repository)
 {
     private readonly IUsersRepository _repository = Repository;
 
-    public async Task<IEnumerable<UserResponse>> Handle(CancellationToken cancellationToken)
+    public async Task<IEnumerable<UserResponse>> HandleAsync(CancellationToken cancellationToken)
     {
         ExceptionFactory.ProbablyThrow<GetUsersQuery>(35);
 

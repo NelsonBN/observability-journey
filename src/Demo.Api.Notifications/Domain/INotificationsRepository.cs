@@ -1,4 +1,9 @@
-﻿namespace Api.Notifications.Domain;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Api.Notifications.Domain;
 
 public interface INotificationsRepository
 {

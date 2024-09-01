@@ -1,5 +1,8 @@
-﻿using Api.Users.Domain;
-using Notifications;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Api.Users.Domain;
+using BuildingBlocks.Contracts.Notifications;
 
 namespace Api.Users.Infrastructure.NotificationsApi;
 

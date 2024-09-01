@@ -1,4 +1,8 @@
-﻿namespace Api.Notifications.Domain;
+﻿using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Api.Notifications.Domain;
 
 public interface IStorageService
 {

@@ -1,5 +1,8 @@
-﻿using Api.Users.Domain;
-using BuildingBlocks.Exceptions;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Api.Users.Domain;
+using BuildingBlocks.Contracts.Exceptions;
 
 namespace Api.Users.UseCases;
 
@@ -7,7 +10,7 @@ public sealed record DeleteUserCommand(IUsersRepository Repository)
 {
     private readonly IUsersRepository _repository = Repository;
 
-    public async Task Handle(Guid id, CancellationToken cancellationToken)
+    public async Task HandleAsync(Guid id, CancellationToken cancellationToken)
     {
         ExceptionFactory.ProbablyThrow<DeleteUserCommand>(35);
 

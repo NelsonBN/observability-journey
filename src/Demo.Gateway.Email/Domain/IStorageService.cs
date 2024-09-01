@@ -1,4 +1,8 @@
-﻿namespace Gateway.Email.Domain;
+﻿using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Gateway.Email.Domain;
 
 public interface IStorageService
 {

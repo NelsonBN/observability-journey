@@ -1,5 +1,8 @@
-﻿using Api.Notifications.Domain;
+﻿using System;
+using Api.Notifications.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Api.Notifications.Infrastructure.Database;
 

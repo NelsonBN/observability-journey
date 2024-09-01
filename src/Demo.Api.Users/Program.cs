@@ -5,6 +5,8 @@ using Api.Users.Infrastructure.NotificationsApi;
 using Api.Users.Infrastructure.Observability;
 using Api.Users.UseCases;
 using BuildingBlocks.Observability;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 
 ContinuousProfiling.Setup();
 

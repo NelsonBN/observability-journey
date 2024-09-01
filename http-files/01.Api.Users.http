@@ -1,26 +1,27 @@
-@UsersApiHost = http://localhost:8088/users
+@host = http://localhost:8088
+@usersApiHost = {{host}}/users
 
-GET {{UsersApiHost}}
+GET {{usersApiHost}}
 
 ### Existing user
 
-GET {{UsersApiHost}}/28111954-9422-4822-a40a-c912f9f297dd
+GET {{usersApiHost}}/28111954-9422-4822-a40a-c912f9f297dd
 
 ### Non-existent user
 
-GET {{UsersApiHost}}/1ab4e8c5-931a-4b7f-99d2-dba8aca287b8
+GET {{usersApiHost}}/1ab4e8c5-931a-4b7f-99d2-dba8aca287b8
 
 ### User with notifications
 
-GET {{UsersApiHost}}/28111954-9422-4822-a40a-c912f9f297dd/total-notifications
+GET {{usersApiHost}}/28111954-9422-4822-a40a-c912f9f297dd/total-notifications
 
 ### User without notifications
 
-GET {{UsersApiHost}}/ab497ca3-4304-47fd-866d-b647f4daaa99/total-notifications
+GET {{usersApiHost}}/ab497ca3-4304-47fd-866d-b647f4daaa99/total-notifications
 
 ###
 
-POST {{UsersApiHost}}
+POST {{usersApiHost}}
 Content-Type: application/json
 
 {
@@ -31,7 +32,7 @@ Content-Type: application/json
 
 ###
 
-PUT {{UsersApiHost}}/28111954-9422-4822-a40a-c912f9f297dd
+PUT {{usersApiHost}}/28111954-9422-4822-a40a-c912f9f297dd
 Content-Type: application/json
 
 {
@@ -42,4 +43,17 @@ Content-Type: application/json
 
 ###
 
-DELETE {{UsersApiHost}}/64c76e00-ce3c-4967-8e50-3d5a972a0cc7
+DELETE {{usersApiHost}}/64c76e00-ce3c-4967-8e50-3d5a972a0cc7
+
+
+######### HEALTHZ #########
+
+
+GET {{host}}/healthz/startup
+
+###
+
+GET {{host}}/healthz/live
+###
+
+GET {{host}}/healthz/ready

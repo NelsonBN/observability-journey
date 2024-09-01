@@ -1,5 +1,9 @@
-﻿using Api.Notifications.Domain;
+﻿using System;
+using Api.Notifications.Domain;
 using Azure.Storage.Blobs;
+using BuildingBlocks.Contracts.Abstractions;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
@@ -10,7 +14,7 @@ internal static class Setup
     internal static IServiceCollection AddStorage(this IServiceCollection services)
         => services
             .ConfigureOptions<StorageOptions.Setup>()
-            .AddTransient<IStartup, Startup>()
+            .AddTransient<IStartupService, Startup>()
             .AddTransient<IStorageService, StorageService>()
             .AddSingleton(sp =>
                 new BlobContainerClient(

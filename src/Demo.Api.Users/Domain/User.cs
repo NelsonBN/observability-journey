@@ -1,4 +1,6 @@
-﻿namespace Api.Users.Domain;
+﻿using System;
+
+namespace Api.Users.Domain;
 
 public sealed class User
 {

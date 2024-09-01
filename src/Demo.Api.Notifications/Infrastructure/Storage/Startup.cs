@@ -1,11 +1,16 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 using Azure.Storage.Blobs;
+using BuildingBlocks.Contracts.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace Api.Notifications.Infrastructure.Storage;
 
 internal sealed class Startup(
     BlobContainerClient client,
-    ILogger<Startup> logger) : IStartup
+    ILogger<Startup> logger) : IStartupService
 {
     private readonly BlobContainerClient _client = client;
     private readonly ILogger<Startup> _logger = logger;

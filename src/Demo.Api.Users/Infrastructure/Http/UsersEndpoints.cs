@@ -1,6 +1,11 @@
-﻿using Api.Users.DTOs;
+﻿using System;
+using System.Threading;
+using Api.Users.DTOs;
 using Api.Users.UseCases;
 using BuildingBlocks.Observability;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 
 namespace Api.Users.Infrastructure.Http;
 
@@ -19,7 +24,7 @@ public static class UsersEndpoints
 
             using var activity = Telemetry.Source.StartHttpActivity("Get: /users");
 
-            var response = await query.Handle(cancellationToken);
+            var response = await query.HandleAsync(cancellationToken);
 
             return Results.Ok(response);
         });
@@ -33,7 +38,7 @@ public static class UsersEndpoints
                 .StartHttpActivity("Get: /users/{id}")?
                 .SetTag("UserId", id.ToString());
 
-            var response = await query.Handle(id, cancellationToken);
+            var response = await query.HandleAsync(id, cancellationToken);
             return Results.Ok(response);
         }).WithName("GetUser");
 
@@ -46,7 +51,7 @@ public static class UsersEndpoints
                 .StartHttpActivity("Get: /users/{id}/total-notifications")?
                 .SetTag("UserId", id.ToString());
 
-            var response = await query.Handle(id, cancellationToken);
+            var response = await query.HandleAsync(id, cancellationToken);
             return Results.Ok(response);
         });
 
@@ -57,7 +62,7 @@ public static class UsersEndpoints
 
             using var activity = Telemetry.Source.StartHttpActivity("Post: /users");
 
-            var id = await command.Handle(request, cancellationToken);
+            var id = await command.HandleAsync(request, cancellationToken);
 
             activity?.SetTag("UserId", id.ToString());
 
@@ -76,7 +81,7 @@ public static class UsersEndpoints
                 .StartHttpActivity("Put: /users")?
                 .SetTag("UserId", id.ToString());
 
-            await command.Handle(id, request, cancellationToken);
+            await command.HandleAsync(id, request, cancellationToken);
 
             return Results.NoContent();
         });
@@ -90,7 +95,7 @@ public static class UsersEndpoints
                 .StartHttpActivity("Delete: /users")?
                 .SetTag("UserId", id.ToString());
 
-            await command.Handle(id, cancellationToken);
+            await command.HandleAsync(id, cancellationToken);
 
             return Results.NoContent();
         });

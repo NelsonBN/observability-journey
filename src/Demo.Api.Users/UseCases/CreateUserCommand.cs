@@ -1,6 +1,9 @@
-﻿using Api.Users.Domain;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Api.Users.Domain;
 using Api.Users.DTOs;
-using BuildingBlocks.Exceptions;
+using BuildingBlocks.Contracts.Exceptions;
 
 namespace Api.Users.UseCases;
 
@@ -8,7 +11,7 @@ public sealed record CreateUserCommand(IUsersRepository Repository)
 {
     private readonly IUsersRepository _repository = Repository;
 
-    public async Task<Guid> Handle(UserRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> HandleAsync(UserRequest request, CancellationToken cancellationToken)
     {
         ExceptionFactory.ProbablyThrow<CreateUserCommand>(35);
 

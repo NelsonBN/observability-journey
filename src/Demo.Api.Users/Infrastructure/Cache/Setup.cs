@@ -1,4 +1,7 @@
-﻿using BuildingBlocks;
+﻿using System.Threading.Tasks;
+using BuildingBlocks.Observability;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
 namespace Api.Users.Infrastructure.Cache;
