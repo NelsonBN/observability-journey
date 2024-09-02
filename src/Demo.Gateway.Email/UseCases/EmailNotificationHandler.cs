@@ -1,54 +1,49 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using BuildingBlocks.Contracts.Abstractions;
 using BuildingBlocks.Contracts.Events;
-using Gateway.Email.Domain;
+using BuildingBlocks.Observability;
 using Microsoft.Extensions.Logging;
 
 namespace Gateway.Email.UseCases;
 
 public class EmailNotificationHandler(
     ILogger<EmailNotificationHandler> logger,
-    IStorageService storage,
     IPublisher publisher)
     : IMessageHandler<EmailNotificationRequestedEvent>
 {
     private readonly ILogger<EmailNotificationHandler> _logger = logger;
-    private readonly IStorageService _storage = storage;
     private readonly IPublisher _publisher = publisher;
 
-    public async Task HandleAsync(EmailNotificationRequestedEvent message, CancellationToken cancellationToken = default)
+    public Task HandleAsync(EmailNotificationRequestedEvent message, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("[HANDLER][EMAIL] received");
+        _logger.LogInformation("[NOTIFICATION][EMAIL][HANDLER] received");
 
-        var delay = Random.Shared.Next(50, 1000);
 
-        await Task.Delay(delay, cancellationToken)
-            .ContinueWith(task =>
+        try
+        {
+            _publisher.Publish(new EmailFeedbackEvent
             {
-                if(delay % 6 == 0)
-                {
-                    _publisher.Publish(new EmailFeedbackEvent
-                    {
-                        Id = message.Id,
-                        Success = false
-                    });
+                Id = message.Id,
+                Success = true
+            });
 
-                    _logger.LogError("[HANDLER][EMAIL] failed");
-                }
+            _logger.LogInformation("[NOTIFICATION][EMAIL][HANDLER] handled");
+        }
+        catch(Exception exception)
+        {
+            _publisher.Publish(new EmailFeedbackEvent
+            {
+                Id = message.Id,
+                Success = false
+            });
 
-                else
-                {
-                    _publisher.Publish(new EmailFeedbackEvent
-                    {
-                        Id = message.Id,
-                        Success = true
-                    });
+            _logger.LogError(exception, "[NOTIFICATION][EMAIL][HANDLER]");
+            Activity.Current.RegisterException(exception);
+        }
 
-                    _logger.LogInformation("[HANDLER][EMAIL] handled");
-                }
-
-            }, cancellationToken);
+        return Task.CompletedTask;
     }
 }

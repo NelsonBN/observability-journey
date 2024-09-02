@@ -15,7 +15,7 @@ public class SMSNotificationHandler(ILogger<SMSNotificationHandler> logger, IPub
 
     public async Task HandleAsync(SMSNotificationRequestedEvent message, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("[HANDLER][SMS] received");
+        _logger.LogInformation("[NOTIFICATION][SMS][HANDLER] received");
 
         var delay = Random.Shared.Next(50, 1000);
 
@@ -30,7 +30,7 @@ public class SMSNotificationHandler(ILogger<SMSNotificationHandler> logger, IPub
                         Success = false
                     });
 
-                    _logger.LogError("[HANDLER][SMS] failed");
+                    _logger.LogError("[NOTIFICATION][SMS][HANDLER] failed");
                 }
 
                 else
@@ -41,7 +41,7 @@ public class SMSNotificationHandler(ILogger<SMSNotificationHandler> logger, IPub
                         Success = true
                     });
 
-                    _logger.LogInformation("[HANDLER][SMS] handled");
+                    _logger.LogInformation("[NOTIFICATION][SMS][HANDLER] handled");
                 }
 
             }, cancellationToken);
