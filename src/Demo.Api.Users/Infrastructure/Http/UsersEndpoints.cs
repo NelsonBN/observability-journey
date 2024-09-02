@@ -20,7 +20,7 @@ public static class UsersEndpoints
 
         group.MapGet("", async (GetUsersQuery query, CancellationToken cancellationToken) =>
         {
-            Telemetry.AddHttpRequest();
+            Telemetry.IncreaseHttpRequest();
 
             using var activity = Telemetry.Source.StartHttpActivity("Get: /users");
 
@@ -32,7 +32,7 @@ public static class UsersEndpoints
 
         group.MapGet("{id:guid}", async (GetUserQuery query, Guid id, CancellationToken cancellationToken) =>
         {
-            Telemetry.AddHttpRequest();
+            Telemetry.IncreaseHttpRequest();
 
             using var activity = Telemetry.Source
                 .StartHttpActivity("Get: /users/{id}")?
@@ -45,7 +45,7 @@ public static class UsersEndpoints
 
         group.MapGet("{id:guid}/total-notifications", async (GetUserNotificationsTotalsQuery query, Guid id, CancellationToken cancellationToken) =>
         {
-            Telemetry.AddHttpRequest();
+            Telemetry.IncreaseHttpRequest();
 
             using var activity = Telemetry.Source
                 .StartHttpActivity("Get: /users/{id}/total-notifications")?
@@ -58,7 +58,7 @@ public static class UsersEndpoints
 
         group.MapPost("", async (CreateUserCommand command, UserRequest request, CancellationToken cancellationToken) =>
         {
-            Telemetry.AddHttpRequest();
+            Telemetry.IncreaseHttpRequest();
 
             using var activity = Telemetry.Source.StartHttpActivity("Post: /users");
 
@@ -75,7 +75,7 @@ public static class UsersEndpoints
 
         group.MapPut("{id:guid}", async (UpdateUserCommand command, Guid id, UserRequest request, CancellationToken cancellationToken) =>
         {
-            Telemetry.AddHttpRequest();
+            Telemetry.IncreaseHttpRequest();
 
             using var activity = Telemetry.Source
                 .StartHttpActivity("Put: /users")?
@@ -89,7 +89,7 @@ public static class UsersEndpoints
 
         group.MapDelete("{id:guid}", async (DeleteUserCommand command, Guid id, CancellationToken cancellationToken) =>
         {
-            Telemetry.AddHttpRequest();
+            Telemetry.IncreaseHttpRequest();
 
             using var activity = Telemetry.Source
                 .StartHttpActivity("Delete: /users")?

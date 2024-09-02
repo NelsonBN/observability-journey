@@ -13,6 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <PackageReference Include="OpenTelemetry.Api" Version="1.9.0" />
     <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
 
     <!-- HealthChecks -->
@@ -23,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Demo.Contracts\1.Contracts.csproj" />
+    <ProjectReference Include="..\Demo.BuildingBlocks.Observability\2.Observability.csproj" />
   </ItemGroup>
 
 </Project>

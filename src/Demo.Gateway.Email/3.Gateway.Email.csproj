@@ -30,8 +30,8 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\Demo.Shared\Demo.BuildingBlocks.Observability\2.Observability.csproj" />
     <ProjectReference Include="..\Demo.Shared\Demo.Contracts\1.Contracts.csproj" />
+    <ProjectReference Include="..\Demo.Shared\Demo.BuildingBlocks.Observability\2.Observability.csproj" />
     <ProjectReference Include="..\Demo.Shared\Demo.BuildingBlocks.MessageBus\3.MessageBus.csproj" />
     <None Include="..\..\http-files\03.Gateway.Email.http" Link="Request.http" />
   </ItemGroup>

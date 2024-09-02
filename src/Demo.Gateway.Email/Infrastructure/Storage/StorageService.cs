@@ -17,6 +17,8 @@ internal sealed class StorageService(BlobContainerClient client) : IStorageServi
 
     public async Task<Stream> GetAsync(string fileName, CancellationToken cancellationToken = default)
     {
+        StorageTelemetry.IncreaseRequest();
+
         var blobClient = _client.GetBlobClient(fileName);
         if(!await blobClient.ExistsAsync(cancellationToken))
         {
@@ -38,7 +40,10 @@ internal sealed class StorageService(BlobContainerClient client) : IStorageServi
         Baggage.Current = parentContext.Baggage;
 
 
-        using var activity = Telemetry.Source.StartActivity($"BlobContainer {_client.Name}", ActivityKind.Consumer);
+        using var activity = StorageTelemetry.Source.StartActivity(
+            $"BlobContainer {_client.Name}",
+            ActivityKind.Consumer,
+            parentContext.ActivityContext);
 
 
         var memoryStream = new MemoryStream();
@@ -55,11 +60,10 @@ internal sealed class StorageService(BlobContainerClient client) : IStorageServi
         memoryStream.Position = 0; // Reset the position to the beginning of the stream
 
         activity?
-            .SetTag(TelemetrySemanticConventions.AzureStorage.SYSTEM, "azure-storage")
-            .SetTag(TelemetrySemanticConventions.AzureStorage.OPERATION_TYPE, "receive")
-            .SetTag(TelemetrySemanticConventions.AzureStorage.CONTAINER, _client.Name)
-            .SetTag(TelemetrySemanticConventions.AzureStorage.BLOB, fileName)
-            .AddAt();
+            .SetTag(StorageTelemetry.SemanticConventions.SYSTEM, "azure-storage")
+            .SetTag(StorageTelemetry.SemanticConventions.OPERATION_TYPE, "receive")
+            .SetTag(StorageTelemetry.SemanticConventions.CONTAINER, _client.Name)
+            .SetTag(StorageTelemetry.SemanticConventions.BLOB, fileName);
 
         return memoryStream;
     }

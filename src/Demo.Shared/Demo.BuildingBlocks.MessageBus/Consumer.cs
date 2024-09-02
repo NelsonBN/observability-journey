@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BuildingBlocks.Contracts.Abstractions;
+using BuildingBlocks.Observability;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -36,7 +41,7 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
         _logger = _serviceProvider.GetRequiredService<ILogger<Consumer<TMessage, THandler>>>();
         _channel = _serviceProvider.GetRequiredService<IModel>();
 
-        _logger.LogInformation("[RABBITMQ][CONSUMER][{ExchangeName}][{QueueName}] Setting...", _exchangeName, _queueName);
+        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Setting...", _exchangeName, _queueName);
 
         // Create Exchange
         _channel.ExchangeDeclare(
@@ -69,25 +74,54 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
         _consumer = new(_channel);
         _consumer.Received += _listener;
 
-        _logger.LogInformation("[RABBITMQ][CONSUMER][{ExchangeName}][{QueueName}] Set", _exchangeName, _queueName);
+        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Set", _exchangeName, _queueName);
     }
 
     private async Task _listener(object sender, BasicDeliverEventArgs args)
     {
+        MessageBusTelemetry.IncreaseRequest();
+
+        Activity? activity = default;
+
         try
         {
-            //Telemetry.AddMessageBusRequest(); // TODO: working here
+            var parentContext = Propagators.DefaultTextMapPropagator.Extract(
+                default,
+                args.BasicProperties,
+            (props, key) =>
+            {
+                if(props.Headers.TryGetValue(key, out var value))
+                {
+                    var bytes = value as byte[];
+                    return [Encoding.UTF8.GetString(bytes!)];
+                }
+                return [];
+            });
+            Baggage.Current = parentContext.Baggage;
+
+
+            activity = MessageBusTelemetry.Source.StartActivity(
+                $"Consumer {_queueName}",
+                ActivityKind.Consumer,
+                parentContext.ActivityContext);
+
+            activity?
+                .SetTag(MessageBusTelemetry.SemanticConventions.SYSTEM, "rabbitmq")
+                .SetTag(MessageBusTelemetry.SemanticConventions.DESTINATION_KIND, "queue")
+                .SetTag(MessageBusTelemetry.SemanticConventions.OPERATION_TYPE, "receive")
+                .SetTag(MessageBusTelemetry.SemanticConventions.DESTINATION_NAME, _queueName)
+                .SetTag(MessageBusTelemetry.SemanticConventions.MESSAGE_ID, args.BasicProperties.MessageId)
+                .SetTag(MessageBusTelemetry.SemanticConventions.CORRELATION_ID, args.BasicProperties.CorrelationId)
+                .SetTag(MessageBusTelemetry.SemanticConventions.ROUTING_KEY, args.RoutingKey);
 
             var message = args.Deserialize<TMessage>()
                 ?? throw new NotSupportedException($"The message type '{typeof(TMessage).Name}' is not supported by consummer");
 
-            // TODO: working here
-            //using var activity = Telemetry.Source
-            //    .StartConsumerActivity(_queueName, args.BasicProperties)
-            //    .AddRoutingKey(args.RoutingKey)
-            //    .AddMessage(domainEvent);
+            activity.AddMessage(message);
+
 
             await _dispatch(message);
+
 
             _channel.BasicAck(
                 args.DeliveryTag,
@@ -97,7 +131,9 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
         {
             _logger.LogError(
                exception,
-               "[RABBITMQ][CONSUMER][{ExchangeName}][{QueueName}] Error deserializing message", _exchangeName, _queueName);
+               "[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Error deserializing message", _exchangeName, _queueName);
+
+            activity.RegisterException(exception);
 
             _channel.BasicReject(
                 args.DeliveryTag,
@@ -107,12 +143,18 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
         {
             _logger.LogError(
                 exception,
-                "[RABBITMQ][CONSUMER][{ExchangeName}][{QueueName}] Error handling message", _exchangeName, _queueName);
+                "[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Error handling message", _exchangeName, _queueName);
+
+            activity.RegisterException(exception);
 
             _channel.BasicNack(
                 args.DeliveryTag,
                 false,
                 false);
+        }
+        finally
+        {
+            activity?.Dispose();
         }
     }
 
@@ -129,14 +171,14 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("[RABBITMQ][CONSUMER][{ExchangeName}][{QueueName}] Starting...", _exchangeName, _queueName);
+        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Starting...", _exchangeName, _queueName);
 
         _channel.BasicConsume(
             queue: _queueName,
             autoAck: false,
             consumer: _consumer);
 
-        _logger.LogInformation("[RABBITMQ][CONSUMER][{ExchangeName}][{QueueName}] Started", _exchangeName, _queueName);
+        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Started", _exchangeName, _queueName);
 
         return Task.CompletedTask;
     }
@@ -144,7 +186,7 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
     public Task StopAsync(CancellationToken cancellationToken)
     {
         _channel.Dispose();
-        _logger.LogInformation("[RABBITMQ][CONSUMER][{ExchangeName}][{QueueName}] Stopped", _exchangeName, _queueName);
+        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Stopped", _exchangeName, _queueName);
 
         return Task.CompletedTask;
     }

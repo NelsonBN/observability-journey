@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using BuildingBlocks.Contracts.Abstractions;
+using BuildingBlocks.Observability;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
 using RabbitMQ.Client;
 
 namespace BuildingBlocks.MessageBus;
@@ -29,16 +34,39 @@ internal sealed class Publisher(
     {
         ArgumentNullException.ThrowIfNull(message);
 
-        var messageType = message.GetType().Name;
+        using var activity = MessageBusTelemetry.Source.StartActivity($"Exchange {_options.ExchangeName}", ActivityKind.Producer);
 
+        ActivityContext contextToInject = default;
+        if(activity is not null)
+        {
+            contextToInject = activity.Context;
+        }
+        else if(Activity.Current is not null)
+        {
+            contextToInject = Activity.Current.Context;
+        }
+
+        var messageType = message.GetType().Name;
         var properties = _channel.CreateProperties(messageType);
 
-        // TODO: to finish
-        //using var activity = Telemetry.Source
-        //    .StartProducerActivity(_options.ExchangeName, properties)
-        //    .AddRoutingKey(messageType)
-        //    .AddMessage(domainEvent);
+        Propagators.DefaultTextMapPropagator.Inject(
+            new(contextToInject, Baggage.Current),
+            properties,
+            (props, key, value) =>
+            {
+                props.Headers ??= new Dictionary<string, object>();
+                props.Headers[key] = value;
+            });
 
+        activity?
+            .SetTag(MessageBusTelemetry.SemanticConventions.SYSTEM, "rabbitmq")
+            .SetTag(MessageBusTelemetry.SemanticConventions.DESTINATION_KIND, "exchange")
+            .SetTag(MessageBusTelemetry.SemanticConventions.OPERATION_TYPE, "publish")
+            .SetTag(MessageBusTelemetry.SemanticConventions.DESTINATION_NAME, _options.ExchangeName)
+            .SetTag(MessageBusTelemetry.SemanticConventions.MESSAGE_ID, properties.MessageId)
+            .SetTag(MessageBusTelemetry.SemanticConventions.CORRELATION_ID, properties.CorrelationId)
+            .SetTag(MessageBusTelemetry.SemanticConventions.ROUTING_KEY, messageType)
+            .AddMessage(message);
 
         _channel.BasicPublish(
             exchange: _options.ExchangeName,
@@ -46,6 +74,6 @@ internal sealed class Publisher(
             basicProperties: properties,
             body: message.Serialize());
 
-        _logger.LogInformation("[RABBITMQ][PUBLISHER] {MessageType} published", messageType);
+        _logger.LogInformation("[MESSAGE BUS][PUBLISHER] {MessageType} published", messageType);
     }
 }

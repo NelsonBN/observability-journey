@@ -20,7 +20,7 @@ public static class NotificationsEndpoints
 
         group.MapGet("", async (GetNotificationsQuery query, CancellationToken cancellationToken) =>
         {
-            Telemetry.AddHttpRequest();
+            Telemetry.IncreaseHttpRequest();
 
             using var activity = Telemetry.Source.StartHttpActivity("Get: /notifications");
 
@@ -32,7 +32,7 @@ public static class NotificationsEndpoints
 
         group.MapGet("{id:guid}", async (GetNotificationQuery query, Guid id, CancellationToken cancellationToken) =>
         {
-            Telemetry.AddHttpRequest();
+            Telemetry.IncreaseHttpRequest();
 
             using var activity = Telemetry.Source
                 .StartHttpActivity("Get: /notifications/{id}")?
@@ -46,7 +46,7 @@ public static class NotificationsEndpoints
 
         group.MapPost("", async (SendNotificationCommand command, NotificationRequest request, CancellationToken cancellationToken) =>
         {
-            Telemetry.AddHttpRequest();
+            Telemetry.IncreaseHttpRequest();
 
             using var activity = Telemetry.Source
                 .StartHttpActivity("Post: /notifications")?

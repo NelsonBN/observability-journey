@@ -74,7 +74,9 @@ WORKDIR /src
 
 # Copy just the project files and restore the nuget packages
 COPY ./src/Demo.Api.Users/*.csproj ./Demo.Api.Users/
-COPY ./src/Demo.BuildingBlocks/*.csproj ./Demo.BuildingBlocks/
+COPY ./src/Demo.Shared/Demo.Contracts/*.csproj ./Demo.Shared/Demo.Contracts/
+COPY ./src/Demo.Shared/Demo.BuildingBlocks.Observability/*.csproj ./Demo.Shared/Demo.BuildingBlocks.Observability/
+COPY ./src/Demo.Shared/Demo.Contracts.Notifications/*.csproj ./Demo.Shared/Demo.Contracts.Notifications/
 
 # Restore nuget packages
 RUN dotnet restore ./Demo.Api.Users/*.csproj --runtime linux-musl-x64
@@ -82,7 +84,9 @@ RUN dotnet restore ./Demo.Api.Users/*.csproj --runtime linux-musl-x64
 
 # Copy all the source code and build
 COPY ./src/Demo.Api.Users/ ./Demo.Api.Users/
-COPY ./src/Demo.BuildingBlocks/ ./Demo.BuildingBlocks/
+COPY ./src/Demo.Shared/Demo.Contracts/ ./Demo.Shared/Demo.Contracts/
+COPY ./src/Demo.Shared/Demo.BuildingBlocks.Observability/ ./Demo.Shared/Demo.BuildingBlocks.Observability/
+COPY ./src/Demo.Shared/Demo.Contracts.Notifications/ ./Demo.Shared/Demo.Contracts.Notifications/
 
 
 # Build and publish the application. Used the "--no-restore" and "--no-build" to benefit the layer caches

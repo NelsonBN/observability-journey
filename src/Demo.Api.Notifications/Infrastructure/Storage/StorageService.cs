@@ -22,7 +22,7 @@ internal sealed class StorageService(BlobContainerClient client) : IStorageServi
 
     public async Task SaveAsync(Stream fileContent, string fileName, CancellationToken cancellationToken = default)
     {
-        using var activity = Telemetry.Source.StartActivity($"BlobContainer {_client.Name}", ActivityKind.Producer);
+        using var activity = StorageTelemetry.Source.StartActivity($"BlobContainer {_client.Name}", ActivityKind.Producer);
 
         ActivityContext contextToInject = default;
         if(activity is not null)
@@ -58,11 +58,10 @@ internal sealed class StorageService(BlobContainerClient client) : IStorageServi
 
 
         activity?
-            .SetTag(TelemetrySemanticConventions.AzureStorage.SYSTEM, "azure-storage")
-            .SetTag(TelemetrySemanticConventions.AzureStorage.OPERATION_TYPE, "publish")
-            .SetTag(TelemetrySemanticConventions.AzureStorage.CONTAINER, _client.Name)
-            .SetTag(TelemetrySemanticConventions.AzureStorage.BLOB, fileName)
-            .AddAt();
+            .SetTag(StorageTelemetry.SemanticConventions.SYSTEM, "azure-storage")
+            .SetTag(StorageTelemetry.SemanticConventions.OPERATION_TYPE, "publish")
+            .SetTag(StorageTelemetry.SemanticConventions.CONTAINER, _client.Name)
+            .SetTag(StorageTelemetry.SemanticConventions.BLOB, fileName);
 
 
         if(response?.Status != (int)HttpStatusCode.Created)

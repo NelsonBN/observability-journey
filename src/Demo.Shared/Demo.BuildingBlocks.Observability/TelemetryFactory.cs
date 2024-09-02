@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using OpenTelemetry.Resources;
 
 namespace BuildingBlocks.Observability;
@@ -9,8 +10,8 @@ public static class TelemetryFactory
     public static readonly Action<ResourceBuilder> Configure = (resourceBuilder)
         => resourceBuilder
             .AddService(
-                serviceName: AppDetails.Name,
-                serviceVersion: AppDetails.Version,
+                serviceName: Assembly.GetEntryAssembly()!.GetName().Name!,
+                serviceVersion: Assembly.GetEntryAssembly()!.GetName().Version!.ToString(),
                 serviceInstanceId: Environment.MachineName)
             .AddTelemetrySdk()
             .AddAttributes([

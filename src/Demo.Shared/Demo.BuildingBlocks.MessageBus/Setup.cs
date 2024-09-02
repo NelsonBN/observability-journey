@@ -43,8 +43,6 @@ public static class Setup
             })
             .AddTransient<THandler>();
 
-
-
     public static IHealthChecksBuilder AddMessageBus(this IHealthChecksBuilder builder)
         => builder.AddRabbitMQ(
             "RabbitMQ",

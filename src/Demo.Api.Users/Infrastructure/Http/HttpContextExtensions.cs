@@ -1,8 +1,8 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System;
 using Microsoft.AspNetCore.Http;
 
-namespace BuildingBlocks.Observability;
+namespace Api.Users.Infrastructure.Http;
 
 public static class HttpContextExtensions
 {
