@@ -22,7 +22,7 @@ internal sealed class StorageService(BlobContainerClient client) : IStorageServi
 
     public async Task SaveAsync(Stream fileContent, string fileName, CancellationToken cancellationToken = default)
     {
-        using var activity = StorageTelemetry.Source.StartActivity($"BlobContainer {_client.Name}", ActivityKind.Producer);
+        using var activity = StorageTelemetry.Source.StartActivity($"BlobContainer {_client.Name}", ActivityKind.Client);
 
         ActivityContext contextToInject = default;
         if(activity is not null)

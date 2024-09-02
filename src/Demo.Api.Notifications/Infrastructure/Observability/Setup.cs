@@ -31,6 +31,7 @@ public static class Setup
                     .AddGrpcCoreInstrumentation()
                     .AddNpgsql()
                     .AddMessageBus()
+                    .AddStorage()
                     .AddEntityFrameworkCoreInstrumentation()
                     .AddQuartzInstrumentation(o =>
                     {

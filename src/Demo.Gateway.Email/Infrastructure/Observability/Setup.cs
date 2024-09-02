@@ -24,6 +24,7 @@ public static class Setup
                 => options
                     .AddSource(Telemetry.Source.Name)
                     .AddMessageBus()
+                    .AddStorage()
                     .AddAspNetCoreInstrumentation(o => o.RecordException = true))
             .WithMetrics(options =>
                 options

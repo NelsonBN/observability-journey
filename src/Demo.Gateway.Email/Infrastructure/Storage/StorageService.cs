@@ -42,7 +42,7 @@ internal sealed class StorageService(BlobContainerClient client) : IStorageServi
 
         using var activity = StorageTelemetry.Source.StartActivity(
             $"BlobContainer {_client.Name}",
-            ActivityKind.Consumer,
+            ActivityKind.Client,
             parentContext.ActivityContext);
 
 
