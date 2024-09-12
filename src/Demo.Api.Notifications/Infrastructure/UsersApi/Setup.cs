@@ -1,4 +1,7 @@
-﻿using Api.Notifications.Domain;
+﻿using System;
+using Api.Notifications.Domain;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Api.Notifications.Infrastructure.UsersApi;
 

@@ -12,7 +12,8 @@ db.User.insertMany([
     {
         _id: "28111954-9422-4822-a40a-c912f9f297dd",
         Name: 'Jane Doe',
-        Email: 'jane@doe@fk'
+        Email: 'jane@doe.fk',
+        Phone: '135798642'
     },
     {
         _id: "63d934e0-6282-42ce-ac2f-f0d454a8bc76",
@@ -22,7 +23,6 @@ db.User.insertMany([
     {
         _id: "64c76e00-ce3c-4967-8e50-3d5a972a0cc7",
         Name: 'Zack Morris',
-        Email: 'zack@morris.fk',
-        Phone: '135798642'
+        Email: 'zack@morris.fk'
     }
 ]);

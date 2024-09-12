@@ -1,18 +1,29 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Api.Notifications.Domain;
 using Api.Notifications.DTOs;
+using BuildingBlocks.Contracts.Abstractions;
+using BuildingBlocks.Contracts.Events;
 using BuildingBlocks.Observability;
+using Microsoft.Extensions.Logging;
 using Quartz;
 
 namespace Api.Notifications.UseCases;
 
 public sealed class ReportGenerateJob(
     ILogger<ReportGenerateJob> logger,
-    IReportsRepository repository) : IJob
+    IReportsRepository repository,
+    IStorageService storage,
+    IPublisher publisher) : IJob
 {
     private readonly ILogger<ReportGenerateJob> _logger = logger;
     private readonly IReportsRepository _repository = repository;
+    private readonly IStorageService _storage = storage;
+    private readonly IPublisher _publisher = publisher;
 
     private static readonly JsonSerializerOptions _jsonOpetions = new()
     {
@@ -69,11 +80,26 @@ public sealed class ReportGenerateJob(
                 }
             }
 
-            var reportContent = JsonSerializer.Serialize(report, _jsonOpetions);
+            using var reportContent = new MemoryStream(
+                Encoding.UTF8.GetBytes(JsonSerializer.Serialize(report, _jsonOpetions)));
 
-            _logger.LogInformation("[JOB][REPORT GENERATE] Report content: {ReportContent}", reportContent);
+            var fileName = $"{report.EndDateTime:yyyyMMddHHmmss}.json";
+
+            await _storage.SaveAsync(
+                reportContent,
+                fileName,
+                context.CancellationToken);
 
             reportState.LastGeneratedAt = report.EndDateTime;
+
+
+            _publisher.Publish(new EmailRequestedEvent
+            {
+                Email = "admin@fake.fk",
+                Message = "Notifications report",
+                Attachment = fileName
+            });
+
 
             await _repository.UpdateAsync(reportState, context.CancellationToken);
 

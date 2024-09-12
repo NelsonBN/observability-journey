@@ -1,4 +1,5 @@
-﻿using Api.Users.Domain;
+﻿using System;
+using Api.Users.Domain;
 
 namespace Api.Users.DTOs;
 

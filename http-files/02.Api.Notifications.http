@@ -1,17 +1,41 @@
-@NotificationsApiHost = http://localhost:8089/notifications
+@host = http://localhost:8089
+@notificationsApiHost = {{host}}/notifications
 
-GET {{NotificationsApiHost}}
-
-###
-
-GET {{NotificationsApiHost}}/5f4dac16-5692-46b9-919b-9b4f3e0d0d91
+GET {{notificationsApiHost}}
 
 ###
 
-POST {{NotificationsApiHost}}
+GET {{notificationsApiHost}}/5f4dac16-5692-46b9-919b-9b4f3e0d0d91
+
+### Existing user
+
+POST {{notificationsApiHost}}
 Content-Type: application/json
 
 {
     "userId": "28111954-9422-4822-a40a-c912f9f297dd",
     "message": "Hello World!"
 }
+
+### Non-existent user
+
+POST {{notificationsApiHost}}
+Content-Type: application/json
+
+{
+    "userId": "1ab4e8c5-931a-4b7f-99d2-dba8aca287b8",
+    "message": "Hello World!"
+}
+
+
+######### HEALTHZ #########
+
+
+GET {{host}}/healthz/startup
+
+###
+
+GET {{host}}/healthz/live
+###
+
+GET {{host}}/healthz/ready

@@ -1,4 +1,5 @@
-﻿using Api.Notifications.Domain;
+﻿using System;
+using Api.Notifications.Domain;
 
 namespace Api.Notifications.DTOs;
 

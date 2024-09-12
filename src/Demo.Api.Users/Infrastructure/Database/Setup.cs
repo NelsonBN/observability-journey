@@ -1,4 +1,7 @@
 ﻿using Api.Users.Domain;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
@@ -42,4 +45,15 @@ public static class Setup
 
         return services;
     }
+
+    public static IHealthChecksBuilder AddDatabase(this IHealthChecksBuilder builder)
+        => builder
+            .AddMongoDb(
+                mongodbConnectionStringFactory: sp => sp.GetRequiredService<IConfiguration>().GetConnectionString("MongoDB")!,
+                name: "MongoDB",
+                failureStatus: HealthStatus.Unhealthy)
+            .AddRedis(
+                name: "Redis",
+                connectionStringFactory: (sp) => sp.GetRequiredService<IConfiguration>().GetConnectionString("Redis")!,
+                failureStatus: HealthStatus.Unhealthy);
 }

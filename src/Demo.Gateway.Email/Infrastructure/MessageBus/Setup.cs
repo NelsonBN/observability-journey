@@ -1,23 +1,23 @@
-﻿using BuildingBlocks.MessageBus;
-using RabbitMQ.Client;
+﻿using BuildingBlocks.Contracts.Events;
+using BuildingBlocks.MessageBus;
+using Gateway.Email.UseCases;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Gateway.Email.Infrastructure.MessageBus;
 
 public static class Setup
 {
     public static IServiceCollection AddMessageBus(this IServiceCollection services)
-    {
-        services
-            .ConfigureOptions<MessageBusOptions.Setup>()
-            .AddSingleton<IConnectionFactory>(sp =>
-                sp.GetRequiredService<IConfiguration>().GetSection(MessageBusOptions.Setup.SECTION_NAME).Get<ConnectionFactory>()!)
-            .AddTransient(sp =>
-                sp.GetRequiredService<IConnectionFactory>().CreateConnection())
-            .AddTransient(sp =>
-                sp.GetRequiredService<IConnection>().CreateModel())
-            .AddTransient<IMessageBus, MessageBusServer>()
-            .AddHostedService<ConsumerWorker>();
-
-        return services;
-    }
+       => services
+            .AddConsumer<EmailNotificationRequestedEvent, EmailNotificationHandler>(sp => new()
+            {
+                ExchangeName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:ExchangeName"]!,
+                QueueName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:EmailNotificationsQueueName"]!
+            })
+            .AddConsumer<EmailRequestedEvent, EmailRequestedHandler>(sp => new()
+            {
+                ExchangeName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:ExchangeName"]!,
+                QueueName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:EmailQueueName"]!
+            });
 }

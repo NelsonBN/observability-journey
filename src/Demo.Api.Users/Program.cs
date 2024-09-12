@@ -3,14 +3,22 @@ using Api.Users.Infrastructure.Database;
 using Api.Users.Infrastructure.Http;
 using Api.Users.Infrastructure.NotificationsApi;
 using Api.Users.Infrastructure.Observability;
+using Api.Users.UseCases;
 using BuildingBlocks.Observability;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 
 ContinuousProfiling.Setup();
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssemblyContaining<Program>());
+builder.Services
+    .AddTransient<GetUsersQuery>()
+    .AddTransient<GetUserQuery>()
+    .AddTransient<GetUserNotificationsTotalsQuery>()
+    .AddTransient<CreateUserCommand>()
+    .AddTransient<UpdateUserCommand>()
+    .AddTransient<DeleteUserCommand>();
 
 builder.Services
     .AddDatabase()

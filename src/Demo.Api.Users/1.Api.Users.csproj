@@ -7,16 +7,14 @@
     <AssemblyName>Api.Users</AssemblyName>
 
     <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
 
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
-
-    <PackageReference Include="MediatR" Version="12.4.1" />
 
     <!-- Databases -->
     <PackageReference Include="MongoDB.Driver" Version="2.28.0" />
@@ -32,8 +30,6 @@
     </PackageReference>
 
     <!-- Trace -->
-    <PackageReference Include="OpenTelemetry" Version="1.9.0" />
-    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.9.0" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
@@ -42,21 +38,20 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.9.0-beta.1" />
     <PackageReference Include="MongoDB.Driver.Core.Extensions.DiagnosticSources" Version="1.5.0" />
 
-    <!-- Continuous Profiling -->
-    <PackageReference Include="Pyroscope" Version="0.8.20" />
-
     <!-- HealthChecks -->
-    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
     <PackageReference Include="AspNetCore.HealthChecks.MongoDb" Version="8.1.0" />
     <PackageReference Include="AspNetCore.HealthChecks.Redis" Version="8.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Demo.BuildingBlocks\0.BuildingBlocks.csproj" />
-  </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\Demo.BuildingBlocks\DTOs\notifications.proto" GrpcServices="Client" />
+    <ProjectReference Include="..\Demo.Shared\Demo.Contracts\1.Contracts.csproj" />
+    <ProjectReference Include="..\Demo.Shared\Demo.BuildingBlocks.Observability\2.Observability.csproj" />
+    <None Include="..\..\http-files\01.Api.Users.http" Link="Request.http" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Protobuf Include="..\Demo.Shared\Demo.Contracts.Notifications\notifications.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>

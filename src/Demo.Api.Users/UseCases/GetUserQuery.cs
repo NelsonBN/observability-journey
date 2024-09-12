@@ -1,27 +1,26 @@
-﻿using Api.Users.Domain;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Api.Users.Domain;
 using Api.Users.DTOs;
-using BuildingBlocks.Exceptions;
-using MediatR;
+using BuildingBlocks.Contracts.Exceptions;
 
 namespace Api.Users.UseCases;
 
-public sealed record GetUserQuery(Guid Id) : IRequest<UserResponse>
+public sealed record GetUserQuery(IUsersRepository Repository)
 {
-    internal sealed class Handler(IUsersRepository repository) : IRequestHandler<GetUserQuery, UserResponse>
+    private readonly IUsersRepository _repository = Repository;
+
+    public async Task<UserResponse> HandleAsync(Guid id, CancellationToken cancellationToken)
     {
-        private readonly IUsersRepository _repository = repository;
+        ExceptionFactory.ProbablyThrow<GetUserQuery>(35);
 
-        public async Task<UserResponse> Handle(GetUserQuery query, CancellationToken cancellationToken)
+        var user = await _repository.GetAsync(id, cancellationToken);
+        if(user is null)
         {
-            ExceptionFactory.ProbablyThrow<Handler>(35);
-
-            var user = await _repository.GetAsync(query.Id, cancellationToken);
-            if(user is null)
-            {
-                throw new UserNotFoundException(query.Id);
-            }
-
-            return user;
+            throw new UserNotFoundException(id);
         }
+
+        return user;
     }
 }

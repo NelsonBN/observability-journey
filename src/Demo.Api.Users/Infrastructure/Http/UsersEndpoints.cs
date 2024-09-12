@@ -1,7 +1,12 @@
-﻿using Api.Users.DTOs;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
+using Api.Users.DTOs;
 using Api.Users.UseCases;
 using BuildingBlocks.Observability;
-using MediatR;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 
 namespace Api.Users.Infrastructure.Http;
 
@@ -14,53 +19,45 @@ public static class UsersEndpoints
             .WithOpenApi();
 
 
-        group.MapGet("", async (IMediator mediator, ILoggerFactory loggerFactory) =>
+        group.MapGet("", async (GetUsersQuery query, CancellationToken cancellationToken) =>
         {
-            Telemetry.AddHttpRequest();
+            Telemetry.IncreaseHttpRequest();
 
-            using var activity = Telemetry.Source.StartHttpActivity("Get: /users");
-
-            var response = await mediator.Send(GetUsersQuery.Instance);
+            var response = await query.HandleAsync(cancellationToken);
 
             return Results.Ok(response);
         });
 
 
-        group.MapGet("{id:guid}", async (IMediator mediator, ILoggerFactory loggerFactory, Guid id) =>
+        group.MapGet("{id:guid}", async (GetUserQuery query, Guid id, CancellationToken cancellationToken) =>
         {
-            Telemetry.AddHttpRequest();
+            Telemetry.IncreaseHttpRequest();
 
-            using var activity = Telemetry.Source
-                .StartHttpActivity("Get: /users/{id}")?
-                .SetTag("UserId", id.ToString());
+            Activity.Current?.SetTag("UserId", id.ToString());
 
-            var response = await mediator.Send(new GetUserQuery(id));
+            var response = await query.HandleAsync(id, cancellationToken);
             return Results.Ok(response);
         }).WithName("GetUser");
 
 
-        group.MapGet("{id:guid}/total-notifications", async (IMediator mediator, ILoggerFactory loggerFactory, Guid id) =>
+        group.MapGet("{id:guid}/total-notifications", async (GetUserNotificationsTotalsQuery query, Guid id, CancellationToken cancellationToken) =>
         {
-            Telemetry.AddHttpRequest();
+            Telemetry.IncreaseHttpRequest();
 
-            using var activity = Telemetry.Source
-                .StartHttpActivity("Get: /users/{id}/total-notifications")?
-                .SetTag("UserId", id.ToString());
+            Activity.Current?.SetTag("UserId", id.ToString());
 
-            var response = await mediator.Send(new GetUserNotificationsTotals(id));
+            var response = await query.HandleAsync(id, cancellationToken);
             return Results.Ok(response);
         });
 
 
-        group.MapPost("", async (IMediator mediator, ILoggerFactory loggerFactory, UserRequest request) =>
+        group.MapPost("", async (CreateUserCommand command, UserRequest request, CancellationToken cancellationToken) =>
         {
-            Telemetry.AddHttpRequest();
+            Telemetry.IncreaseHttpRequest();
 
-            using var activity = Telemetry.Source.StartHttpActivity("Post: /users");
+            var id = await command.HandleAsync(request, cancellationToken);
 
-            var id = await mediator.Send(new CreateUserCommand(request));
-
-            activity?.SetTag("UserId", id.ToString());
+            Activity.Current?.SetTag("UserId", id.ToString());
 
             return Results.CreatedAtRoute(
                 "GetUser",
@@ -69,29 +66,25 @@ public static class UsersEndpoints
         });
 
 
-        group.MapPut("{id:guid}", async (IMediator mediator, ILoggerFactory loggerFactory, Guid id, UserRequest request) =>
+        group.MapPut("{id:guid}", async (UpdateUserCommand command, Guid id, UserRequest request, CancellationToken cancellationToken) =>
         {
-            Telemetry.AddHttpRequest();
+            Telemetry.IncreaseHttpRequest();
 
-            using var activity = Telemetry.Source
-                .StartHttpActivity("Put: /users")?
-                .SetTag("UserId", id.ToString());
+            Activity.Current?.SetTag("UserId", id.ToString());
 
-            await mediator.Send(new UpdateUserCommand(id, request));
+            await command.HandleAsync(id, request, cancellationToken);
 
             return Results.NoContent();
         });
 
 
-        group.MapDelete("{id:guid}", async (IMediator mediator, ILoggerFactory loggerFactory, Guid id) =>
+        group.MapDelete("{id:guid}", async (DeleteUserCommand command, Guid id, CancellationToken cancellationToken) =>
         {
-            Telemetry.AddHttpRequest();
+            Telemetry.IncreaseHttpRequest();
 
-            using var activity = Telemetry.Source
-                .StartHttpActivity("Delete: /users")?
-                .SetTag("UserId", id.ToString());
+            Activity.Current?.SetTag("UserId", id.ToString());
 
-            await mediator.Send(new DeleteUserCommand(id));
+            await command.HandleAsync(id, cancellationToken);
 
             return Results.NoContent();
         });

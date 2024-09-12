@@ -47,6 +47,12 @@ services:
       service: rabbitmq
 
 
+  storage:
+    extends:
+      file: docker-compose.dependencies.yml
+      service: storage
+
+
 ############################## EXTERNAL ###############################
 
 
@@ -119,6 +125,8 @@ services:
     restart: always
     environment:
       SYSTEM_ENVIRONMENT: PROD
+      CONNECTIONSTRINGS__STORAGE: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://storage:10000/devstoreaccount1;
+      STORAGE__CONTAINERNAME: email-blobs
       MESSAGEBUS__HOSTNAME: rabbitmq
       MESSAGEBUS__SSL__SERVERNAME: rabbitmq
       ### Observability
@@ -130,6 +138,8 @@ services:
       - demo
     depends_on:
       rabbitmq:
+        condition: service_healthy
+      storage:
         condition: service_healthy
       prometheus:
         condition: service_healthy
@@ -219,6 +229,8 @@ services:
     environment:
       SYSTEM_ENVIRONMENT: PROD
       CONNECTIONSTRINGS__POSTGRES: Server=postgres;Port=5432;Database=demodb;User Id=demouser;Password=a123456789;
+      CONNECTIONSTRINGS__STORAGE: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://storage:10000/devstoreaccount1;
+      STORAGE__CONTAINERNAME: email-blobs
       MESSAGEBUS__HOSTNAME: rabbitmq
       MESSAGEBUS__SSL__SERVERNAME: rabbitmq
       USERSAPI: http://api-users:8080
@@ -234,6 +246,8 @@ services:
       postgres:
         condition: service_healthy
       rabbitmq:
+        condition: service_healthy
+      storage:
         condition: service_healthy
       prometheus:
         condition: service_healthy

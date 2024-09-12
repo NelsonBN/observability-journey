@@ -1,27 +1,26 @@
-﻿using Api.Notifications.Domain;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Api.Notifications.Domain;
 using Api.Notifications.DTOs;
-using BuildingBlocks.Exceptions;
-using MediatR;
+using BuildingBlocks.Contracts.Exceptions;
 
 namespace Api.Notifications.UseCases;
 
-public sealed record GetNotificationQuery(Guid Id) : IRequest<NotificationResponse>
+public sealed record GetNotificationQuery(INotificationsRepository Repository)
 {
-    internal sealed class Handler(INotificationsRepository repository) : IRequestHandler<GetNotificationQuery, NotificationResponse>
+    private readonly INotificationsRepository _repository = Repository;
+
+    public async Task<NotificationResponse> HandleAsync(Guid id, CancellationToken cancellationToken)
     {
-        private readonly INotificationsRepository _repository = repository;
+        ExceptionFactory.ProbablyThrow<GetNotificationQuery>(35);
 
-        public async Task<NotificationResponse> Handle(GetNotificationQuery query, CancellationToken cancellationToken)
+        var notification = await _repository.GetAsync(id, cancellationToken);
+        if(notification is null)
         {
-            ExceptionFactory.ProbablyThrow<Handler>(35);
-
-            var notification = await _repository.GetAsync(query.Id, cancellationToken);
-            if(notification is null)
-            {
-                throw new NotificationNotFoundException(query.Id);
-            }
-
-            return notification;
+            throw new NotificationNotFoundException(id);
         }
+
+        return notification;
     }
 }

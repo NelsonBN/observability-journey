@@ -1,8 +1,14 @@
-﻿using System.Diagnostics;
-using BuildingBlocks.Exceptions;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+using Api.Notifications.Domain;
+using BuildingBlocks.Contracts.Exceptions;
 using BuildingBlocks.Observability;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Api.Notifications.Infrastructure.Http;
 
@@ -22,7 +28,7 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
         };
 
 
-        if(exception is UserNotFoundException)
+        if(exception is UserNotFoundException || exception is NotificationNotFoundException)
         {
             problemDetails.Status = StatusCodes.Status404NotFound;
             problemDetails.Title = exception.Message;

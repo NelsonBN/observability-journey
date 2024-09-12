@@ -1,7 +1,9 @@
-﻿using BuildingBlocks.Observability;
+﻿using Api.Users.Infrastructure.Database;
+using BuildingBlocks.Observability;
 using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -41,25 +43,11 @@ public static class Setup
                     configureOptions.ParseStateValues = true;
                 });
 
-        services._addHealth();
-
-        return services;
-    }
-
-    private static IServiceCollection _addHealth(this IServiceCollection services)
-    {
         services
             .AddSingleton<StartupBackgroundService.HealthCheck>()
             .AddHostedService<StartupBackgroundService>()
             .AddHealthChecks()
-            .AddMongoDb(
-                mongodbConnectionStringFactory: sp => sp.GetRequiredService<IConfiguration>().GetConnectionString("MongoDB")!,
-                name: "MongoDB",
-                failureStatus: HealthStatus.Unhealthy)
-            .AddRedis(
-                name: "Redis",
-                connectionStringFactory: (sp) => sp.GetRequiredService<IConfiguration>().GetConnectionString("Redis")!,
-                failureStatus: HealthStatus.Unhealthy)
+            .AddDatabase()
             .AddCheck<StartupBackgroundService.HealthCheck>(
                 "Startup",
                 tags: ["Startup"]);

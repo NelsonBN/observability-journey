@@ -1,4 +1,7 @@
-﻿namespace Api.Notifications.Infrastructure.Grpc;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Api.Notifications.Infrastructure.Grpc;
 
 public static class Setup
 {

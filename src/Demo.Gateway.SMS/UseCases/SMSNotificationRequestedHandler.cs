@@ -1,20 +1,21 @@
-﻿using BuildingBlocks.Events;
-using BuildingBlocks.MessageBus;
-using MediatR;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using BuildingBlocks.Contracts.Abstractions;
+using BuildingBlocks.Contracts.Events;
+using Microsoft.Extensions.Logging;
 
 namespace Gateway.SMS.UseCases;
 
-public sealed class SMSNotificationRequestedHandler(
-    ILogger<SMSNotificationRequestedHandler> logger,
-    IMessageBus messageBus)
-: INotificationHandler<SMSNotificationRequestedEvent>
+public class SMSNotificationHandler(ILogger<SMSNotificationHandler> logger, IPublisher publisher)
+    : IMessageHandler<SMSNotificationRequestedEvent>
 {
-    private readonly ILogger<SMSNotificationRequestedHandler> _logger = logger;
-    private readonly IMessageBus _messageBus = messageBus;
+    private readonly ILogger<SMSNotificationHandler> _logger = logger;
+    private readonly IPublisher _publisher = publisher;
 
-    public async Task Handle(SMSNotificationRequestedEvent domainEvent, CancellationToken cancellationToken)
+    public async Task HandleAsync(SMSNotificationRequestedEvent message, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation($"[MESSAGE BUS][WORKER][CONSUMER][HANDLER] {domainEvent.GetType().Name} received");
+        _logger.LogInformation("[NOTIFICATION][SMS][HANDLER] received");
 
         var delay = Random.Shared.Next(50, 1000);
 
@@ -23,23 +24,26 @@ public sealed class SMSNotificationRequestedHandler(
             {
                 if(delay % 6 == 0)
                 {
-                    _messageBus.Publish(new SMSNotificationFailedEvent
+                    _publisher.Publish(new SMSFeedbackEvent
                     {
-                        Id = domainEvent.Id,
+                        Id = message.Id,
+                        Success = false
                     });
 
-                    _logger.LogError($"[MESSAGE BUS][WORKER][CONSUMER][HANDLER] {domainEvent.GetType().Name} failed");
+                    _logger.LogError("[NOTIFICATION][SMS][HANDLER] failed");
                 }
 
                 else
                 {
-                    _messageBus.Publish(new SMSNotificationSentEvent
+                    _publisher.Publish(new SMSFeedbackEvent
                     {
-                        Id = domainEvent.Id,
+                        Id = message.Id,
+                        Success = true
                     });
 
-                    _logger.LogInformation($"[MESSAGE BUS][WORKER][CONSUMER][HANDLER] {domainEvent.GetType().Name} handled");
+                    _logger.LogInformation("[NOTIFICATION][SMS][HANDLER] handled");
                 }
+
             }, cancellationToken);
     }
 }

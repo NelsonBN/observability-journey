@@ -1,0 +1,14 @@
+@host = http://localhost:8099
+
+
+######### HEALTHZ #########
+
+
+GET {{host}}/healthz/startup
+
+###
+
+GET {{host}}/healthz/live
+###
+
+GET {{host}}/healthz/ready

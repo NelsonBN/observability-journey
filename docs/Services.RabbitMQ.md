@@ -4,7 +4,8 @@
 
 ## Documentation
 
-- [Semantic Conventions for Messaging Systems](https://github.com/open-telemetry/semantic-conventions/tree/main/docs/messaging)
+- [Semantic Conventions for RabbitMQ](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/messaging/rabbitmq.md)
+- [Semantic Conventions for Messaging Spans](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/messaging/messaging-spans.md)
 - [.NET Implementation](https://github.com/open-telemetry/opentelemetry-dotnet/tree/main/examples/MicroserviceExample)
 
 

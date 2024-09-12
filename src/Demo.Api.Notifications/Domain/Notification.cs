@@ -1,10 +1,13 @@
-﻿using BuildingBlocks.Events;
+﻿using System;
+using System.Collections.Generic;
+using BuildingBlocks.Contracts.Abstractions;
+using BuildingBlocks.Contracts.Events;
 
 namespace Api.Notifications.Domain;
 
 public sealed class Notification
 {
-    private readonly List<DomainEvent> _domainEvents = [];
+    private readonly List<IMessage> _domainEvents = [];
 
     public Guid Id { get; private set; }
     public Guid UserId { get; private set; }
@@ -48,7 +51,7 @@ public sealed class Notification
     }
 
 
-    public DomainEvent[] GetDomainEvents()
+    public IMessage[] GetDomainEvents()
     {
         var events = _domainEvents.ToArray();
 

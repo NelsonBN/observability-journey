@@ -1,4 +1,6 @@
-﻿namespace Api.Users.DTOs;
+﻿using System;
+
+namespace Api.Users.DTOs;
 
 public sealed record UserNotificationsTotalsResponse(
     Guid Id,

@@ -1,28 +1,26 @@
-﻿using Api.Notifications.Domain;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Api.Notifications.Domain;
 using Api.Notifications.DTOs;
-using BuildingBlocks.Exceptions;
-using MediatR;
+using BuildingBlocks.Contracts.Exceptions;
 
 namespace Api.Notifications.UseCases;
 
-public sealed record GetNotificationsQuery : IRequest<IEnumerable<NotificationResponse>>
+public sealed record GetNotificationsQuery(INotificationsRepository Repository)
 {
-    public static GetNotificationsQuery Instance => new();
+    private readonly INotificationsRepository _repository = Repository;
 
-    internal sealed class Handler(INotificationsRepository repository) : IRequestHandler<GetNotificationsQuery, IEnumerable<NotificationResponse>>
+    public async Task<IEnumerable<NotificationResponse>> HandleAsync(CancellationToken cancellationToken)
     {
-        private readonly INotificationsRepository _repository = repository;
+        ExceptionFactory.ProbablyThrow<GetNotificationsQuery>(35);
 
-        public async Task<IEnumerable<NotificationResponse>> Handle(GetNotificationsQuery query, CancellationToken cancellationToken)
-        {
-            ExceptionFactory.ProbablyThrow<Handler>(35);
+        var notifications = await _repository.ListAsync(cancellationToken);
 
-            var notifications = await _repository.ListAsync(cancellationToken);
+        var result = notifications
+            .Select(n => (NotificationResponse)n);
 
-            var result = notifications
-                .Select(n => (NotificationResponse)n);
-
-            return result;
-        }
+        return result;
     }
 }

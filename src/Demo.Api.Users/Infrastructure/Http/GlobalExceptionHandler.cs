@@ -1,8 +1,13 @@
-﻿using System.Diagnostics;
-using BuildingBlocks.Exceptions;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+using BuildingBlocks.Contracts.Exceptions;
 using BuildingBlocks.Observability;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Api.Users.Infrastructure.Http;
 

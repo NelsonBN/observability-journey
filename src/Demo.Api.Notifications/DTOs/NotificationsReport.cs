@@ -1,4 +1,6 @@
-﻿namespace Api.Notifications.DTOs;
+﻿using System;
+
+namespace Api.Notifications.DTOs;
 
 public sealed record class NotificationsReport
 {

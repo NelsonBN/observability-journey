@@ -1,4 +1,7 @@
-﻿using BuildingBlocks;
+﻿using System.Reflection;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
 namespace Api.Users.Infrastructure.Cache;
@@ -12,7 +15,7 @@ public static class Setup
             .AddSingleton(connectionMultiplexer)
             .AddStackExchangeRedisCache(options =>
             {
-                options.InstanceName = AppDetails.Name;
+                options.InstanceName = Assembly.GetEntryAssembly()!.GetName().Name;
                 options.ConnectionMultiplexerFactory = () => Task.FromResult<IConnectionMultiplexer>(connectionMultiplexer);
             });
 

@@ -1,23 +1,23 @@
-﻿using BuildingBlocks.MessageBus;
-using RabbitMQ.Client;
+﻿using Api.Notifications.UseCases;
+using BuildingBlocks.Contracts.Events;
+using BuildingBlocks.MessageBus;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Api.Notifications.Infrastructure.MessageBus;
 
 public static class Setup
 {
     public static IServiceCollection AddMessageBus(this IServiceCollection services)
-    {
-        services
-            .ConfigureOptions<MessageBusOptions.Setup>()
-            .AddSingleton<IConnectionFactory>(sp =>
-                sp.GetRequiredService<IConfiguration>().GetSection(MessageBusOptions.Setup.SECTION_NAME).Get<ConnectionFactory>()!)
-            .AddTransient(sp =>
-                sp.GetRequiredService<IConnectionFactory>().CreateConnection())
-            .AddTransient(sp =>
-                sp.GetRequiredService<IConnection>().CreateModel())
-            .AddTransient<IMessageBus, MessageBusServer>()
-            .AddHostedService<ConsumerWorker>();
-
-        return services;
-    }
+        => services
+            .AddConsumer<EmailFeedbackEvent, EmailFeedbackHandler>(sp => new()
+            {
+                ExchangeName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:ExchangeName"]!,
+                QueueName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:EmailFeedbackQueueName"]!
+            })
+            .AddConsumer<SMSFeedbackEvent, SMSFeedbackHandler>(sp => new()
+            {
+                ExchangeName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:ExchangeName"]!,
+                QueueName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:SMSFeedbackQueueName"]!
+            });
 }

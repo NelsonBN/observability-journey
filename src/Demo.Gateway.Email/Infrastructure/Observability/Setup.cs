@@ -1,8 +1,10 @@
-﻿using BuildingBlocks.Observability;
+﻿using BuildingBlocks.MessageBus;
+using BuildingBlocks.Observability;
+using Gateway.Email.Infrastructure.Storage;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -21,12 +23,15 @@ public static class Setup
             .WithTracing(options
                 => options
                     .AddSource(Telemetry.Source.Name)
+                    .AddMessageBus()
+                    .AddStorage()
                     .AddAspNetCoreInstrumentation(o => o.RecordException = true))
             .WithMetrics(options =>
                 options
                     .AddMeter(Telemetry.Meter.Name)
                     .AddAspNetCoreInstrumentation()
                     .AddRuntimeInstrumentation()
+                    .AddMessageBus()
                     .AddView(
                         "http.server.request.duration",
                         new ExplicitBucketHistogramConfiguration { Boundaries = [0, 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10] }))
@@ -39,18 +44,12 @@ public static class Setup
                     configureOptions.ParseStateValues = true;
                 });
 
-        services._addHealth();
-
-        return services;
-    }
-
-    private static IServiceCollection _addHealth(this IServiceCollection services)
-    {
         services
             .AddSingleton<StartupBackgroundService.HealthCheck>()
             .AddHostedService<StartupBackgroundService>()
             .AddHealthChecks()
-            .AddRabbitMQ("RabbitMQ", HealthStatus.Unhealthy)
+            .AddMessageBus()
+            .AddStorage()
             .AddCheck<StartupBackgroundService.HealthCheck>(
                 "Startup",
                 tags: ["Startup"]);

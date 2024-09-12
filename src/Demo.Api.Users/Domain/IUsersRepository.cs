@@ -1,4 +1,9 @@
-﻿namespace Api.Users.Domain;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Api.Users.Domain;
 
 public interface IUsersRepository
 {

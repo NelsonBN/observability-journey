@@ -1,4 +1,6 @@
-﻿namespace Api.Notifications.Domain;
+﻿using System;
+
+namespace Api.Notifications.Domain;
 
 public sealed record NotificationsTotals
 {
