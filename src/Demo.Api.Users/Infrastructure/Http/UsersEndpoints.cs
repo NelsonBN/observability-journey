@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using Api.Users.DTOs;
 using Api.Users.UseCases;
@@ -22,8 +23,6 @@ public static class UsersEndpoints
         {
             Telemetry.IncreaseHttpRequest();
 
-            using var activity = Telemetry.Source.StartHttpActivity("Get: /users");
-
             var response = await query.HandleAsync(cancellationToken);
 
             return Results.Ok(response);
@@ -34,9 +33,7 @@ public static class UsersEndpoints
         {
             Telemetry.IncreaseHttpRequest();
 
-            using var activity = Telemetry.Source
-                .StartHttpActivity("Get: /users/{id}")?
-                .SetTag("UserId", id.ToString());
+            Activity.Current?.SetTag("UserId", id.ToString());
 
             var response = await query.HandleAsync(id, cancellationToken);
             return Results.Ok(response);
@@ -47,9 +44,7 @@ public static class UsersEndpoints
         {
             Telemetry.IncreaseHttpRequest();
 
-            using var activity = Telemetry.Source
-                .StartHttpActivity("Get: /users/{id}/total-notifications")?
-                .SetTag("UserId", id.ToString());
+            Activity.Current?.SetTag("UserId", id.ToString());
 
             var response = await query.HandleAsync(id, cancellationToken);
             return Results.Ok(response);
@@ -60,11 +55,9 @@ public static class UsersEndpoints
         {
             Telemetry.IncreaseHttpRequest();
 
-            using var activity = Telemetry.Source.StartHttpActivity("Post: /users");
-
             var id = await command.HandleAsync(request, cancellationToken);
 
-            activity?.SetTag("UserId", id.ToString());
+            Activity.Current?.SetTag("UserId", id.ToString());
 
             return Results.CreatedAtRoute(
                 "GetUser",
@@ -77,9 +70,7 @@ public static class UsersEndpoints
         {
             Telemetry.IncreaseHttpRequest();
 
-            using var activity = Telemetry.Source
-                .StartHttpActivity("Put: /users")?
-                .SetTag("UserId", id.ToString());
+            Activity.Current?.SetTag("UserId", id.ToString());
 
             await command.HandleAsync(id, request, cancellationToken);
 
@@ -91,9 +82,7 @@ public static class UsersEndpoints
         {
             Telemetry.IncreaseHttpRequest();
 
-            using var activity = Telemetry.Source
-                .StartHttpActivity("Delete: /users")?
-                .SetTag("UserId", id.ToString());
+            Activity.Current?.SetTag("UserId", id.ToString());
 
             await command.HandleAsync(id, cancellationToken);
 

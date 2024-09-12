@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using Api.Notifications.DTOs;
 using Api.Notifications.UseCases;
@@ -22,8 +23,6 @@ public static class NotificationsEndpoints
         {
             Telemetry.IncreaseHttpRequest();
 
-            using var activity = Telemetry.Source.StartHttpActivity("Get: /notifications");
-
             var response = await query.HandleAsync(cancellationToken);
 
             return Results.Ok(response);
@@ -34,9 +33,7 @@ public static class NotificationsEndpoints
         {
             Telemetry.IncreaseHttpRequest();
 
-            using var activity = Telemetry.Source
-                .StartHttpActivity("Get: /notifications/{id}")?
-                .SetTag("NotificationId", id.ToString());
+            Activity.Current?.SetTag("NotificationId", id.ToString());
 
             var response = await query.HandleAsync(id, cancellationToken);
             return Results.Ok(response);
@@ -48,13 +45,11 @@ public static class NotificationsEndpoints
         {
             Telemetry.IncreaseHttpRequest();
 
-            using var activity = Telemetry.Source
-                .StartHttpActivity("Post: /notifications")?
-                .SetTag("UserId", request.UserId.ToString());
+            Activity.Current?.SetTag("UserId", request.UserId.ToString());
 
             var id = await command.HandleAsync(request, cancellationToken);
 
-            activity?.SetTag("NotificationId", id.ToString());
+            Activity.Current?.SetTag("NotificationId", id.ToString());
 
             return Results.AcceptedAtRoute(
                 "GetNotification",
