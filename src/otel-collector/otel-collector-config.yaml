@@ -3,7 +3,7 @@ receivers:
   otlp:
     protocols:
       grpc:
-        endpoint: otel-collector:4317
+        endpoint: :4317
       # http:
       #   endpoint: 0.0.0.0:4318
 

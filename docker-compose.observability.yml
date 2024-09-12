@@ -157,7 +157,7 @@ services:
       GF_AUTH_ANONYMOUS_ORG_ROLE: Admin # Set the role for anonymous users to Admin
       GF_AUTH_BASIC_ENABLED: false # Disable basic auth
       GF_FEATURE_TOGGLES_ENABLE: flameGraph,traceqlEditor # Enable flameGraph for Pyroscope / traceqlEditor for Tempo
-      GF_INSTALL_PLUGINS: grafana-pyroscope-app
+      GF_INSTALL_PLUGINS: https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/grafana-lokiexplore-app-latest.zip;grafana-lokiexplore-app,grafana-pyroscope-app # Install Loki Explore plugin and Pyroscope plugin
     ports:
       - 3000:3000
     volumes:

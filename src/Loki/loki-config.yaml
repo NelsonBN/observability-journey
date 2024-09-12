@@ -23,6 +23,9 @@ query_range:
         enabled: true
         max_size_mb: 100
 
+limits_config:
+  volume_enabled: true
+
 schema_config:
   configs:
     - from: 2023-07-01
