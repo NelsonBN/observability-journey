@@ -23,7 +23,7 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
 
     <!-- Storage -->
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.21.2" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.22.0" />
 
     <!-- Grpc -->
     <PackageReference Include="Grpc.AspNetCore" Version="2.65.0" />
