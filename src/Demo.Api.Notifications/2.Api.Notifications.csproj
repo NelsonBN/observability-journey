@@ -16,14 +16,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1" />
 
     <!-- Database -->
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.8" />
 
     <!-- Storage -->
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.22.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.22.1" />
 
     <!-- Grpc -->
     <PackageReference Include="Grpc.AspNetCore" Version="2.65.0" />
