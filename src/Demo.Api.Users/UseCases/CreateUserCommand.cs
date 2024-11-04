@@ -13,7 +13,7 @@ public sealed record CreateUserCommand(IUsersRepository Repository)
 
     public async Task<Guid> HandleAsync(UserRequest request, CancellationToken cancellationToken)
     {
-        ExceptionFactory.ProbablyThrow<CreateUserCommand>(35);
+        ExceptionFactory.ProbablyThrow<CreateUserCommand>();
 
         var user = User.Create(
             request.Name,

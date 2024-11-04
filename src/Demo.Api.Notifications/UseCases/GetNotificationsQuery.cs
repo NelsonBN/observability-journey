@@ -14,7 +14,7 @@ public sealed record GetNotificationsQuery(INotificationsRepository Repository)
 
     public async Task<IEnumerable<NotificationResponse>> HandleAsync(CancellationToken cancellationToken)
     {
-        ExceptionFactory.ProbablyThrow<GetNotificationsQuery>(35);
+        ExceptionFactory.ProbablyThrow<GetNotificationsQuery>();
 
         var notifications = await _repository.ListAsync(cancellationToken);
 

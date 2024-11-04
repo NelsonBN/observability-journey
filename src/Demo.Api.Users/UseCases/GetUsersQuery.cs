@@ -14,7 +14,7 @@ public sealed record GetUsersQuery(IUsersRepository Repository)
 
     public async Task<IEnumerable<UserResponse>> HandleAsync(CancellationToken cancellationToken)
     {
-        ExceptionFactory.ProbablyThrow<GetUsersQuery>(35);
+        ExceptionFactory.ProbablyThrow<GetUsersQuery>();
 
         var users = await _repository.ListAsync(cancellationToken);
 

@@ -13,7 +13,7 @@ public sealed record GetUserQuery(IUsersRepository Repository)
 
     public async Task<UserResponse> HandleAsync(Guid id, CancellationToken cancellationToken)
     {
-        ExceptionFactory.ProbablyThrow<GetUserQuery>(35);
+        ExceptionFactory.ProbablyThrow<GetUserQuery>();
 
         var user = await _repository.GetAsync(id, cancellationToken);
         if(user is null)
