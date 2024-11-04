@@ -15,19 +15,19 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
 
     <!-- Database -->
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.8" />
 
     <!-- Storage -->
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.21.2" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.22.2" />
 
     <!-- Grpc -->
-    <PackageReference Include="Grpc.AspNetCore" Version="2.65.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.66.0">
+    <PackageReference Include="Grpc.AspNetCore" Version="2.66.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.67.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
@@ -42,12 +42,12 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.0.0-beta.12" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.9.0" />
-    <PackageReference Include="Npgsql.OpenTelemetry" Version="8.0.4" />
+    <PackageReference Include="Npgsql.OpenTelemetry" Version="8.0.5" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Quartz" Version="1.0.0-beta.3" />
     <PackageReference Include="OpenTelemetry.Instrumentation.GrpcCore" Version="1.0.0-beta.6" />
 
     <!-- HealthChecks -->
-    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.2" />
     <PackageReference Include="AspNetCore.HealthChecks.Azure.Storage.Blobs" Version="8.0.1" />
   </ItemGroup>
