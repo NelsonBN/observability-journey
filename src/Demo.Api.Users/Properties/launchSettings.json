@@ -9,7 +9,8 @@
       "applicationUrl": "http://localhost:8088",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "SYSTEM_ENVIRONMENT": "DEV"
+        "SYSTEM_ENVIRONMENT": "DEV",
+        "EXCEPTION_PROBABILITY": "20"
       }
     }
   }

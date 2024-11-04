@@ -16,7 +16,7 @@ public sealed record GetUserNotificationsTotalsQuery(
 
     public async Task<UserNotificationsTotalsResponse> HandleAsync(Guid id, CancellationToken cancellationToken)
     {
-        ExceptionFactory.ProbablyThrow<GetUserNotificationsTotalsQuery>(35);
+        ExceptionFactory.ProbablyThrow<GetUserNotificationsTotalsQuery>();
 
         var user = await _repository.GetAsync(id, cancellationToken);
         if(user is null)

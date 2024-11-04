@@ -13,7 +13,7 @@ public sealed record GetNotificationQuery(INotificationsRepository Repository)
 
     public async Task<NotificationResponse> HandleAsync(Guid id, CancellationToken cancellationToken)
     {
-        ExceptionFactory.ProbablyThrow<GetNotificationQuery>(35);
+        ExceptionFactory.ProbablyThrow<GetNotificationQuery>();
 
         var notification = await _repository.GetAsync(id, cancellationToken);
         if(notification is null)
