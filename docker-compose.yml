@@ -199,6 +199,8 @@ services:
       ### Observability
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
+      ### API Configuration
+      EXCEPTION_PROBABILITY: 0
     ports:
       - 8088:8080
     networks:
@@ -237,6 +239,8 @@ services:
       ### Observability
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
+      ### API Configuration
+      EXCEPTION_PROBABILITY: 0
     ports:
       - 8089:8080 # Web Api
       - 8090:8081 # gRPC Api
@@ -264,4 +268,32 @@ services:
       gateway-email:
         condition: service_healthy
       api-users:
+        condition: service_healthy
+
+
+############################## TESTS ###############################
+
+
+  k6:
+    image: grafana/k6:0.53.0
+    container_name: k6
+    environment:
+      K6_PROMETHEUS_RW_SERVER_URL: http://prometheus:9090/api/v1/write
+      K6_PROMETHEUS_RW_TREND_STATS: p(95),p(99),min,max
+      K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM: true
+      # APIS
+      USERS_API_HOST: http://api-users:8080
+      NOTIFICATIONS_API_HOST: http://api-notifications:8080
+    volumes:
+      - ./tests/tests.js:/scripts/script.js
+    working_dir: /scripts
+    command: run -o experimental-prometheus-rw /scripts/script.js
+    networks:
+      - demo
+    depends_on:
+      prometheus:
+        condition: service_healthy
+      api-users:
+        condition: service_healthy
+      api-notifications:
         condition: service_healthy

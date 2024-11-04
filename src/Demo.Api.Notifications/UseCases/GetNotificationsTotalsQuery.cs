@@ -13,7 +13,7 @@ public sealed record GetNotificationsTotalsQuery(IReportsRepository Repository)
 
     public async Task<NotificationsTotalsResponse> HandleAsync(Guid userId, CancellationToken cancellationToken)
     {
-        ExceptionFactory.ProbablyThrow<GetNotificationsTotalsQuery>(35);
+        ExceptionFactory.ProbablyThrow<GetNotificationsTotalsQuery>();
 
         var total = await _repository.GetTotalsAsync(userId, cancellationToken);
         if(total is null)
