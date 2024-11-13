@@ -12,7 +12,7 @@ public sealed record DeleteUserCommand(IUsersRepository Repository)
 
     public async Task HandleAsync(Guid id, CancellationToken cancellationToken)
     {
-        ExceptionFactory.ProbablyThrow<DeleteUserCommand>(35);
+        ExceptionFactory.ProbablyThrow<DeleteUserCommand>();
 
         if(!await _repository.AnyAsync(id, cancellationToken))
         {

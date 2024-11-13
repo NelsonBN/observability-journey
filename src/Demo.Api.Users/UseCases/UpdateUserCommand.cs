@@ -14,7 +14,7 @@ public sealed record UpdateUserCommand(IUsersRepository Repository)
 
     public async Task HandleAsync(Guid id, UserRequest request, CancellationToken cancellationToken)
     {
-        ExceptionFactory.ProbablyThrow<UpdateUserCommand>(35);
+        ExceptionFactory.ProbablyThrow<UpdateUserCommand>();
 
         var user = await _repository.GetAsync(id, cancellationToken);
         if(user is null)
