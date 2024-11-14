@@ -20,12 +20,12 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
     where THandler : IMessageHandler<TMessage>
 {
     private readonly ILogger<Consumer<TMessage, THandler>> _logger;
-    private readonly IModel _channel;
+    private readonly IChannel _channel;
     private readonly IServiceProvider _serviceProvider;
     private readonly string _exchangeName;
     private readonly string _queueName;
 
-    private readonly AsyncEventingBasicConsumer _consumer;
+    private AsyncEventingBasicConsumer _consumer;
 
 
     public Consumer(
@@ -39,42 +39,10 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
         _queueName = queueName;
 
         _logger = _serviceProvider.GetRequiredService<ILogger<Consumer<TMessage, THandler>>>();
-        _channel = _serviceProvider.GetRequiredService<IModel>();
-
-        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Setting...", _exchangeName, _queueName);
-
-        // Create Exchange
-        _channel.ExchangeDeclare(
-            exchange: exchangeName,
-            type: ExchangeType.Topic,
-            durable: true,
-            autoDelete: false,
-            arguments: null);
-
-        // Create Queue
-        _channel.QueueDeclare(
-            queue: _queueName,
-            durable: true,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null);
-
-        // Attach Queue to Exchange
-        _channel.QueueBind(
-            queue: _queueName,
-            exchange: exchangeName,
-            routingKey: typeof(TMessage).Name);
-
-        // Set QoS
-        _channel.BasicQos(
-            0,
-            1, // Total message receive same time
-            false); // [ false per consumer | true per channel ]
+        _channel = _serviceProvider.GetRequiredService<IChannel>();
 
         _consumer = new(_channel);
-        _consumer.Received += _listener;
-
-        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Set", _exchangeName, _queueName);
+        _consumer.ReceivedAsync += _listener;
     }
 
     private async Task _listener(object sender, BasicDeliverEventArgs args)
@@ -90,6 +58,11 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
                 args.BasicProperties,
             (props, key) =>
             {
+                if(props.Headers is null)
+                {
+                    return [];
+                }
+
                 if(props.Headers.TryGetValue(key, out var value))
                 {
                     var bytes = value as byte[];
@@ -123,7 +96,7 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
             await _dispatch(message);
 
 
-            _channel.BasicAck(
+            await _channel.BasicAckAsync(
                 args.DeliveryTag,
                 false);
         }
@@ -135,7 +108,7 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
 
             activity.RegisterException(exception);
 
-            _channel.BasicReject(
+            await _channel.BasicRejectAsync(
                 args.DeliveryTag,
                 false);
         }
@@ -147,7 +120,7 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
 
             activity.RegisterException(exception);
 
-            _channel.BasicNack(
+            await _channel.BasicNackAsync(
                 args.DeliveryTag,
                 false,
                 false);
@@ -169,18 +142,54 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
     }
 
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Starting...", _exchangeName, _queueName);
+        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Setting...", _exchangeName, _queueName);
 
-        _channel.BasicConsume(
+        // Create Exchange
+        await _channel.ExchangeDeclareAsync(
+            exchange: _exchangeName,
+            type: ExchangeType.Topic,
+            durable: true,
+            autoDelete: false,
+            arguments: null,
+            cancellationToken: cancellationToken);
+
+        // Create Queue
+        await _channel.QueueDeclareAsync(
+            queue: _queueName,
+            durable: true,
+            exclusive: false,
+            autoDelete: false,
+            arguments: null,
+            cancellationToken: cancellationToken);
+
+        // Attach Queue to Exchange
+        await _channel.QueueBindAsync(
+            queue: _queueName,
+            exchange: _exchangeName,
+            routingKey: typeof(TMessage).Name,
+            cancellationToken: cancellationToken);
+
+        // Set QoS
+        await _channel.BasicQosAsync(
+            0,
+            1, // Total message receive same time
+            false,
+            cancellationToken: cancellationToken); // [ false per consumer | true per channel ]
+
+        _consumer = new(_channel);
+        _consumer.ReceivedAsync += _listener;
+
+        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Set", _exchangeName, _queueName);
+
+        await _channel.BasicConsumeAsync(
             queue: _queueName,
             autoAck: false,
-            consumer: _consumer);
+            consumer: _consumer,
+            cancellationToken: cancellationToken);
 
         _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Started", _exchangeName, _queueName);
-
-        return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

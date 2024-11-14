@@ -14,11 +14,11 @@ namespace BuildingBlocks.MessageBus;
 internal sealed class Publisher(
     ILogger<Publisher> logger,
     IOptions<MessageBusOptions> options,
-    IModel channel) : IPublisher
+    IChannel channel) : IPublisher
 {
     private readonly ILogger<Publisher> _logger = logger;
     private readonly MessageBusOptions _options = options.Value;
-    private readonly IModel _channel = channel;
+    private readonly IChannel _channel = channel;
 
     public void Publish<TEvent>(params TEvent[] messages)
         where TEvent : IMessage
@@ -29,7 +29,7 @@ internal sealed class Publisher(
         }
     }
 
-    public void Publish<TEvent>(TEvent message)
+    public async void Publish<TEvent>(TEvent message)
         where TEvent : IMessage
     {
         ArgumentNullException.ThrowIfNull(message);
@@ -47,14 +47,14 @@ internal sealed class Publisher(
         }
 
         var messageType = message.GetType().Name;
-        var properties = _channel.CreateProperties(messageType);
+        var properties = MessageBusExtensions.CreateProperties(messageType);
 
         Propagators.DefaultTextMapPropagator.Inject(
             new(contextToInject, Baggage.Current),
             properties,
             (props, key, value) =>
             {
-                props.Headers ??= new Dictionary<string, object>();
+                props.Headers ??= new Dictionary<string, object?>();
                 props.Headers[key] = value;
             });
 
@@ -68,10 +68,11 @@ internal sealed class Publisher(
             .SetTag(MessageBusTelemetry.SemanticConventions.ROUTING_KEY, messageType)
             .AddMessage(message);
 
-        _channel.BasicPublish(
+        await _channel.BasicPublishAsync(
             exchange: _options.ExchangeName,
             routingKey: messageType,
             basicProperties: properties,
+            mandatory: true,
             body: message.Serialize());
 
         _logger.LogInformation("[MESSAGE BUS][PUBLISHER] {MessageType} published", messageType);

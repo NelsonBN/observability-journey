@@ -2,7 +2,6 @@
 using BuildingBlocks.Contracts.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 
@@ -16,9 +15,9 @@ public static class Setup
             .AddSingleton<IConnectionFactory>(sp =>
                 sp.GetRequiredService<IConfiguration>().GetSection(MessageBusOptions.SECTION_NAME).Get<ConnectionFactory>()!)
             .AddSingleton(sp =>
-                sp.GetRequiredService<IConnectionFactory>().CreateConnection())
+                sp.GetRequiredService<IConnectionFactory>().CreateConnectionAsync().GetAwaiter().GetResult()) // TODO: try to improve to async await
             .AddTransient(sp =>
-                sp.GetRequiredService<IConnection>().CreateModel())
+                sp.GetRequiredService<IConnection>().CreateChannelAsync().GetAwaiter().GetResult()) // TODO: try to improve to async await
             .AddTransient<IPublisher, Publisher>()
             .AddOptions<MessageBusOptions>().BindConfiguration(MessageBusOptions.SECTION_NAME);
 
@@ -44,7 +43,9 @@ public static class Setup
             .AddTransient<THandler>();
 
     public static IHealthChecksBuilder AddMessageBus(this IHealthChecksBuilder builder)
-        => builder.AddRabbitMQ(
-            "RabbitMQ",
-            HealthStatus.Unhealthy);
+        // TODO: Temporary disabled. Waiting for the implementation of the health check to compatible with new version of RabbitMQ Client
+        => builder;
+    //=> builder.AddRabbitMQ(
+    //    "RabbitMQ",
+    //    HealthStatus.Unhealthy);
 }
