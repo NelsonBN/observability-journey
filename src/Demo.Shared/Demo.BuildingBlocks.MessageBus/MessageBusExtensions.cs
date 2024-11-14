@@ -11,8 +11,8 @@ namespace BuildingBlocks.MessageBus;
 
 public static class MessageBusExtensions
 {
-    public static IBasicProperties CreateProperties(this IModel channel, string messageType)
-        => channel.CreateBasicProperties()
+    public static BasicProperties CreateProperties(string messageType)
+        => new BasicProperties()
             .SetAppId()
             .SetCorrelationId()
             .SetMessageId()
@@ -20,7 +20,7 @@ public static class MessageBusExtensions
             .SetEncodingUTF8()
             .SetMessageType(messageType);
 
-    public static IBasicProperties SetAppId(this IBasicProperties properties, string? appId = null)
+    public static BasicProperties SetAppId(this BasicProperties properties, string? appId = null)
     {
         if(string.IsNullOrWhiteSpace(appId))
         {
@@ -32,13 +32,13 @@ public static class MessageBusExtensions
         return properties;
     }
 
-    public static IBasicProperties SetMessageId(this IBasicProperties properties, string? messageId = null)
+    public static BasicProperties SetMessageId(this BasicProperties properties, string? messageId = null)
     {
         properties.MessageId = messageId ?? Guid.NewGuid().ToString();
         return properties;
     }
 
-    public static IBasicProperties SetCorrelationId(this IBasicProperties properties, string? correlationId = null)
+    public static BasicProperties SetCorrelationId(this BasicProperties properties, string? correlationId = null)
     {
         if(string.IsNullOrWhiteSpace(correlationId))
         {
@@ -55,22 +55,22 @@ public static class MessageBusExtensions
         return properties;
     }
 
-    public static IBasicProperties SetContentTypeJson(this IBasicProperties properties)
+    public static BasicProperties SetContentTypeJson(this BasicProperties properties)
     {
         properties.ContentType = MediaTypeNames.Application.Json;
         return properties;
     }
 
-    public static IBasicProperties SetMessageType(this IBasicProperties properties, string messageType)
+    public static BasicProperties SetMessageType(this BasicProperties properties, string messageType)
     {
         properties.Type = messageType;
         return properties;
     }
 
-    public static string GetMessageType(this BasicDeliverEventArgs args)
-        => args.BasicProperties.Type;
+    public static string? GetMessageType(this BasicDeliverEventArgs args)
+        => args.BasicProperties?.Type;
 
-    public static IBasicProperties SetEncodingUTF8(this IBasicProperties properties)
+    public static BasicProperties SetEncodingUTF8(this BasicProperties properties)
     {
         properties.ContentEncoding = Encoding.UTF8.BodyName;
         return properties;
@@ -84,7 +84,14 @@ public static class MessageBusExtensions
     }
 
     public static Encoding GetEncoding(this BasicDeliverEventArgs args)
-        => Encoding.GetEncoding(args.BasicProperties.ContentEncoding);
+    {
+        if(string.IsNullOrWhiteSpace(args.BasicProperties?.ContentEncoding))
+        {
+            return Encoding.UTF8;
+        }
+
+        return Encoding.GetEncoding(args.BasicProperties.ContentEncoding);
+    }
 
     public static TEvent? Deserialize<TEvent>(this BasicDeliverEventArgs args)
     {
