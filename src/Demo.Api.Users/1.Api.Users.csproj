@@ -14,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.0.0" />
 
     <!-- Databases -->
     <PackageReference Include="MongoDB.Driver" Version="3.0.0" />
