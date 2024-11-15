@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
 
     <RootNamespace>Gateway.Email</RootNamespace>
     <AssemblyName>Gateway.Email</AssemblyName>
@@ -17,7 +17,7 @@
     <PackageReference Include="System.Text.Json" Version="9.0.0" /> <!-- To fix vulnerability -->
 
     <!-- Storage -->
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.22.2" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
 
     <!-- Trace -->
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.10.0" />
