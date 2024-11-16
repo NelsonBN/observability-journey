@@ -103,8 +103,8 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
         catch(NotSupportedException exception)
         {
             _logger.LogError(
-               exception,
-               "[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Error deserializing message", _exchangeName, _queueName);
+                exception,
+                "[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Error deserializing message", _exchangeName, _queueName);
 
             activity.RegisterException(exception);
 

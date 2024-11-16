@@ -4,6 +4,7 @@ using System.Net.Mime;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using BuildingBlocks.Contracts.Abstractions;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -11,15 +12,6 @@ namespace BuildingBlocks.MessageBus;
 
 public static class MessageBusExtensions
 {
-    public static BasicProperties CreateProperties(string messageType)
-        => new BasicProperties()
-            .SetAppId()
-            .SetCorrelationId()
-            .SetMessageId()
-            .SetContentTypeJson()
-            .SetEncodingUTF8()
-            .SetMessageType(messageType);
-
     public static BasicProperties SetAppId(this BasicProperties properties, string? appId = null)
     {
         if(string.IsNullOrWhiteSpace(appId))
@@ -77,7 +69,8 @@ public static class MessageBusExtensions
     }
 
 
-    public static ReadOnlyMemory<byte> Serialize(this object message)
+    public static ReadOnlyMemory<byte> Serialize<TMessage>(this TMessage message)
+        where TMessage : IMessage
     {
         var payload = JsonSerializer.Serialize(message);
         return new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(payload));
@@ -93,12 +86,13 @@ public static class MessageBusExtensions
         return Encoding.GetEncoding(args.BasicProperties.ContentEncoding);
     }
 
-    public static TEvent? Deserialize<TEvent>(this BasicDeliverEventArgs args)
+    public static TMessage? Deserialize<TMessage>(this BasicDeliverEventArgs args)
+        where TMessage : IMessage
     {
         var encoding = args.GetEncoding();
         var body = args.Body.ToArray();
         var payload = encoding.GetString(body);
 
-        return JsonSerializer.Deserialize<TEvent>(payload);
+        return JsonSerializer.Deserialize<TMessage>(payload);
     }
 }
