@@ -15,9 +15,9 @@ public static class Setup
             .AddSingleton<IConnectionFactory>(sp =>
                 sp.GetRequiredService<IConfiguration>().GetSection(MessageBusOptions.SECTION_NAME).Get<ConnectionFactory>()!)
             .AddSingleton(sp =>
-                sp.GetRequiredService<IConnectionFactory>().CreateConnectionAsync().GetAwaiter().GetResult()) // TODO: try to improve to async await
+                sp.GetRequiredService<IConnectionFactory>().CreateConnectionAsync().GetAwaiter().GetResult())
             .AddTransient(sp =>
-                sp.GetRequiredService<IConnection>().CreateChannelAsync().GetAwaiter().GetResult()) // TODO: try to improve to async await
+                sp.GetRequiredService<IConnection>().CreateChannelAsync().GetAwaiter().GetResult())
             .AddTransient<IPublisher, Publisher>()
             .AddOptions<MessageBusOptions>().BindConfiguration(MessageBusOptions.SECTION_NAME);
 

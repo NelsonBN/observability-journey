@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using BuildingBlocks.Contracts.Abstractions;
 using BuildingBlocks.Observability;
 using Microsoft.Extensions.Logging;
@@ -20,17 +22,12 @@ internal sealed class Publisher(
     private readonly MessageBusOptions _options = options.Value;
     private readonly IChannel _channel = channel;
 
-    public void Publish<TEvent>(params TEvent[] messages)
-        where TEvent : IMessage
-    {
-        foreach(var message in messages)
-        {
-            Publish(message);
-        }
-    }
+    public Task Publish<TMessage>(params IEnumerable<TMessage> messages)
+        where TMessage : IMessage
+        => Task.WhenAll(messages.Select(Publish));
 
-    public async void Publish<TEvent>(TEvent message)
-        where TEvent : IMessage
+    public async Task Publish<TMessage>(TMessage message)
+        where TMessage : IMessage
     {
         ArgumentNullException.ThrowIfNull(message);
 
@@ -46,8 +43,8 @@ internal sealed class Publisher(
             contextToInject = Activity.Current.Context;
         }
 
-        var messageType = message.GetType().Name;
-        var properties = MessageBusExtensions.CreateProperties(messageType);
+        var type = message.GetType().Name;
+        var properties = MessageBusFactory.CreateProperties(type);
 
         Propagators.DefaultTextMapPropagator.Inject(
             new(contextToInject, Baggage.Current),
@@ -65,16 +62,16 @@ internal sealed class Publisher(
             .SetTag(MessageBusTelemetry.SemanticConventions.DESTINATION_NAME, _options.ExchangeName)
             .SetTag(MessageBusTelemetry.SemanticConventions.MESSAGE_ID, properties.MessageId)
             .SetTag(MessageBusTelemetry.SemanticConventions.CORRELATION_ID, properties.CorrelationId)
-            .SetTag(MessageBusTelemetry.SemanticConventions.ROUTING_KEY, messageType)
+            .SetTag(MessageBusTelemetry.SemanticConventions.ROUTING_KEY, type)
             .AddMessage(message);
 
         await _channel.BasicPublishAsync(
             exchange: _options.ExchangeName,
-            routingKey: messageType,
+            routingKey: type,
             basicProperties: properties,
             mandatory: true,
             body: message.Serialize());
 
-        _logger.LogInformation("[MESSAGE BUS][PUBLISHER] {MessageType} published", messageType);
+        _logger.LogInformation("[MESSAGE BUS][PUBLISHER] {MessageType} published", type);
     }
 }

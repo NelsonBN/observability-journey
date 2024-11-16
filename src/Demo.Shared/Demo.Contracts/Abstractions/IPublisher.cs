@@ -1,10 +1,13 @@
-﻿namespace BuildingBlocks.Contracts.Abstractions;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace BuildingBlocks.Contracts.Abstractions;
 
 public interface IPublisher
 {
-    void Publish<TMessage>(params TMessage[] messages)
+    Task Publish<TMessage>(params IEnumerable<TMessage> messages)
         where TMessage : IMessage;
 
-    void Publish<TMessage>(TMessage message)
+    Task Publish<TMessage>(TMessage message)
         where TMessage : IMessage;
 }
