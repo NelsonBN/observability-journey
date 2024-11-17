@@ -17,14 +17,14 @@ public class EmailNotificationHandler(
     private readonly ILogger<EmailNotificationHandler> _logger = logger;
     private readonly IPublisher _publisher = publisher;
 
-    public Task HandleAsync(EmailNotificationRequestedEvent message, CancellationToken cancellationToken = default)
+    public async Task HandleAsync(EmailNotificationRequestedEvent message, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("[NOTIFICATION][EMAIL][HANDLER] received");
 
 
         try
         {
-            _publisher.Publish(new EmailFeedbackEvent
+            await _publisher.Publish(new EmailFeedbackEvent
             {
                 Id = message.Id,
                 Success = true
@@ -34,7 +34,7 @@ public class EmailNotificationHandler(
         }
         catch(Exception exception)
         {
-            _publisher.Publish(new EmailFeedbackEvent
+            await _publisher.Publish(new EmailFeedbackEvent
             {
                 Id = message.Id,
                 Success = false
@@ -43,7 +43,5 @@ public class EmailNotificationHandler(
             _logger.LogError(exception, "[NOTIFICATION][EMAIL][HANDLER]");
             Activity.Current.RegisterException(exception);
         }
-
-        return Task.CompletedTask;
     }
 }

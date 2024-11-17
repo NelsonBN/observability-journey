@@ -20,11 +20,11 @@ public class SMSNotificationHandler(ILogger<SMSNotificationHandler> logger, IPub
         var delay = Random.Shared.Next(50, 1000);
 
         await Task.Delay(delay, cancellationToken)
-            .ContinueWith(task =>
+            .ContinueWith(async task =>
             {
                 if(delay % 6 == 0)
                 {
-                    _publisher.Publish(new SMSFeedbackEvent
+                    await _publisher.Publish(new SMSFeedbackEvent
                     {
                         Id = message.Id,
                         Success = false
@@ -35,7 +35,7 @@ public class SMSNotificationHandler(ILogger<SMSNotificationHandler> logger, IPub
 
                 else
                 {
-                    _publisher.Publish(new SMSFeedbackEvent
+                    await _publisher.Publish(new SMSFeedbackEvent
                     {
                         Id = message.Id,
                         Success = true

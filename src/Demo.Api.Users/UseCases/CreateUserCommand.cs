@@ -7,9 +7,9 @@ using BuildingBlocks.Contracts.Exceptions;
 
 namespace Api.Users.UseCases;
 
-public sealed record CreateUserCommand(IUsersRepository Repository)
+public sealed class CreateUserCommand(IUsersRepository repository)
 {
-    private readonly IUsersRepository _repository = Repository;
+    private readonly IUsersRepository _repository = repository;
 
     public async Task<Guid> HandleAsync(UserRequest request, CancellationToken cancellationToken)
     {

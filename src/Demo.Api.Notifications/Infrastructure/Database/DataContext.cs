@@ -48,7 +48,7 @@ public sealed class DataContext(ILoggerFactory LoggerFactory, IConfiguration Con
                             .HasColumnName("email_notification_status")
                             .HasConversion(
                                 v => v.ToString(),
-                                v => (NotificationStatus)Enum.Parse(typeof(NotificationStatus), v, true));
+                                v => Enum.Parse<NotificationStatus>(v, true));
 
                 notification.Property(p => p.Phone)
                             .HasColumnName("phone");
@@ -57,7 +57,7 @@ public sealed class DataContext(ILoggerFactory LoggerFactory, IConfiguration Con
                             .HasColumnName("phone_notification_status")
                             .HasConversion(
                                 v => v.ToString(),
-                                v => (NotificationStatus)Enum.Parse(typeof(NotificationStatus), v, true));
+                                v => Enum.Parse<NotificationStatus>(v, true));
 
                 notification.Property(p => p.CreatedAt)
                             .HasColumnName("created_at")

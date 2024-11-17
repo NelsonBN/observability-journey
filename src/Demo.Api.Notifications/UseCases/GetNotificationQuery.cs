@@ -7,9 +7,9 @@ using BuildingBlocks.Contracts.Exceptions;
 
 namespace Api.Notifications.UseCases;
 
-public sealed record GetNotificationQuery(INotificationsRepository Repository)
+public sealed class GetNotificationQuery(INotificationsRepository repository)
 {
-    private readonly INotificationsRepository _repository = Repository;
+    private readonly INotificationsRepository _repository = repository;
 
     public async Task<NotificationResponse> HandleAsync(Guid id, CancellationToken cancellationToken)
     {
