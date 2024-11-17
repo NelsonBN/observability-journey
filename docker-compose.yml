@@ -35,10 +35,10 @@ services:
       file: docker-compose.dependencies.yml
       service: redis
 
-  redis-insight:
+  redis-commander:
     extends:
       file: docker-compose.dependencies-clients.yml
-      service: redis-insight
+      service: redis-commander
 
 
   rabbitmq:
