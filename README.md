@@ -65,7 +65,7 @@ docker build -t gateway-sms -f ./src/Demo.Gateway.SMS/Dockerfile .
 #### Only external services
 
 ```bash
-docker compose up mongo postgres redis rabbitmq prometheus tempo pyroscope postgres-exporter grafana pgadmin mongo-express redis-insight mailpit
+docker compose up mongo postgres redis rabbitmq prometheus tempo pyroscope postgres-exporter grafana pgweb mongo-express redis-insight mailpit
 ```
 
 
@@ -92,7 +92,7 @@ docker compose up prometheus loki tempo pyroscope otel-collector grafana
 ```bash
 docker compose up --build
 ## or
-docker compose up --build mongo postgres redis rabbitmq prometheus loki tempo pyroscope postgres-exporter otel-collector grafana pgadmin mongo-express redis-insight mailpit api-users api-notifications gateway-email gateway-sms
+docker compose up --build mongo postgres redis rabbitmq prometheus loki tempo pyroscope postgres-exporter otel-collector grafana pgweb mongo-express redis-insight mailpit api-users api-notifications gateway-email gateway-sms
 ```
 
 

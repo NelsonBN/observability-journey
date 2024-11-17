@@ -7,9 +7,9 @@ using BuildingBlocks.Contracts.Notifications;
 
 namespace Api.Notifications.UseCases;
 
-public sealed record GetNotificationsTotalsQuery(IReportsRepository Repository)
+public sealed class GetNotificationsTotalsQuery(IReportsRepository repository)
 {
-    private readonly IReportsRepository _repository = Repository;
+    private readonly IReportsRepository _repository = repository;
 
     public async Task<NotificationsTotalsResponse> HandleAsync(Guid userId, CancellationToken cancellationToken)
     {

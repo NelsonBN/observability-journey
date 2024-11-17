@@ -6,9 +6,9 @@ using BuildingBlocks.Contracts.Exceptions;
 
 namespace Api.Users.UseCases;
 
-public sealed record DeleteUserCommand(IUsersRepository Repository)
+public sealed class DeleteUserCommand(IUsersRepository repository)
 {
-    private readonly IUsersRepository _repository = Repository;
+    private readonly IUsersRepository _repository = repository;
 
     public async Task HandleAsync(Guid id, CancellationToken cancellationToken)
     {

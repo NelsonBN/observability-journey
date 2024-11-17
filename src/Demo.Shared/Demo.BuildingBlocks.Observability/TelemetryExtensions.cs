@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text.Json;
-using OpenTelemetry.Trace;
 
 namespace BuildingBlocks.Observability;
 
@@ -22,7 +21,7 @@ public static class TelemetryExtensions
         }
 
         activity.SetStatus(ActivityStatusCode.Error, exception.Message);
-        activity.RecordException(exception);
+        activity.AddException(exception);
 
         return activity;
     }

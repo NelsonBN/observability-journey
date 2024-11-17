@@ -13,10 +13,10 @@ services:
       file: docker-compose.dependencies.yml
       service: postgres
 
-  pgadmin:
+  pgweb:
     extends:
       file: docker-compose.dependencies-clients.yml
-      service: pgadmin
+      service: pgweb
 
 
   mongodb:

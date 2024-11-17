@@ -7,7 +7,7 @@ using BuildingBlocks.Contracts.Abstractions;
 
 namespace Api.Notifications.UseCases;
 
-public sealed record SendNotificationCommand(
+public sealed class SendNotificationCommand(
     INotificationsRepository repository,
     IUsersService service,
     IPublisher publisher)
@@ -28,7 +28,7 @@ public sealed record SendNotificationCommand(
 
         await _repository.AddAsync(notification, cancellationToken);
 
-        _publisher.Publish(notification.GetDomainEvents());
+        await _publisher.Publish(notification.GetDomainEvents());
 
         return notification.Id;
     }

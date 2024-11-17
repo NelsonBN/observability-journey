@@ -93,7 +93,7 @@ public sealed class ReportGenerateJob(
             reportState.LastGeneratedAt = report.EndDateTime;
 
 
-            _publisher.Publish(new EmailRequestedEvent
+            await _publisher.Publish(new EmailRequestedEvent
             {
                 Email = "admin@fake.fk",
                 Message = "Notifications report",

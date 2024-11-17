@@ -7,12 +7,12 @@ using BuildingBlocks.Contracts.Exceptions;
 
 namespace Api.Users.UseCases;
 
-public sealed record GetUserNotificationsTotalsQuery(
-    IUsersRepository Repository,
-    INotificationsService Service)
+public sealed class GetUserNotificationsTotalsQuery(
+    IUsersRepository repository,
+    INotificationsService service)
 {
-    private readonly IUsersRepository _repository = Repository;
-    private readonly INotificationsService _service = Service;
+    private readonly IUsersRepository _repository = repository;
+    private readonly INotificationsService _service = service;
 
     public async Task<UserNotificationsTotalsResponse> HandleAsync(Guid id, CancellationToken cancellationToken)
     {
