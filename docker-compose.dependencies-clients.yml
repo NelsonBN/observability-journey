@@ -63,20 +63,31 @@ services:
       file: docker-compose.dependencies.yml
       service: redis
 
-  redis-insight:
-    image: redislabs/redisinsight:2.60.0
-    container_name: redis-insight
+  redis-commander:
+    image: ghcr.io/joeferner/redis-commander:latest
+    container_name: redis-commander
     restart: always
     ports:
-      - 5540:5540
+      - 8083:8081
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    user: redis
     depends_on:
       redis:
         condition: service_healthy
     networks:
       - demo
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5540/api/health", "||", "exit 1"]
-      interval: 10s
-      timeout: 5s
-      start_period: 3s
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8081"
+        ]
+      interval: 30s
+      timeout: 10s
       retries: 5
+      start_period: 10s
