@@ -33,6 +33,13 @@ scrape_configs:
         service_type: 'Observability'
         service_name: 'Loki'
 
+  - job_name: 'Tempo'
+    static_configs:
+    - targets: ['tempo:3200']
+      labels:
+        service_type: 'Observability'
+        service_name: 'Tempo'
+
   - job_name: 'Pyroscope'
     static_configs:
     - targets: ['pyroscope:4040']
