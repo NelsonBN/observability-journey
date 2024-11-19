@@ -48,10 +48,11 @@ public static class Setup
 
     public static IHealthChecksBuilder AddDatabase(this IHealthChecksBuilder builder)
         => builder
-            .AddMongoDb(
-                mongodbConnectionStringFactory: sp => sp.GetRequiredService<IConfiguration>().GetConnectionString("MongoDB")!,
-                name: "MongoDB",
-                failureStatus: HealthStatus.Unhealthy)
+            // TODO: temporary disabled. HealthChecks isn't compatible with Mongo.Driver to 3.0.0 -> https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks/pull/2312
+            //.AddMongoDb(
+            //    mongodbConnectionStringFactory: sp => sp.GetRequiredService<IConfiguration>().GetConnectionString("MongoDB")!,
+            //    name: "MongoDB",
+            //    failureStatus: HealthStatus.Unhealthy)
             .AddRedis(
                 name: "Redis",
                 connectionStringFactory: (sp) => sp.GetRequiredService<IConfiguration>().GetConnectionString("Redis")!,
