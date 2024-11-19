@@ -55,7 +55,8 @@ services:
     networks:
       - demo
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
 
 
   redis:
