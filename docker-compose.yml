@@ -141,12 +141,6 @@ services:
         condition: service_healthy
       storage:
         condition: service_healthy
-      prometheus:
-        condition: service_healthy
-      loki:
-        condition: service_healthy
-      tempo:
-        condition: service_healthy
       pyroscope:
         condition: service_started
       otel-collector:
@@ -172,12 +166,6 @@ services:
       - demo
     depends_on:
       rabbitmq:
-        condition: service_healthy
-      prometheus:
-        condition: service_healthy
-      loki:
-        condition: service_healthy
-      tempo:
         condition: service_healthy
       pyroscope:
         condition: service_started
@@ -210,16 +198,10 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      prometheus:
-        condition: service_healthy
-      loki:
-        condition: service_healthy
-      tempo:
-        condition: service_healthy
       pyroscope:
         condition: service_started
       otel-collector:
-        condition: service_healthy
+        condition: service_started
 
   api-notifications:
     build:
@@ -253,16 +235,10 @@ services:
         condition: service_healthy
       storage:
         condition: service_healthy
-      prometheus:
-        condition: service_healthy
-      loki:
-        condition: service_healthy
-      tempo:
-        condition: service_healthy
       pyroscope:
         condition: service_started
       otel-collector:
-        condition: service_healthy
+        condition: service_started
       gateway-sms:
         condition: service_healthy
       gateway-email:
