@@ -132,6 +132,7 @@ services:
       ### Observability
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
+      PYROSCOPE_LABELS: system.environment:PROD
     ports:
       - 8098:8080
     networks:
@@ -160,6 +161,7 @@ services:
       ### Observability
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
+      PYROSCOPE_LABELS: system.environment:PROD
     ports:
       - 8099:8080
     networks:
@@ -187,6 +189,7 @@ services:
       ### Observability
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
+      PYROSCOPE_LABELS: system.environment:PROD
       ### API Configuration
       EXCEPTION_PROBABILITY: 0
     ports:
@@ -221,6 +224,7 @@ services:
       ### Observability
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
+      PYROSCOPE_LABELS: system.environment:PROD
       ### API Configuration
       EXCEPTION_PROBABILITY: 0
     ports:

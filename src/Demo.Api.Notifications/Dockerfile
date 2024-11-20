@@ -30,10 +30,16 @@ ENV DOTNET_EnableDiagnostics_Debugger=0
 ENV DOTNET_EnableDiagnostics_Profiler=1
 
 ENV PYROSCOPE_LOG_LEVEL=info
-ENV PYROSCOPE_PROFILING_ENABLED=1
+# Defaults false
+ENV PYROSCOPE_PROFILING_ENABLED=true
 ENV PYROSCOPE_PROFILING_ALLOCATION_ENABLED=true
 ENV PYROSCOPE_PROFILING_CONTENTION_ENABLED=true
 ENV PYROSCOPE_PROFILING_EXCEPTION_ENABLED=true
+ENV PYROSCOPE_PROFILING_WALLTIME_ENABLED=true
+ENV PYROSCOPE_PROFILING_LOCK_ENABLED=true
+ENV PYROSCOPE_PROFILING_HEAP_ENABLED=true
+# Defaults true
+ENV PYROSCOPE_PROFILING_CPU_ENABLED=true
 
 # Create the log directory and set the appropriate permissions
 RUN mkdir -p /var/log/pyroscope/dotnet && \
@@ -67,8 +73,8 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0.100 AS build-env
 WORKDIR /libs
 
 ### Configure the pyroscope
-RUN wget -qO- https://github.com/grafana/pyroscope-dotnet/releases/download/v0.8.14-pyroscope/pyroscope.0.8.14-musl-x86_64.tar.gz \
-    | tar xvz
+RUN wget -qO- https://github.com/grafana/pyroscope-dotnet/releases/download/v0.8.20-pyroscope/pyroscope.0.8.20-musl-x86_64.tar.gz \
+    | tar xvz -C .
 
 
 WORKDIR /src
