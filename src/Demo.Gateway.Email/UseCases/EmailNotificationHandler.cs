@@ -2,45 +2,56 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using BuildingBlocks.Contracts;
 using BuildingBlocks.Contracts.Abstractions;
-using BuildingBlocks.Contracts.Events;
 using BuildingBlocks.Observability;
 using Microsoft.Extensions.Logging;
 
 namespace Gateway.Email.UseCases;
 
-public class EmailNotificationHandler(
+public sealed class EmailNotificationHandler(
     ILogger<EmailNotificationHandler> logger,
-    IPublisher publisher)
-    : IMessageHandler<EmailNotificationRequestedEvent>
+    IPublisher publisher) : IMessageHandler
 {
     private readonly ILogger<EmailNotificationHandler> _logger = logger;
     private readonly IPublisher _publisher = publisher;
 
-    public async Task HandleAsync(EmailNotificationRequestedEvent message, CancellationToken cancellationToken = default)
+    public async Task HandleAsync(Message message, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("[NOTIFICATION][EMAIL][HANDLER] received");
+        _logger.LogInformation("[HANDLER][NOTIFICATION][EMAIL] received");
 
+        var email = Convert.ToString(message.Data["Email"]);
+        var body = Convert.ToString(message.Data["Body"]);
 
         try
         {
-            await _publisher.Publish(new EmailFeedbackEvent
+            await _publisher.Publish(new Message
             {
-                Id = message.Id,
-                Success = true
+                Context = "notifications",
+                Type = "email.response",
+                AggregateId = message.AggregateId,
+                Data = new()
+                {
+                    ["Sent"] = "true"
+                }
             });
 
-            _logger.LogInformation("[NOTIFICATION][EMAIL][HANDLER] handled");
+            _logger.LogInformation("[HANDLER][NOTIFICATION][EMAIL][{Email}] {Body}", email, body);
         }
         catch(Exception exception)
         {
-            await _publisher.Publish(new EmailFeedbackEvent
+            await _publisher.Publish(new Message
             {
-                Id = message.Id,
-                Success = false
+                Context = "notifications",
+                Type = "email.response",
+                AggregateId = message.AggregateId,
+                Data = new()
+                {
+                    ["Sent"] = "false"
+                }
             });
 
-            _logger.LogError(exception, "[NOTIFICATION][EMAIL][HANDLER]");
+            _logger.LogError(exception, "[HANDLER][NOTIFICATION][EMAIL][{Email}] {Body}", email, body);
             Activity.Current.RegisterException(exception);
         }
     }

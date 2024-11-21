@@ -1,5 +1,4 @@
-﻿using BuildingBlocks.Contracts.Events;
-using BuildingBlocks.MessageBus;
+﻿using BuildingBlocks.MessageBus;
 using Gateway.Email.UseCases;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,14 +9,16 @@ public static class Setup
 {
     public static IServiceCollection AddMessageBus(this IServiceCollection services)
        => services
-            .AddConsumer<EmailNotificationRequestedEvent, EmailNotificationHandler>(sp => new()
+            .AddConsumer<EmailNotificationHandler>(sp => new()
             {
                 ExchangeName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:ExchangeName"]!,
-                QueueName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:EmailNotificationsQueueName"]!
+                QueueName = "email-requested-queue",
+                RoutingKey = "email.requested"
             })
-            .AddConsumer<EmailRequestedEvent, EmailRequestedHandler>(sp => new()
+            .AddConsumer<EmailRequestedHandler>(sp => new()
             {
                 ExchangeName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:ExchangeName"]!,
-                QueueName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:EmailQueueName"]!
+                QueueName = "report-queue",
+                RoutingKey = "email.report"
             });
 }

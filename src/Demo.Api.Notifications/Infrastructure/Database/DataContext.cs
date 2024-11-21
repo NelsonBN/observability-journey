@@ -38,8 +38,8 @@ public sealed class DataContext(ILoggerFactory LoggerFactory, IConfiguration Con
                 notification.Property(p => p.Version)
                             .HasColumnName("version");
 
-                notification.Property(p => p.Message)
-                            .HasColumnName("message");
+                notification.Property(p => p.Body)
+                            .HasColumnName("body");
 
                 notification.Property(p => p.Email)
                             .HasColumnName("email");

@@ -4,7 +4,6 @@ using System.Net.Mime;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
-using BuildingBlocks.Contracts.Abstractions;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -70,7 +69,6 @@ public static class MessageBusExtensions
 
 
     public static ReadOnlyMemory<byte> Serialize<TMessage>(this TMessage message)
-        where TMessage : IMessage
     {
         var payload = JsonSerializer.Serialize(message);
         return new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(payload));
@@ -87,7 +85,6 @@ public static class MessageBusExtensions
     }
 
     public static TMessage? Deserialize<TMessage>(this BasicDeliverEventArgs args)
-        where TMessage : IMessage
     {
         var encoding = args.GetEncoding();
         var body = args.Body.ToArray();

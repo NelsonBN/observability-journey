@@ -14,7 +14,7 @@ Content-Type: application/json
 
 {
     "userId": "28111954-9422-4822-a40a-c912f9f297dd",
-    "message": "Hello World!"
+    "body": "Hello World!"
 }
 
 ### Non-existent user
@@ -24,7 +24,7 @@ Content-Type: application/json
 
 {
     "userId": "1ab4e8c5-931a-4b7f-99d2-dba8aca287b8",
-    "message": "Hello World!"
+    "body": "Hello World!"
 }
 
 

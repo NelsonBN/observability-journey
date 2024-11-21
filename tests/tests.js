@@ -103,7 +103,7 @@ export default () => {
         NOTIFICATIONS_API_HOST,
         JSON.stringify({
             "userId": userId,
-            "message": "Hello World!"
+            "body": "Hello World!"
         }),
         {
             headers: {

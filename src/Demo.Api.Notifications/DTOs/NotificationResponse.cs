@@ -6,7 +6,7 @@ namespace Api.Notifications.DTOs;
 public sealed record NotificationResponse(
     Guid Id,
     Guid UserId,
-    string Message,
+    string Body,
     string? Email,
     NotificationStatus EmailNotificationStatus,
     string? Phone,
@@ -16,7 +16,7 @@ public sealed record NotificationResponse(
         => new(
             notification.Id,
             notification.UserId,
-            notification.Message,
+            notification.Body,
             notification.Email,
             notification.EmailNotificationStatus,
             notification.Phone,

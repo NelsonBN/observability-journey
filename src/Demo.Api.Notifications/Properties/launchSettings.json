@@ -10,7 +10,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "SYSTEM_ENVIRONMENT": "DEV",
-        "EXCEPTION_PROBABILITY": "20"
+        "EXCEPTION_PROBABILITY": "0"
       }
     }
   }
