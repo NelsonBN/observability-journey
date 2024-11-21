@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using BuildingBlocks.Contracts.Abstractions;
-using BuildingBlocks.Contracts.Events;
+using BuildingBlocks.Contracts;
 
 namespace Api.Notifications.Domain;
 
 public sealed class Notification
 {
-    private readonly List<IMessage> _domainEvents = [];
+    private readonly List<Message> _domainEvents = [];
 
     public Guid Id { get; private set; }
     public Guid UserId { get; private set; }
-    public string Message { get; private set; } = default!;
+    public string Body { get; private set; } = default!;
 
     public string? Email { get; private set; }
     public NotificationStatus EmailNotificationStatus { get; private set; }
@@ -51,18 +50,20 @@ public sealed class Notification
     }
 
 
-    public IMessage[] GetDomainEvents()
+    public IReadOnlyCollection<Message> GetDomainEvents()
     {
-        var events = _domainEvents.ToArray();
+        var events = _domainEvents
+            .ToArray()
+            .AsReadOnly();
 
         _domainEvents.Clear();
 
         return events;
     }
 
-    public static Notification Create(Guid userId, string message, string? email, string? phone)
+    public static Notification Create(Guid userId, string body, string? email, string? phone)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(message, nameof(message));
+        ArgumentException.ThrowIfNullOrWhiteSpace(body, nameof(body));
 
 
         if(string.IsNullOrWhiteSpace(email) && string.IsNullOrWhiteSpace(phone))
@@ -75,7 +76,7 @@ public sealed class Notification
             Id = Guid.NewGuid(),
             UserId = userId,
             Version = 1,
-            Message = message,
+            Body = body,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -89,11 +90,16 @@ public sealed class Notification
             notification.Email = email;
             notification.EmailNotificationStatus = NotificationStatus.Pending;
 
-            notification._domainEvents.Add(new EmailNotificationRequestedEvent
+            notification._domainEvents.Add(new()
             {
-                Id = notification.Id,
-                Message = notification.Message,
-                Email = notification.Email
+                Context = "notifications",
+                Type = "email.requested",
+                AggregateId = notification.Id,
+                Data = new Dictionary<string, object>
+                {
+                    [nameof(notification.Email)] = notification.Email,
+                    [nameof(notification.Body)] = notification.Body
+                }
             });
         }
 
@@ -107,11 +113,16 @@ public sealed class Notification
             notification.Phone = phone;
             notification.PhoneNotificationStatus = NotificationStatus.Pending;
 
-            notification._domainEvents.Add(new SMSNotificationRequestedEvent
+            notification._domainEvents.Add(new()
             {
-                Id = notification.Id,
-                Message = notification.Message,
-                Phone = notification.Phone
+                Context = "notifications",
+                Type = "sms.requested",
+                AggregateId = notification.Id,
+                Data = new Dictionary<string, object>
+                {
+                    [nameof(notification.Phone)] = notification.Phone,
+                    [nameof(notification.Body)] = notification.Body
+                }
             });
         }
 

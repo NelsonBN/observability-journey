@@ -1,5 +1,4 @@
 ﻿using Api.Notifications.UseCases;
-using BuildingBlocks.Contracts.Events;
 using BuildingBlocks.MessageBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,14 +9,16 @@ public static class Setup
 {
     public static IServiceCollection AddMessageBus(this IServiceCollection services)
         => services
-            .AddConsumer<EmailFeedbackEvent, EmailFeedbackHandler>(sp => new()
+            .AddConsumer<EmailResponseHandler>(sp => new()
             {
                 ExchangeName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:ExchangeName"]!,
-                QueueName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:EmailFeedbackQueueName"]!
+                QueueName = "email-response-queue",
+                RoutingKey = "email.response"
             })
-            .AddConsumer<SMSFeedbackEvent, SMSFeedbackHandler>(sp => new()
+            .AddConsumer<SMSResponseHandler>(sp => new()
             {
                 ExchangeName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:ExchangeName"]!,
-                QueueName = sp.GetRequiredService<IConfiguration>()[$"{MessageBusOptions.SECTION_NAME}:SMSFeedbackQueueName"]!
+                QueueName = "sms-response-queue",
+                RoutingKey = "sms.response"
             });
 }

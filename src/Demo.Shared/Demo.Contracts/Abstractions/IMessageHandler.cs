@@ -3,8 +3,7 @@ using System.Threading.Tasks;
 
 namespace BuildingBlocks.Contracts.Abstractions;
 
-public interface IMessageHandler<TMessage>
-    where TMessage : IMessage
+public interface IMessageHandler
 {
-    public Task HandleAsync(TMessage message, CancellationToken cancellationToken = default);
+    public Task HandleAsync(Message message, CancellationToken cancellationToken = default);
 }

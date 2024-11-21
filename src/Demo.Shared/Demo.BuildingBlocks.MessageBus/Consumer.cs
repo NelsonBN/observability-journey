@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using BuildingBlocks.Contracts;
 using BuildingBlocks.Contracts.Abstractions;
 using BuildingBlocks.Observability;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,30 +16,25 @@ using RabbitMQ.Client.Events;
 
 namespace BuildingBlocks.MessageBus;
 
-public sealed class Consumer<TMessage, THandler> : IHostedService
-    where TMessage : IMessage
-    where THandler : IMessageHandler<TMessage>
+public sealed class Consumer<THandler> : IHostedService
+    where THandler : IMessageHandler
 {
-    private readonly ILogger<Consumer<TMessage, THandler>> _logger;
+    private readonly ILogger<Consumer<THandler>> _logger;
     private readonly IChannel _channel;
     private readonly IServiceProvider _serviceProvider;
-    private readonly string _exchangeName;
-    private readonly string _queueName;
+    private readonly MessageBusOptions _options;
 
     private AsyncEventingBasicConsumer _consumer;
 
 
     public Consumer(
         IServiceProvider serviceProvider,
-        string exchangeName,
-        string queueName)
+        MessageBusOptions options)
     {
         _serviceProvider = serviceProvider;
+        _options = options;
 
-        _exchangeName = exchangeName;
-        _queueName = queueName;
-
-        _logger = _serviceProvider.GetRequiredService<ILogger<Consumer<TMessage, THandler>>>();
+        _logger = _serviceProvider.GetRequiredService<ILogger<Consumer<THandler>>>();
         _channel = _serviceProvider.GetRequiredService<IChannel>();
 
         _consumer = new(_channel);
@@ -74,7 +70,7 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
 
 
             activity = MessageBusTelemetry.Source.StartActivity(
-                $"Consumer {_queueName}",
+                $"Consumer {_options.QueueName}",
                 ActivityKind.Consumer,
                 parentContext.ActivityContext);
 
@@ -82,19 +78,17 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
                 .SetTag(MessageBusTelemetry.SemanticConventions.SYSTEM, "rabbitmq")
                 .SetTag(MessageBusTelemetry.SemanticConventions.DESTINATION_KIND, "queue")
                 .SetTag(MessageBusTelemetry.SemanticConventions.OPERATION_TYPE, "receive")
-                .SetTag(MessageBusTelemetry.SemanticConventions.DESTINATION_NAME, _queueName)
+                .SetTag(MessageBusTelemetry.SemanticConventions.DESTINATION_NAME, _options.QueueName)
                 .SetTag(MessageBusTelemetry.SemanticConventions.MESSAGE_ID, args.BasicProperties.MessageId)
                 .SetTag(MessageBusTelemetry.SemanticConventions.CORRELATION_ID, args.BasicProperties.CorrelationId)
                 .SetTag(MessageBusTelemetry.SemanticConventions.ROUTING_KEY, args.RoutingKey);
 
-            var message = args.Deserialize<TMessage>()
-                ?? throw new NotSupportedException($"The message type '{typeof(TMessage).Name}' is not supported by consummer");
+            var message = args.Deserialize<Message>()
+                ?? throw new NotSupportedException($"The message type '{args.GetMessageType()}' is not supported by consummer");
 
             activity.AddMessage(message);
 
-
             await _dispatch(message);
-
 
             await _channel.BasicAckAsync(
                 args.DeliveryTag,
@@ -104,7 +98,7 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
         {
             _logger.LogError(
                 exception,
-                "[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Error deserializing message", _exchangeName, _queueName);
+                "[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Error deserializing message", _options.ExchangeName, _options.QueueName);
 
             activity.RegisterException(exception);
 
@@ -116,7 +110,7 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
         {
             _logger.LogError(
                 exception,
-                "[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Error handling message", _exchangeName, _queueName);
+                "[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Error handling message", _options.ExchangeName, _options.QueueName);
 
             activity.RegisterException(exception);
 
@@ -131,7 +125,7 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
         }
     }
 
-    private async Task _dispatch(TMessage message, CancellationToken cancellationToken = default)
+    private async Task _dispatch(Message message, CancellationToken cancellationToken = default)
     {
         using var scope = _serviceProvider.CreateScope();
         var handler = scope.ServiceProvider.GetRequiredService<THandler>();
@@ -144,11 +138,11 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Setting...", _exchangeName, _queueName);
+        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Setting...", _options.ExchangeName, _options.QueueName);
 
         // Create Exchange
         await _channel.ExchangeDeclareAsync(
-            exchange: _exchangeName,
+            exchange: _options.ExchangeName,
             type: ExchangeType.Topic,
             durable: true,
             autoDelete: false,
@@ -157,7 +151,7 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
 
         // Create Queue
         await _channel.QueueDeclareAsync(
-            queue: _queueName,
+            queue: _options.QueueName,
             durable: true,
             exclusive: false,
             autoDelete: false,
@@ -166,9 +160,9 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
 
         // Attach Queue to Exchange
         await _channel.QueueBindAsync(
-            queue: _queueName,
-            exchange: _exchangeName,
-            routingKey: typeof(TMessage).Name,
+            queue: _options.QueueName,
+            exchange: _options.ExchangeName,
+            routingKey: _options.RoutingKey,
             cancellationToken: cancellationToken);
 
         // Set QoS
@@ -181,21 +175,21 @@ public sealed class Consumer<TMessage, THandler> : IHostedService
         _consumer = new(_channel);
         _consumer.ReceivedAsync += _listener;
 
-        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Set", _exchangeName, _queueName);
+        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Set", _options.ExchangeName, _options.QueueName);
 
         await _channel.BasicConsumeAsync(
-            queue: _queueName,
+            queue: _options.QueueName,
             autoAck: false,
             consumer: _consumer,
             cancellationToken: cancellationToken);
 
-        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Started", _exchangeName, _queueName);
+        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Started", _options.ExchangeName, _options.QueueName);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
         _channel.Dispose();
-        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Stopped", _exchangeName, _queueName);
+        _logger.LogInformation("[MESSAGE BUS][CONSUMER][{ExchangeName}][{QueueName}] Stopped", _options.ExchangeName, _options.QueueName);
 
         return Task.CompletedTask;
     }

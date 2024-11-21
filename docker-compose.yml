@@ -120,7 +120,7 @@ services:
     build:
       context: .
       dockerfile: ./src/Demo.Gateway.Email/Dockerfile
-    image: demo-gateway-email
+    image: technobre/demo-gateway-email
     container_name: gateway-email
     restart: always
     environment:

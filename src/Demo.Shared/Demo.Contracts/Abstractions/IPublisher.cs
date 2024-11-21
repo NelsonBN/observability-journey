@@ -5,9 +5,7 @@ namespace BuildingBlocks.Contracts.Abstractions;
 
 public interface IPublisher
 {
-    Task Publish<TMessage>(params IEnumerable<TMessage> messages)
-        where TMessage : IMessage;
+    Task Publish(params IEnumerable<Message> messages);
 
-    Task Publish<TMessage>(TMessage message)
-        where TMessage : IMessage;
+    Task Publish(Message message);
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -6,8 +7,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Api.Notifications.Domain;
 using Api.Notifications.DTOs;
+using BuildingBlocks.Contracts;
 using BuildingBlocks.Contracts.Abstractions;
-using BuildingBlocks.Contracts.Events;
 using BuildingBlocks.Observability;
 using Microsoft.Extensions.Logging;
 using Quartz;
@@ -33,7 +34,7 @@ public sealed class ReportGenerateJob(
 
     public async Task Execute(IJobExecutionContext context)
     {
-        _logger.LogInformation("[JOB][REPORT GENERATE] Starting...");
+        _logger.LogInformation("[JOB][REPORT] Starting...");
 
         try
         {
@@ -92,18 +93,22 @@ public sealed class ReportGenerateJob(
 
             reportState.LastGeneratedAt = report.EndDateTime;
 
-
-            await _publisher.Publish(new EmailRequestedEvent
+            await _publisher.Publish(new Message()
             {
-                Email = "admin@fake.fk",
-                Message = "Notifications report",
-                Attachment = fileName
+                Context = "reports",
+                Type = "email.report",
+                AggregateId = Guid.NewGuid(),
+                Data = new Dictionary<string, object>
+                {
+                    ["Email"] = "admin@fake.fk",
+                    ["Body"] = "Notifications report",
+                    ["Attachment"] = fileName,
+                }
             });
-
 
             await _repository.UpdateAsync(reportState, context.CancellationToken);
 
-            _logger.LogInformation("[JOB][REPORT GENERATE] Created report");
+            _logger.LogInformation("[JOB][REPORT] Created report {FileName}", fileName);
         }
         catch(Exception exception)
         {

@@ -2,7 +2,6 @@
 using BuildingBlocks.Contracts.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 
 namespace BuildingBlocks.MessageBus;
@@ -24,22 +23,14 @@ public static class Setup
         return services;
     }
 
-    public static IServiceCollection AddConsumer<TMessage, THandler>(this IServiceCollection services, Func<IServiceProvider, MessageBusOptions>? factoryOptions = null)
-        where TMessage : IMessage
-        where THandler : class, IMessageHandler<TMessage>
+    public static IServiceCollection AddConsumer<THandler>(this IServiceCollection services, Func<IServiceProvider, MessageBusOptions> factoryOptions)
+        where THandler : class, IMessageHandler
         => services
             .AddMessageBus()
-            .AddHostedService(sp =>
-            {
-                var options = factoryOptions is null ?
-                    sp.GetRequiredService<IOptions<MessageBusOptions>>().Value :
-                    factoryOptions(sp);
-
-                return new Consumer<TMessage, THandler>(
+            .AddHostedService(sp
+                => new Consumer<THandler>(
                     sp,
-                    options.ExchangeName,
-                    options.QueueName);
-            })
+                    factoryOptions(sp)))
             .AddTransient<THandler>();
 
     public static IHealthChecksBuilder AddMessageBus(this IHealthChecksBuilder builder)

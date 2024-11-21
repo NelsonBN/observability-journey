@@ -22,7 +22,7 @@ public sealed class SendNotificationCommand(
 
         var notification = Notification.Create(
             request.UserId,
-            request.Message,
+            request.Body,
             user.Email,
             user.Phone);
 

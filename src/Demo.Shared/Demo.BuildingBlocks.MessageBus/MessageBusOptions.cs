@@ -6,4 +6,5 @@ public record MessageBusOptions
 
     public required string ExchangeName { get; init; }
     public required string QueueName { get; init; }
+    public required string RoutingKey { get; init; }
 }
