@@ -13,6 +13,10 @@ exporters:
     endpoint: tempo:4317
     tls:
       insecure: true
+  otlp/oteltui:
+    endpoint: oteltui:4317
+    tls:
+      insecure: true
 
   loki:
     endpoint: http://loki:3100/loki/api/v1/push
@@ -71,15 +75,15 @@ service:
       receivers: [otlp]
       #processors: [filter/exclude-traces-health, batch]
       processors: [filter/exclude-traces-health]
-      exporters: [otlp/tempo-traces]
+      exporters: [otlp/tempo-traces, otlp/oteltui]
     logs:
       receivers: [otlp]
       #processors: [batch]
-      exporters: [loki]
+      exporters: [loki, otlp/oteltui]
     metrics:
       receivers: [otlp]
       #processors: [batch]
-      exporters: [prometheusremotewrite]
+      exporters: [prometheusremotewrite, otlp/oteltui]
       #exporters: [prometheus]
 
   telemetry:
