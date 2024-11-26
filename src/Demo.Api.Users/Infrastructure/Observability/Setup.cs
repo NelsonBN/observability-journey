@@ -8,6 +8,7 @@ using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Pyroscope.OpenTelemetry;
 
 namespace Api.Users.Infrastructure.Observability;
 
@@ -25,7 +26,8 @@ public static class Setup
                     .AddAspNetCoreInstrumentation(o => o.RecordException = true)
                     .AddGrpcClientInstrumentation()
                     .AddSource("MongoDB.Driver.Core.Extensions.DiagnosticSources")
-                    .AddRedisInstrumentation())
+                    .AddRedisInstrumentation()
+                    .AddProcessor(new PyroscopeSpanProcessor()))
             .WithMetrics(options
                 => options
                     .AddMeter(Telemetry.Meter.Name)

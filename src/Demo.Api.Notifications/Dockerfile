@@ -14,7 +14,7 @@ HEALTHCHECK --interval=10s \
 
 
 ### Configure pyroscope
-ENV PYROSCOPE_APPLICATION_NAME=api-notifications
+ENV PYROSCOPE_APPLICATION_NAME=Api.Notifications
 # Enable the Pyroscope profiler
 ENV CORECLR_ENABLE_PROFILING=1
 # The Pyroscope profiler GUID
@@ -40,6 +40,8 @@ ENV PYROSCOPE_PROFILING_LOCK_ENABLED=true
 ENV PYROSCOPE_PROFILING_HEAP_ENABLED=true
 # Defaults true
 ENV PYROSCOPE_PROFILING_CPU_ENABLED=true
+
+ENV PYROSCOPE_LABELS=system.environment:production
 
 # Create the log directory and set the appropriate permissions
 RUN mkdir -p /var/log/pyroscope/dotnet && \
@@ -73,7 +75,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0.100 AS build-env
 WORKDIR /libs
 
 ### Configure the pyroscope
-RUN wget -qO- https://github.com/grafana/pyroscope-dotnet/releases/download/v0.8.20-pyroscope/pyroscope.0.8.20-musl-x86_64.tar.gz \
+RUN wget -qO- https://github.com/grafana/pyroscope-dotnet/releases/download/v0.9.2-pyroscope/pyroscope.0.9.2-musl-x86_64.tar.gz \
     | tar xvz -C .
 
 

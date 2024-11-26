@@ -11,6 +11,7 @@ using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Pyroscope.OpenTelemetry;
 using Quartz;
 
 namespace Api.Notifications.Infrastructure.Observability;
@@ -33,6 +34,7 @@ public static class Setup
                     .AddMessageBus()
                     .AddStorage()
                     .AddEntityFrameworkCoreInstrumentation()
+                    .AddProcessor(new PyroscopeSpanProcessor())
                     .AddQuartzInstrumentation(o =>
                     {
                         o.RecordException = true;

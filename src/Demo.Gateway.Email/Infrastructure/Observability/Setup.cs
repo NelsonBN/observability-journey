@@ -9,6 +9,7 @@ using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Pyroscope.OpenTelemetry;
 
 namespace Gateway.Email.Infrastructure.Observability;
 
@@ -25,7 +26,8 @@ public static class Setup
                     .AddSource(Telemetry.Source.Name)
                     .AddMessageBus()
                     .AddStorage()
-                    .AddAspNetCoreInstrumentation(o => o.RecordException = true))
+                    .AddAspNetCoreInstrumentation(o => o.RecordException = true)
+                    .AddProcessor(new PyroscopeSpanProcessor()))
             .WithMetrics(options =>
                 options
                     .AddMeter(Telemetry.Meter.Name)
