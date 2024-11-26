@@ -41,6 +41,10 @@ datasources:
       tracesToProfiles:
         datasourceUid: pyroscope-uid
         customQuery: false
+        profileTypeId: wall:cpu:nanoseconds:cpu:nanoseconds
+        # tags:
+        #   - key: "host.name"
+        #     value: "hostname"
       serviceMap:
         datasourceUid: prometheus-uid
       nodeGraph:
