@@ -113,6 +113,12 @@ services:
       service: grafana
 
 
+  oteltui:
+    extends:
+      file: docker-compose.observability.yml
+      service: oteltui
+
+
 ############################## DEMO SERVICES ###############################
 
 

@@ -193,3 +193,15 @@ services:
         condition: service_healthy
       pyroscope:
         condition: service_started
+
+
+  oteltui:
+    image: ymtdzzz/otel-tui:v0.3.7
+    container_name: otel-tui
+    stdin_open: true
+    tty: true
+    # ports:
+    #   - 4317:4317
+    #   - 4318:4318
+    networks:
+      - demo
