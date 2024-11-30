@@ -63,6 +63,9 @@ RUN apk upgrade musl
 
 USER app
 
+# Skip extraction of XML docs - generally not useful within an image/container - helps performance
+ENV NUGET_XMLDOC_MODE=skip
+
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV ASPNETCORE_URLS=http://*:8080
 ENV ASPNETCORE_HTTP_PORTS=
