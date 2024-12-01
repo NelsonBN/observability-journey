@@ -9,22 +9,29 @@ receivers:
 
 
 exporters:
+
   otlp/tempo-traces:
     endpoint: tempo:4317
     tls:
       insecure: true
+
   otlp/oteltui:
     endpoint: oteltui:4317
     tls:
       insecure: true
 
-  loki:
-    endpoint: http://loki:3100/loki/api/v1/push
-    default_labels_enabled:
-      exporter: true
-      job: true
+  otlphttp/loki:
+    logs_endpoint: http://loki:3100/otlp/v1/logs
     tls:
       insecure: true
+
+  # loki:
+  #   endpoint: http://loki:3100/loki/api/v1/push
+  #   default_labels_enabled:
+  #     exporter: true
+  #     job: true
+  #   tls:
+  #     insecure: true
 
   # Data sources: metrics
   prometheusremotewrite:
@@ -32,8 +39,8 @@ exporters:
     # tls:
     #   insecure: true
 
-  prometheus:
-    endpoint: otel-collector:8889
+  # prometheus:
+  #   endpoint: otel-collector:8889
 
 
 extensions:
@@ -79,7 +86,7 @@ service:
     logs:
       receivers: [otlp]
       #processors: [batch]
-      exporters: [loki, otlp/oteltui]
+      exporters: [otlphttp/loki, otlp/oteltui]
     metrics:
       receivers: [otlp]
       #processors: [batch]
