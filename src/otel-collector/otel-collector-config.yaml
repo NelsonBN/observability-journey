@@ -9,6 +9,8 @@ receivers:
 
 
 exporters:
+  # debug:
+  #   verbosity: detailed
 
   otlp/tempo-traces:
     endpoint: tempo:4317
@@ -19,6 +21,7 @@ exporters:
     endpoint: oteltui:4317
     tls:
       insecure: true
+
 
   otlphttp/loki:
     logs_endpoint: http://loki:3100/otlp/v1/logs
@@ -33,11 +36,17 @@ exporters:
   #   tls:
   #     insecure: true
 
-  # Data sources: metrics
-  prometheusremotewrite:
-    endpoint: http://prometheus:9090/api/v1/write
-    # tls:
-    #   insecure: true
+
+  otlphttp/prometheus:
+    metrics_endpoint: http://prometheus:9090/api/v1/otlp/v1/metrics
+    tls:
+      insecure: true
+
+  # # Data sources: metrics
+  # prometheusremotewrite:
+  #   endpoint: http://prometheus:9090/api/v1/write
+  #   # tls:
+  #   #   insecure: true
 
   # prometheus:
   #   endpoint: otel-collector:8889
@@ -90,7 +99,7 @@ service:
     metrics:
       receivers: [otlp]
       #processors: [batch]
-      exporters: [prometheusremotewrite, otlp/oteltui]
+      exporters: [otlphttp/prometheus, otlp/oteltui]
       #exporters: [prometheus]
 
   telemetry:

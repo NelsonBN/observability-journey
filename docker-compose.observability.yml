@@ -10,9 +10,9 @@ services:
     restart: always
     command:
       - --config.file=/etc/prometheus/prometheus.yml
-      # This is necessary to otel-collector can send metrics to prometheus and also K6
-      - --web.enable-remote-write-receiver
       - --enable-feature=native-histograms
+      - --web.enable-remote-write-receiver # This is necessary to k6 can send metrics to prometheus
+      - --web.enable-otlp-receiver
     volumes:
       - ./src/Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./src/Prometheus/alert-rules.yml:/etc/prometheus/alert.rules:ro
