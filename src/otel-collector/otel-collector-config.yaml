@@ -60,16 +60,30 @@ extensions:
 processors:
   batch:
 
+  tail_sampling/traces-health-checks:
+    decision_wait: 2s # Maximum time to take a decision (Affact the latency of the trace)
+    num_traces: 500
+    expected_new_traces_per_sec: 250
+    policies:
+    - name: policy-traces-health-checks
+      type: string_attribute
+      string_attribute:
+        key: http.route
+        values:
+        - /healthz/startup
+        - /healthz/live
+        - /healthz/ready
+        invert_match: true
 
-  # Filter HTTP spans to server for `GET /health`
-  # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor
-  filter/exclude-traces-health:
-    error_mode: ignore
-    traces:
-      span:
-        - 'attributes["http.route"] == "/healthz/startup"'
-        - 'attributes["http.route"] == "/healthz/live"'
-        - 'attributes["http.route"] == "/healthz/ready"'
+  # # Filter HTTP spans to server for `GET /health`
+  # # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor
+  # filter/exclude-traces-health:
+  #   error_mode: ignore
+  #   traces:
+  #     span:
+  #       - 'attributes["http.route"] == "/healthz/startup"'
+  #       - 'attributes["http.route"] == "/healthz/live"'
+  #       - 'attributes["http.route"] == "/healthz/ready"'
 
   # Filter logs for `GET /health`
   # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor
@@ -89,18 +103,14 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      #processors: [filter/exclude-traces-health, batch]
-      processors: [filter/exclude-traces-health]
+      processors: [tail_sampling/traces-health-checks]
       exporters: [otlp/tempo, otlp/oteltui]
     logs:
       receivers: [otlp]
-      #processors: [batch]
       exporters: [otlphttp/loki, otlp/oteltui]
     metrics:
       receivers: [otlp]
-      #processors: [batch]
       exporters: [otlphttp/prometheus, otlp/oteltui]
-      #exporters: [prometheus]
 
   telemetry:
     metrics:
