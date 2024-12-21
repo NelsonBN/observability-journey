@@ -2,6 +2,7 @@
 using BuildingBlocks.Contracts.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using RabbitMQ.Client;
 
 namespace BuildingBlocks.MessageBus;
@@ -34,9 +35,7 @@ public static class Setup
             .AddTransient<THandler>();
 
     public static IHealthChecksBuilder AddMessageBus(this IHealthChecksBuilder builder)
-        // TODO: Temporary disabled. Waiting for the implementation of the health check to compatible with new version of RabbitMQ Client
-        => builder;
-    //=> builder.AddRabbitMQ(
-    //    "RabbitMQ",
-    //    HealthStatus.Unhealthy);
+        => builder.AddRabbitMQ(
+            name: "RabbitMQ",
+            failureStatus: HealthStatus.Unhealthy);
 }
