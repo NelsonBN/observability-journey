@@ -17,7 +17,7 @@
     <PackageReference Include="System.Text.Json" Version="9.0.0" /> <!-- To fix vulnerability -->
 
     <!-- Trace -->
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.10.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.11.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.10.1" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.10.0" />
   </ItemGroup>
