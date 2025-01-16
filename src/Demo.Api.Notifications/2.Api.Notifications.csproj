@@ -14,7 +14,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
 
     <!-- Database -->
@@ -36,7 +36,7 @@
     <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.1" />
 
     <!-- Trace -->
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.10.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.11.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.10.1" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.10.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.0.0-beta.12" />
