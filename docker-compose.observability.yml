@@ -166,7 +166,7 @@ services:
 
 
   grafana:
-    image: grafana/grafana:11.3.0
+    image: grafana/grafana:11.4.0
     container_name: grafana
     environment:
       TZ: Europe/Lisbon
@@ -199,7 +199,7 @@ services:
 
 
   oteltui:
-    image: ymtdzzz/otel-tui:v0.3.7
+    image: ymtdzzz/otel-tui:v0.3.10
     container_name: otel-tui
     stdin_open: true
     tty: true
