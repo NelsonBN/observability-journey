@@ -104,7 +104,7 @@ services:
 
 
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.118.0
+    image: otel/opentelemetry-collector-contrib:0.119.0
     container_name: otel-collector
     restart: always
     command: --config=/etc/otel-collector-config.yaml
@@ -166,7 +166,7 @@ services:
 
 
   grafana:
-    image: grafana/grafana:11.4.0
+    image: grafana/grafana:11.5.1
     container_name: grafana
     environment:
       TZ: Europe/Lisbon
@@ -199,7 +199,7 @@ services:
 
 
   oteltui:
-    image: ymtdzzz/otel-tui:v0.3.10
+    image: ymtdzzz/otel-tui:v0.4.1
     container_name: otel-tui
     stdin_open: true
     tty: true
