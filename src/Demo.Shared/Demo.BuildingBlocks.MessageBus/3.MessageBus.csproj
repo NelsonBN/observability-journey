@@ -14,7 +14,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.1" />
     <PackageReference Include="OpenTelemetry.Api" Version="1.11.1" />
-    <PackageReference Include="RabbitMQ.Client" Version="7.1.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="7.1.1" />
 
     <!-- HealthChecks -->
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
