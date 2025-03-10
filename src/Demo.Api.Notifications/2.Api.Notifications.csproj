@@ -31,8 +31,8 @@
     </PackageReference>
 
     <!-- Scheduler -->
-    <PackageReference Include="Quartz" Version="3.13.1" />
-    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.1" />
+    <PackageReference Include="Quartz" Version="3.14.0" />
+    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.14.0" />
 
     <!-- Trace -->
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.11.2" />
