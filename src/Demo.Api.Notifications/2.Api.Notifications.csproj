@@ -24,7 +24,7 @@
     <PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
 
     <!-- Grpc -->
-    <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.70.0" />
     <PackageReference Include="Grpc.Tools" Version="2.71.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
