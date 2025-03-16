@@ -43,14 +43,13 @@ services:
       service: mongodb
 
   mongo-express:
-    image: mongo-express:1.0.2
+    image: mongo-express:1-18
     container_name: mongo-express
     restart: always
     ports:
       - 8081:8081
     environment:
-      ME_CONFIG_BASICAUTH_USERNAME: guest
-      ME_CONFIG_BASICAUTH_PASSWORD: guest
+      ME_CONFIG_BASICAUTH: false
       ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
     networks:
       - demo
