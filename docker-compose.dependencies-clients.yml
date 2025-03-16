@@ -43,7 +43,7 @@ services:
       service: mongodb
 
   mongo-express:
-    image: mongo-express:1.0.2
+    image: mongo-express:1-18
     container_name: mongo-express
     restart: always
     ports:
