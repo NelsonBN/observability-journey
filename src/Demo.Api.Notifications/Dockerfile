@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:9.0.0-alpine3.20-amd64 AS base-env
+FROM mcr.microsoft.com/dotnet/aspnet:9.0.3-alpine3.20-amd64 AS base-env
 # Preparing the runtime environment
 
 WORKDIR /app
