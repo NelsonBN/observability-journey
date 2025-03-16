@@ -52,7 +52,7 @@ services:
 
 
   tempo:
-    image: grafana/tempo:2.6.1
+    image: grafana/tempo:2.7.1
     container_name: tempo
     restart: always
     command: [ "-config.file=/etc/tempo.yaml" ]
@@ -174,8 +174,8 @@ services:
       GF_AUTH_ANONYMOUS_ENABLED: true # Allow anonymous access
       GF_AUTH_ANONYMOUS_ORG_ROLE: Admin # Set the role for anonymous users to Admin
       GF_AUTH_BASIC_ENABLED: false # Disable basic auth
-      GF_FEATURE_TOGGLES_ENABLE: traceqlEditor traceToProfiles tracesEmbeddedFlameGraph flameGraph # Enable flameGraph for Pyroscope / traceqlEditor for Tempo
-      GF_INSTALL_PLUGINS: https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/grafana-lokiexplore-app-latest.zip;grafana-lokiexplore-app,grafana-pyroscope-app # Install Loki Explore plugin and Pyroscope plugin
+      GF_FEATURE_TOGGLES_ENABLE: metricsSummary correlations traceToMetrics traceqlSearch traceqlEditor traceQLStreaming traceToProfiles tracesEmbeddedFlameGraph flameGraph datatrails
+      GF_INSTALL_PLUGINS: grafana-lokiexplore-app,grafana-pyroscope-app,grafana-exploretraces-app # Install Loki Explore plugin and Pyroscope plugin
     ports:
       - 3000:3000
     volumes:
