@@ -52,3 +52,16 @@ updates:
       prefix: "build"
       include: "scope"
     target-branch: "main"
+
+  - package-ecosystem: "docker-compose"
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "daily"
+    assignees:
+      - "NelsonBN"
+    reviewers:
+      - "NelsonBN"
+    commit-message:
+      prefix: "build"
+      include: "scope"
+    target-branch: "main"
