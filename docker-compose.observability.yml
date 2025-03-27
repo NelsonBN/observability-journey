@@ -52,7 +52,7 @@ services:
 
 
   tempo:
-    image: grafana/tempo:2.7.1
+    image: grafana/tempo:2.7.2
     container_name: tempo
     restart: always
     command: [ "-config.file=/etc/tempo.yaml" ]
