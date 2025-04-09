@@ -69,7 +69,7 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 
 
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0.202-alpine3.20-amd64 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:9.0.203-alpine3.20-amd64 AS build-env
 
 WORKDIR /libs
 
