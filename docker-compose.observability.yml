@@ -5,7 +5,7 @@ networks:
 services:
 
   prometheus:
-    image: prom/prometheus:v3.2.1
+    image: prom/prometheus:v3.3.0
     container_name: prometheus
     restart: always
     command:
@@ -199,7 +199,7 @@ services:
 
 
   oteltui:
-    image: ymtdzzz/otel-tui:v0.4.8
+    image: ymtdzzz/otel-tui:v0.4.9
     container_name: otel-tui
     stdin_open: true
     tty: true
