@@ -58,6 +58,9 @@ datasources:
       spanBar:
         type: 'Tag'
         tag: 'http.path'
+      streamingEnabled:
+        metrics: true
+        search: true
 
 
   - name: Loki
