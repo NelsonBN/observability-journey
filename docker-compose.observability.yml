@@ -81,7 +81,7 @@ services:
 
 
   pyroscope:
-    image: grafana/pyroscope:1.13.2
+    image: grafana/pyroscope:1.13.4
     container_name: pyroscope
     restart: always
     command: [ "-config.file=/etc/pyroscope.yml" ]
