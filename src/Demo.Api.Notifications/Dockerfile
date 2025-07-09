@@ -73,7 +73,7 @@ ENV ASPNETCORE_HTTPS_PORTS=
 
 
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0.301 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:9.0.302 AS build-env
 
 WORKDIR /libs
 
