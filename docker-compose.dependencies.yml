@@ -81,7 +81,7 @@ services:
       retries: 5
 
   storage:
-    image: mcr.microsoft.com/azure-storage/azurite:3.34.0 # https://github.com/Azure/Azurite
+    image: mcr.microsoft.com/azure-storage/azurite:3.35.0 # https://github.com/Azure/Azurite
     container_name: storage
     restart: always
     command: "azurite-blob --blobHost 0.0.0.0 --blobPort 10000"
