@@ -128,7 +128,7 @@ services:
 
 
   altertmanager:
-    image: prom/alertmanager:v0.28.1
+    image: prom/alertmanager:v0.29.0
     container_name: alertmanager
     restart: always
     command:
