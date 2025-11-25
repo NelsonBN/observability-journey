@@ -29,7 +29,7 @@ services:
 
 
   loki:
-    image: grafana/loki:3.6.0
+    image: grafana/loki:3.6.1
     container_name: loki
     restart: always
     ports:
@@ -166,7 +166,7 @@ services:
 
 
   grafana:
-    image: grafana/grafana:12.2.1
+    image: grafana/grafana:12.3.0
     container_name: grafana
     environment:
       TZ: Europe/Lisbon
