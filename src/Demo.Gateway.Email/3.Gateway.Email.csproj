@@ -17,7 +17,7 @@
     <PackageReference Include="System.Text.Json" Version="10.0.1" /> <!-- To fix vulnerability -->
 
     <!-- Storage -->
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.26.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.27.0" />
 
     <!-- Trace -->
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
