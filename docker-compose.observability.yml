@@ -52,7 +52,7 @@ services:
 
 
   tempo:
-    image: grafana/tempo:2.9.0
+    image: grafana/tempo:2.10.0
     container_name: tempo
     restart: always
     command: [ "-config.file=/etc/tempo.yaml" ]
@@ -104,7 +104,7 @@ services:
 
 
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.144.0
+    image: otel/opentelemetry-collector-contrib:0.145.0
     container_name: otel-collector
     restart: always
     command: --config=/etc/otel-collector-config.yaml
@@ -128,7 +128,7 @@ services:
 
 
   altertmanager:
-    image: prom/alertmanager:v0.30.1
+    image: prom/alertmanager:v0.31.0
     container_name: alertmanager
     restart: always
     command:
@@ -151,7 +151,7 @@ services:
 
 
   postgres-exporter:
-    image: quay.io/prometheuscommunity/postgres-exporter:v0.18.1
+    image: quay.io/prometheuscommunity/postgres-exporter:v0.19.0
     container_name: postgres-exporter
     restart: always
     ports:
@@ -166,7 +166,7 @@ services:
 
 
   grafana:
-    image: grafana/grafana:12.3.1
+    image: grafana/grafana:12.3.2
     container_name: grafana
     environment:
       TZ: Europe/Lisbon
@@ -199,7 +199,7 @@ services:
 
 
   oteltui:
-    image: ymtdzzz/otel-tui:v0.6.3
+    image: ymtdzzz/otel-tui:v0.7.0
     container_name: otel-tui
     stdin_open: true
     tty: true
