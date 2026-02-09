@@ -29,7 +29,7 @@ services:
 
 
   loki:
-    image: grafana/loki:3.6.4
+    image: grafana/loki:3.6.5
     container_name: loki
     restart: always
     ports:
@@ -199,7 +199,7 @@ services:
 
 
   oteltui:
-    image: ymtdzzz/otel-tui:v0.7.0
+    image: ymtdzzz/otel-tui:v0.7.1
     container_name: otel-tui
     stdin_open: true
     tty: true
