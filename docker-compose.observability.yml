@@ -29,7 +29,7 @@ services:
 
 
   loki:
-    image: grafana/loki:3.6.5
+    image: grafana/loki:3.6.6
     container_name: loki
     restart: always
     ports:
@@ -104,7 +104,7 @@ services:
 
 
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.145.0
+    image: otel/opentelemetry-collector-contrib:0.146.1
     container_name: otel-collector
     restart: always
     command: --config=/etc/otel-collector-config.yaml
