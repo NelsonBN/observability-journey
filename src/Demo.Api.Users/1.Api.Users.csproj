@@ -13,12 +13,12 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.14" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.4" />
 
     <!-- Databases -->
     <PackageReference Include="MongoDB.Driver" Version="3.7.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.4" />
 
     <!-- Grpc -->
     <PackageReference Include="Google.Protobuf" Version="3.34.0" />
