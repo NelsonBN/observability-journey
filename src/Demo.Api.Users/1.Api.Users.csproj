@@ -18,7 +18,7 @@
 
     <!-- Databases -->
     <PackageReference Include="MongoDB.Driver" Version="3.7.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.5" />
 
     <!-- Grpc -->
     <PackageReference Include="Google.Protobuf" Version="3.34.0" />
