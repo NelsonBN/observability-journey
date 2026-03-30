@@ -25,13 +25,13 @@
 
     <!-- Grpc -->
     <PackageReference Include="Grpc.AspNetCore" Version="2.76.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.78.0">
+    <PackageReference Include="Grpc.Tools" Version="2.80.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
 
     <!-- Scheduler -->
-    <PackageReference Include="Quartz" Version="3.16.1" />
+    <PackageReference Include="Quartz" Version="3.17.0" />
     <PackageReference Include="Quartz.Extensions.Hosting" Version="3.17.0" />
 
     <!-- Trace -->
