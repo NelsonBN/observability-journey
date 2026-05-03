@@ -5,7 +5,7 @@ networks:
 services:
 
   prometheus:
-    image: prom/prometheus:v3.11.2
+    image: prom/prometheus:v3.11.3
     container_name: prometheus
     restart: always
     command:
@@ -104,7 +104,7 @@ services:
 
 
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.150.1
+    image: otel/opentelemetry-collector-contrib:0.151.0
     container_name: otel-collector
     restart: always
     command: --config=/etc/otel-collector-config.yaml
@@ -128,7 +128,7 @@ services:
 
 
   altertmanager:
-    image: prom/alertmanager:v0.32.0
+    image: prom/alertmanager:v0.32.1
     container_name: alertmanager
     restart: always
     command:
