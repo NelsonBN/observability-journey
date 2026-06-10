@@ -52,7 +52,7 @@ services:
 
 
   tempo:
-    image: grafana/tempo:3.0.1
+    image: grafana/tempo:3.0.2
     container_name: tempo
     restart: always
     command: [ "-config.file=/etc/tempo.yaml" ]
@@ -104,7 +104,7 @@ services:
 
 
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.153.0
+    image: otel/opentelemetry-collector-contrib:0.154.0
     container_name: otel-collector
     restart: always
     command: --config=/etc/otel-collector-config.yaml
