@@ -17,7 +17,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
 
     <!-- Databases -->
-    <PackageReference Include="MongoDB.Driver" Version="3.9.0" />
+    <PackageReference Include="MongoDB.Driver" Version="3.10.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.9" />
 
     <!-- Grpc -->
